@@ -19,6 +19,8 @@ informed decision before signing or broadcasting a transaction.
 Start with the [market and wallet safety guide](guides/market-safety.md).
 For the current Marketplace v1 capabilities and safety gates, read the
 [Marketplace v1 guide](guides/marketplace-v1.md).
+Release checks are performed before a change is published; see the
+[release validation note](guides/release-validation.md).
 
 ## Availability and data
 
