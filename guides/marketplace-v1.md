@@ -7,7 +7,7 @@ while keeping protocol-specific ownership and transaction rules authoritative.
 ## What the release candidate supports
 
 - Executable, separately authenticated marketplace authorities for Ordinals, TAP, DMT, UNAT,
-  Bitmap, ARC-20, unified DROPS and OP_DROP, Dogecoin TAP, and Tandem integrations.
+  Bitmap, Bitcoin Names, ARC-20, unified DROPS and OP_DROP, Dogecoin TAP, and Tandem integrations.
 - Wallet-reviewed prepared actions instead of hidden signing or custodial key handling.
 - Durable listings, reservations, funded offers, broadcast lineage, confirmed settlement, and
   deterministic rollback where the protocol authority supports those operations.
@@ -26,6 +26,22 @@ output. The authority rejects later duplicate claims, mixed protocol collateral,
 changed economics, and unsigned or structurally different transactions. Settlement is not final until
 the exact transaction is confirmed and the canonical claim is indexed at the buyer-owned output;
 dropped transactions and reorganizations remain recoverable through the durable action journal.
+
+### Bitcoin Names execution
+
+Bitcoin Names trading uses the canonical first Sats Names System registration inscription for each
+name. The authority preserves the exact SNS name and namespace rules, verifies the current Ordinals
+location against Bitcoin Core and the complete output inventory, and groups discovery by namespace
+without implying that namespace registration grants ownership of member names. Listing, repricing,
+delisting, buying, and funded offers use wallet-reviewed Bitcoin transactions with durable revisions,
+funding fences, and idempotent broadcast. A background reconciliation pass records confirmation,
+buyer ownership, settlement, dropped transactions, and reorganizations until the lifecycle reaches a
+durable result.
+
+The old `/trade/names` and name-detail URLs now reopen the canonical Marketplace v1 order book.
+Portfolio controls also enter the same reviewed action flow. Legacy registration rows are never
+converted into synthetic `domain-*` asset identifiers; when an inscription ID is not available, the
+action screen requires the authoritative inscription before any signing step.
 
 ## Why an action may be unavailable
 
