@@ -7,7 +7,8 @@ while keeping protocol-specific ownership and transaction rules authoritative.
 ## What the release candidate supports
 
 - Executable, separately authenticated marketplace authorities for Ordinals, TAP, DMT, UNAT,
-  Bitmap, Bitcoin Names, ARC-20, unified DROPS and OP_DROP, Dogecoin TAP, and Tandem integrations.
+  Bitmap, Bitcoin Names, ARC-20, unified DROPS and OP_DROP, Dogecoin TAP, DRC-20, Doginals, and
+  Tandem integrations.
 - Wallet-reviewed prepared actions instead of hidden signing or custodial key handling.
 - Durable listings, reservations, funded offers, broadcast lineage, confirmed settlement, and
   deterministic rollback where the protocol authority supports those operations.
@@ -42,6 +43,15 @@ The old `/trade/names` and name-detail URLs now reopen the canonical Marketplace
 Portfolio controls also enter the same reviewed action flow. Legacy registration rows are never
 converted into synthetic `domain-*` asset identifiers; when an inscription ID is not available, the
 action screen requires the authoritative inscription before any signing step.
+
+### Dogecoin execution
+
+Dogecoin TAP, DRC-20, and Doginals actions use a native Dogecoin wallet boundary. The review screen
+binds the protocol, action, connected account, asset, amounts, transaction template, fees, and owned
+inputs before the wallet is asked to sign. Listing-authority messages use standard Dogecoin signed
+messages, while transaction actions require a signature envelope for every owned input. The backend
+recovers the signing key and verifies that it matches the claimed Dogecoin address; mismatched,
+partial, reordered, or structurally changed results fail closed.
 
 ## Why an action may be unavailable
 
