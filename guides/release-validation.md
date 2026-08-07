@@ -16,6 +16,11 @@ they do not weaken the safety or availability checks for the supported release
 paths. A passing validation result is release evidence, not a claim that a
 change has already reached production.
 
+Marketplace database releases are rehearsed on both MySQL 8 and MariaDB 10.11.
+The validation compares semantic column types, constraints, checks, triggers,
+idempotent reruns, and guarded rollback behavior, so harmless database display
+differences cannot weaken or incorrectly block the same safety contract.
+
 The production frontend build also runs with a bounded JavaScript heap on the
 managed fleet. This keeps one compilation from exhausting a shared build host
 while still producing and validating the same release artifact.
