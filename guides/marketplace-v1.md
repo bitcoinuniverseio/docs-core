@@ -7,7 +7,7 @@ while keeping protocol-specific ownership and transaction rules authoritative.
 ## What the release candidate supports
 
 - Executable, separately authenticated marketplace authorities for Ordinals, TAP, DMT, UNAT,
-  ARC-20, unified DROPS and OP_DROP, Dogecoin TAP, and Tandem integrations.
+  Bitmap, ARC-20, unified DROPS and OP_DROP, Dogecoin TAP, and Tandem integrations.
 - Wallet-reviewed prepared actions instead of hidden signing or custodial key handling.
 - Durable listings, reservations, funded offers, broadcast lineage, confirmed settlement, and
   deterministic rollback where the protocol authority supports those operations.
@@ -17,6 +17,15 @@ while keeping protocol-specific ownership and transaction rules authoritative.
 
 Other protocol families remain visible only where their authoritative execution path is complete.
 The application does not silently fall back to a generic transaction path for an unsupported asset.
+
+### Bitmap execution
+
+Bitmap trading is bound to the canonical first valid `{block-height}.bitmap` district claim. Listing,
+repricing, delisting, buying, and funded offers use the live claim inscription and its exact Bitcoin
+output. The authority rejects later duplicate claims, mixed protocol collateral, stale ownership,
+changed economics, and unsigned or structurally different transactions. Settlement is not final until
+the exact transaction is confirmed and the canonical claim is indexed at the buyer-owned output;
+dropped transactions and reorganizations remain recoverable through the durable action journal.
 
 ## Why an action may be unavailable
 
