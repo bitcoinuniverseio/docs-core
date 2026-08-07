@@ -15,3 +15,7 @@ Those probes run only when their managed environment is explicitly available;
 they do not weaken the safety or availability checks for the supported release
 paths. A passing validation result is release evidence, not a claim that a
 change has already reached production.
+
+The production frontend build also runs with a bounded JavaScript heap on the
+managed fleet. This keeps one compilation from exhausting a shared build host
+while still producing and validating the same release artifact.
