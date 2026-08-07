@@ -21,6 +21,18 @@ If a market says its reader is unavailable, do not assume that no tokens,
 listings, or activity exist. Retry later or use the protocol’s independent
 explorer. Do not create or repeat a transaction from stale market data.
 
+## TAP-DOGE test environment
+
+The TAP-DOGE view on `test.bitcoinuniverse.io` uses its own staging API. It
+does not silently switch to production data when that staging API is
+unavailable. An unavailable-reader message therefore means the test data
+source could not be verified; wait for it to recover before evaluating market
+balances or activity.
+
+The test environment is for validation, not real-fund transactions. Always
+return to the production application and verify the active network and reader
+status before approving a live wallet request.
+
 ## What the platform does not prove
 
 An on-chain transaction does not by itself prove the identity of a counterparty,
