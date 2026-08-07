@@ -17,6 +17,8 @@ informed decision before signing or broadcasting a transaction.
 - Open guided inscription and transaction tools.
 
 Start with the [market and wallet safety guide](guides/market-safety.md).
+For the current Marketplace v1 capabilities and safety gates, read the
+[Marketplace v1 guide](guides/marketplace-v1.md).
 
 ## Availability and data
 
