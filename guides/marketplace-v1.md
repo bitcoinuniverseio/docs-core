@@ -28,6 +28,11 @@ changed economics, and unsigned or structurally different transactions. Settleme
 the exact transaction is confirmed and the canonical claim is indexed at the buyer-owned output;
 dropped transactions and reorganizations remain recoverable through the durable action journal.
 
+Every Bitmap market surface also consolidates records by block height. Provider listing IDs,
+inscription IDs, and historical activity IDs are observations of the same district, not separate
+assets. Supply comes from the authoritative indexer status unless a complete first page proves an
+exact unique total, so duplicate history rows cannot inflate the collection grid or its count.
+
 ### Bitcoin Names execution
 
 Bitcoin Names trading uses the canonical first Sats Names System registration inscription for each
