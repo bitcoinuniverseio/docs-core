@@ -24,3 +24,8 @@ differences cannot weaken or incorrectly block the same safety contract.
 The production frontend build also runs with a bounded JavaScript heap on the
 managed fleet. This keeps one compilation from exhausting a shared build host
 while still producing and validating the same release artifact.
+
+Frontend release tests run without a persistent Jest transform cache. This
+keeps transient files from accumulating across projects on a shared runner and
+prevents runner storage pressure from being confused with a failed product
+test.
