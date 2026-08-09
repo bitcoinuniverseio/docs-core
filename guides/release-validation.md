@@ -29,3 +29,9 @@ Frontend release tests run without a persistent Jest transform cache. This
 keeps transient files from accumulating across projects on a shared runner and
 prevents runner storage pressure from being confused with a failed product
 test.
+
+Each trusted test job also receives an isolated, memory-backed temporary
+workspace that is removed when the job finishes. Push and pull-request events
+for the same exact revision are coalesced into one validation workload. These
+boundaries protect test reliability without weakening any required assertion,
+build, or release gate.
