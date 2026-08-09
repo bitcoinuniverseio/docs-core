@@ -79,3 +79,9 @@ An unavailable action is a safety decision, not proof that an asset or market do
 The code is a validated release candidate, not a statement that every production gate is enabled.
 Protocol authorities, protected configuration, live readiness checks, and funded canaries must pass
 before production execution is declared available.
+
+The Marketplace on `test.bitcoinuniverse.io` uses the isolated
+`test.api.bitcoinuniverse.io` API lane for Marketplace v1 requests. It does not fall back to the
+production Marketplace API. The staging edge permits only read and preflight requests while
+authorities are being verified; create, sign, reserve, purchase, offer, cancel, and broadcast actions
+remain unavailable until their complete staging execution and rollback gates pass.
