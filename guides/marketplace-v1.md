@@ -85,3 +85,9 @@ The Marketplace on `test.bitcoinuniverse.io` uses the isolated
 production Marketplace API. The staging edge permits only read and preflight requests while
 authorities are being verified; create, sign, reserve, purchase, offer, cancel, and broadcast actions
 remain unavailable until their complete staging execution and rollback gates pass.
+
+As of 9 August 2026, the test frontend and isolated staging API run the same
+verified Core release. DogeTap reads remain available, while Marketplace v1
+returns an explicit unavailable state because its execution authorities are
+not configured. This is a deployed safety boundary, not a claim that any
+protocol has passed live listing, purchase, offer, or settlement acceptance.
