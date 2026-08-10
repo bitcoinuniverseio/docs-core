@@ -29,6 +29,12 @@ APIs. A healthy page shell does not guarantee that every protocol reader is
 available. The application identifies unavailable readers and avoids presenting
 missing data as a confirmed empty market.
 
+Release readiness also checks the indexers behind the application. The public
+health response identifies each observed network and protocol reader with its
+chain tip, indexed height, lag, and last successful update. Missing or stale
+indexer evidence remains unavailable; it is never converted into an empty or
+healthy result.
+
 ## Security
 
 Bitcoin Universe is non-custodial. Never enter a seed phrase or private key into
