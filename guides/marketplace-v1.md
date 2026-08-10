@@ -19,6 +19,25 @@ while keeping protocol-specific ownership and transaction rules authoritative.
 Other protocol families remain visible only where their authoritative execution path is complete.
 The application does not silently fall back to a generic transaction path for an unsupported asset.
 
+### Market navigation and wallets
+
+The primary market navigation is intentionally limited to **ORDINALS, RUNES, ALKANES, STAMPS,
+ATOMICALS, and MORE MARKETS**. The obsolete Native Runes entry and the Discover menu are no longer
+shown. Opening /trade selects the Bitmap market; historical Native Runes links resolve to the
+canonical RUNES market.
+
+Wizz Wallet is supported on Bitcoin mainnet. Desktop users connect through the validated Wizz
+extension provider. On mobile, open Bitcoin Universe inside Wizz Discovery and connect from the
+wallet's built-in browser. The application rejects unsupported networks and never asks for a seed
+phrase or private key.
+
+### Marketplace fees
+
+Bitcoin Universe applies the same service-fee calculation across supported marketplace settlement
+paths: 1.5% of the gross sale price is charged independently to the buyer and seller. Amounts are
+calculated in integer satoshis with deterministic half-up rounding and are displayed for review
+before signing.
+
 ### Bitmap execution
 
 Bitmap trading is bound to the canonical first valid `{block-height}.bitmap` district claim. Listing,
@@ -32,6 +51,10 @@ Every Bitmap market surface also consolidates records by block height. Provider 
 inscription IDs, and historical activity IDs are observations of the same district, not separate
 assets. Supply comes from the authoritative indexer status unless a complete first page proves an
 exact unique total, so duplicate history rows cannot inflate the collection grid or its count.
+
+Bitmap identity comes from the indexed block_number, not an inscription's mined block height or a
+generic numeric presentation field. Activity uses the same canonical identity, and ambiguous
+buyer/seller attribution is reported as unresolved instead of being guessed.
 
 ### Bitcoin Names execution
 
