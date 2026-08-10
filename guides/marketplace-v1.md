@@ -36,7 +36,13 @@ phrase or private key.
 Bitcoin Universe applies the same service-fee calculation across supported marketplace settlement
 paths: 1.5% of the gross sale price is charged independently to the buyer and seller. Amounts are
 calculated in integer satoshis with deterministic half-up rounding and are displayed for review
-before signing.
+before signing. The service-fee calculation has no protocol-specific minimum; Bitcoin transaction
+outputs must still satisfy the network and script dust rules needed to construct a valid settlement.
+
+When Wizz signs a prepared Bitcoin transaction, the application converts its internal PSBT encoding
+to the hexadecimal PSBT string required by the wallet and validates the signed result before it is
+submitted. Exact transaction review remains fail closed: a required ownership, output, fee, or
+signature mismatch blocks the action instead of being downgraded to an advisory confirmation.
 
 ### Bitmap execution
 
