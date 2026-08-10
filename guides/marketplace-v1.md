@@ -19,6 +19,18 @@ while keeping protocol-specific ownership and transaction rules authoritative.
 Other protocol families remain visible only where their authoritative execution path is complete.
 The application does not silently fall back to a generic transaction path for an unsupported asset.
 
+### Availability profiles
+
+Bitcoin Universe reports browsing availability separately from transaction availability. A
+read-only release can keep portfolio and market views online while trading actions remain closed.
+The public health response labels this state clearly instead of treating a healthy page as evidence
+that transactions are ready.
+
+A mutation-ready release has a stronger gate. Every one of the 26 supported protocol authorities
+must report current, matching evidence for three consecutive refresh cycles before transaction
+traffic can open. Any missing, stale, conflicting, or failed authority resets that gate and keeps
+wallet mutations unavailable while read traffic can continue safely.
+
 ### Market navigation and wallets
 
 The primary market navigation is intentionally limited to **ORDINALS, RUNES, ALKANES, STAMPS,
