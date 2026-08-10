@@ -16,6 +16,13 @@ they do not weaken the safety or availability checks for the supported release
 paths. A passing validation result is release evidence, not a claim that a
 change has already reached production.
 
+The deployment health check also respects the selected Marketplace profile. A
+read-only release requires healthy database-backed application reads and keeps
+transaction traffic explicitly closed. A mutation-ready release is accepted
+only after three complete healthy refresh cycles across all 26 protocol
+authorities. This prevents a generic healthy response from being mistaken for
+permission to list, buy, sell, or make offers.
+
 Marketplace database releases are rehearsed on both MySQL 8 and MariaDB 10.11.
 The validation compares semantic column types, constraints, checks, triggers,
 idempotent reruns, and guarded rollback behavior, so harmless database display
