@@ -17,6 +17,8 @@ workflows.
   smooth a brief provider interruption.
 - Address UTXO failure is reported as unavailable. It is never presented as a
   confirmed empty wallet.
+- The primary service uses overlapping workers so routine software reloads do
+  not interrupt Bitcoin data requests.
 
 ## Transaction broadcasts
 
