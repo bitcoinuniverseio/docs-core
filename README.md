@@ -35,6 +35,13 @@ chain tip, indexed height, lag, and last successful update. Missing or stale
 indexer evidence remains unavailable; it is never converted into an empty or
 healthy result.
 
+The response identifies its exact contract as
+`network-indexer-health-v1`. Bitcoin mainnet readiness requires a fresh
+timestamp, synchronized service state, authoritative chain and indexed heights,
+and an internally consistent lag. If those observations are unavailable, the
+service reports degraded readiness instead of treating database liveness as
+chain readiness.
+
 ## Security
 
 Bitcoin Universe is non-custodial. Never enter a seed phrase or private key into
