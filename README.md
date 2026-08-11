@@ -21,6 +21,8 @@ For the current Marketplace v1 capabilities and safety gates, read the
 [Marketplace v1 guide](guides/marketplace-v1.md).
 Release checks are performed before a change is published; see the
 [release validation note](guides/release-validation.md).
+For the Bitcoin network-data availability contract, see
+[Bitcoin data reliability](guides/bitcoin-data-reliability.md).
 
 ## Availability and data
 
