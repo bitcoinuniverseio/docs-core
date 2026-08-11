@@ -1,9 +1,10 @@
 # Bitcoin data reliability
 
 Bitcoin Universe uses a self-hosted Bitcoin data service as the primary source
-for fee estimates, chain height, transactions, and address UTXOs. Independent
-public providers are retained as bounded fallbacks so a single upstream outage
-does not silently disable Bitcoin workflows.
+for fee estimates, chain height, transactions, address activity and balances,
+and address UTXOs. Independent public providers are retained as bounded
+fallbacks so a single upstream outage does not silently disable Bitcoin
+workflows.
 
 ## What users can expect
 
