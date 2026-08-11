@@ -7,10 +7,16 @@ The Atomicals market menu contains four distinct views:
 - Realms for top-level Realm names;
 - Subrealms for names below a parent Realm.
 
-NFTs, Realms, and Subrealms are canonical browse views from one synchronized
-Atomicals index. They show indexed ownership and mint evidence but do not imply
-that an asset is listed for sale. ARC-20 keeps its existing market and listing
-rules.
+All four views use canonical Atomicals identity and ownership evidence. ARC-20
+trades the complete fungible balance at its live output. NFTs, Realms, and
+Subrealms trade one exact Atomical at a time; a browse result does not by itself
+mean that the asset is listed for sale.
+
+Transaction actions remain fail closed until the Marketplace reports current
+Atomicals and Bitcoin checkpoints, a live unspent owner output, and a matching
+execution authority. Realms and Subrealms must also be the verified canonical
+name winner. Mixed outputs, stale ownership, burns, changed transaction
+economics, and signatures for another protocol route are rejected.
 
 Portfolio has two views: Dashboard and Activity. Dashboard contains asset
 filters and asset details. Activity contains wallet inscription activity. The
