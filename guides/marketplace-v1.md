@@ -7,8 +7,8 @@ while keeping protocol-specific ownership and transaction rules authoritative.
 ## What the release candidate supports
 
 - Executable, separately authenticated marketplace authorities for Ordinals, TAP, DMT, UNAT,
-  Bitmap, Bitcoin Names, ARC-20, unified DROPS and OP_DROP, Dogecoin TAP, DRC-20, Doginals, and
-  Tandem integrations.
+  Bitmap, Bitcoin Names, ARC-20, Atomicals NFTs, Realms, Subrealms, unified DROPS and OP_DROP,
+  Dogecoin TAP, DRC-20, Doginals, and Tandem integrations.
 - Wallet-reviewed prepared actions instead of hidden signing or custodial key handling.
 - Durable listings, reservations, funded offers, broadcast lineage, confirmed settlement, and
   deterministic rollback where the protocol authority supports those operations.
@@ -26,7 +26,7 @@ read-only release can keep portfolio and market views online while trading actio
 The public health response labels this state clearly instead of treating a healthy page as evidence
 that transactions are ready.
 
-A mutation-ready release has a stronger gate. Every one of the 26 supported protocol authorities
+A mutation-ready release has a stronger gate. Every one of the 29 supported protocol authorities
 must report current, matching evidence for three consecutive refresh cycles before transaction
 traffic can open. Any missing, stale, conflicting, or failed authority resets that gate and keeps
 wallet mutations unavailable while read traffic can continue safely.
@@ -89,6 +89,23 @@ The old `/trade/names` and name-detail URLs now reopen the canonical Marketplace
 Portfolio controls also enter the same reviewed action flow. Legacy registration rows are never
 converted into synthetic `domain-*` asset identifiers; when an inscription ID is not available, the
 action screen requires the authoritative inscription before any signing step.
+
+### Atomicals execution
+
+ARC-20, Atomicals NFTs, Realms, and Subrealms use one isolated Atomicals
+execution service with separate protocol routes and durable state. ARC-20
+resolves the canonical ticker winner and transfers the complete colored value.
+The non-fungible markets accept one canonical compact Atomical ID with quantity
+one. Generic NFT listings cannot contain a Realm, Subrealm, FT, container, or
+item subtype; Realm markets also require the verified canonical name winner.
+
+Every mutation rechecks the exact Bitcoin output, owner script, spent state,
+single-Atomical inventory, colored value, and stable Bitcoin/Atomicals
+checkpoint. Prepared transactions must assign the selected Atomical to one
+unburned output, preserve the reviewed seller payout and fees, and pass Bitcoin
+Core preflight. Listing revisions, funded offers, reservations, broadcast
+lineage, confirmation, dropped/replaced transactions, and reorganization
+reconciliation remain durable and protocol-scoped.
 
 ### Dogecoin execution
 
