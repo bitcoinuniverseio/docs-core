@@ -18,6 +18,26 @@ execution authority. Realms and Subrealms must also be the verified canonical
 name winner. Mixed outputs, stale ownership, burns, changed transaction
 economics, and signatures for another protocol route are rejected.
 
+## Listing an ARC-20 lot
+
+An ARC-20 balance is held in complete colored-sat UTXOs. Open the token from
+Portfolio or its ARC-20 market, select one available lot, enter the sale price,
+review the 1.5% seller service fee and net proceeds, then approve the PSBT in
+the connected wallet. The application never splits the selected colored lot or
+uses it as ordinary Bitcoin change.
+
+Wizz is shown as Wizz, not as UniSat. Desktop users connect the validated Wizz
+extension; mobile users open Bitcoin Universe in Wizz Discovery. Bitcoin
+Universe converts the prepared PSBT to the hexadecimal format Wizz expects.
+If a connected extension no longer exposes a signer, the form is disabled with
+an unlock-and-reconnect explanation before any listing transaction is prepared.
+
+The listing appears only after the signed offer passes ownership, outpoint,
+ticker, quantity, payout, and signature checks. Refreshing or reconnecting reads
+the open listing from the market; retrying cannot create a second open listing
+for the same ARC-20 outpoint. Buying independently applies the buyer service
+fee and preserves every colored sat in the buyer output.
+
 Portfolio has two views: Dashboard and Activity. Dashboard contains asset
 filters and asset details. Activity contains wallet inscription activity. The
 former Holdings view and its bulk-list page are retired; listing actions open
