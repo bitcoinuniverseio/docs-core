@@ -43,10 +43,12 @@ healthy result.
 
 The response identifies its exact contract as
 `network-indexer-health-v1`. Bitcoin mainnet readiness requires a fresh
-timestamp, synchronized service state, authoritative chain and indexed heights,
-and an internally consistent lag. If those observations are unavailable, the
-service reports degraded readiness instead of treating database liveness as
-chain readiness.
+timestamp and a valid chain tip from Bitcoin Universe's private provider
+registry. The response exposes this source as
+`dependencies.bitcoinNetwork=ready`; if it is unavailable, read readiness fails
+closed instead of treating database liveness, a zero height, or a stale indexer
+as chain readiness. Protocol indexer errors remain visible separately for
+diagnosis.
 
 ## Security
 
