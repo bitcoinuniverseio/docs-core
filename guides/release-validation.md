@@ -10,6 +10,11 @@ If that managed fleet has a short infrastructure interruption, an eligible
 first attempt may receive one automatic retry. A retry is never used to hide a
 reported validation failure.
 
+Production freshness checks use the repository-scoped, pinned GitHub deploy
+identity with bounded connection timeouts and retries. Exhausting those retries
+fails closed before release links change; it never permits a cached candidate
+to bypass exact-`main` verification.
+
 Some platform-specific compatibility probes require a dedicated environment.
 Those probes run only when their managed environment is explicitly available;
 they do not weaken the safety or availability checks for the supported release
