@@ -27,6 +27,12 @@ A declared supply is informational. The confirmed count is the number of
 members independently reconciled with the Bitcoin chain authority. These
 numbers can differ while a collection is still minting.
 
+Bitcoin Universe continuously monitors the collection-import service, its
+queue, publication progress, chain reconciliation, and the official KNOT HEADS
+feed. If an authority or import becomes unhealthy, the last verified
+collection remains available while new publication fails safely; an upstream
+failure is never shown as an empty collection.
+
 ## JSON manifest v1
 
 Use the published
