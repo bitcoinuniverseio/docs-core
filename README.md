@@ -25,6 +25,8 @@ Release checks are performed before a change is published; see the
 [release validation note](guides/release-validation.md).
 For the Bitcoin network-data availability contract, see
 [Bitcoin data reliability](guides/bitcoin-data-reliability.md).
+For collection creators, see
+[Add an Ordinals collection](guides/ordinals-collection-imports.md).
 
 ## Availability and data
 
