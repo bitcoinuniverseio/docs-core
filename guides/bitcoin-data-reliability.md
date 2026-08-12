@@ -15,6 +15,11 @@ workflows.
   shown or used by a transaction workflow.
 - Fee and chain-tip responses may use short-lived validated cache entries to
   smooth a brief provider interruption.
+- The public application health contract reads its canonical Bitcoin mainnet
+  head through the same provider registry. An unavailable or invalid chain tip
+  makes application read readiness fail closed.
+- A failed protocol indexer remains visible in health diagnostics but does not
+  replace the authoritative Bitcoin chain head with zero.
 - Address UTXO failure is reported as unavailable. It is never presented as a
   confirmed empty wallet.
 - The primary service uses overlapping workers so routine software reloads do
