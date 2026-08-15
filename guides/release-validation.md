@@ -48,3 +48,9 @@ workspace that is removed when the job finishes. Push and pull-request events
 for the same exact revision are coalesced into one validation workload. These
 boundaries protect test reliability without weakening any required assertion,
 build, or release gate.
+
+Interactive interface tests explicitly wait for a newly selected request and
+its rendered result before comparing it with an older response. This preserves
+the user-visible guarantee that stale network data cannot replace newer
+marketplace data, without treating temporary runner scheduling as a product
+failure.
