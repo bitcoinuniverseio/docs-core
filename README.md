@@ -29,6 +29,8 @@ For collection creators, see
 [Add an Ordinals collection](guides/ordinals-collection-imports.md).
 For private messaging and wallet-verification safety, see
 [Private chat verification](guides/private-chat-verification.md).
+For buyers, see
+[Browse an Ordinals collection market](guides/ordinals-collection-market.md).
 
 ## Availability and data
 
