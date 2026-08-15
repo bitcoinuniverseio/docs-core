@@ -27,6 +27,8 @@ For the Bitcoin network-data availability contract, see
 [Bitcoin data reliability](guides/bitcoin-data-reliability.md).
 For collection creators, see
 [Add an Ordinals collection](guides/ordinals-collection-imports.md).
+For private messaging and wallet-verification safety, see
+[Private chat verification](guides/private-chat-verification.md).
 
 ## Availability and data
 
