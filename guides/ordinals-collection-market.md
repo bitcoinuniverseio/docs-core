@@ -26,11 +26,31 @@ from discovery filters.
 
 ## Availability and media
 
-Collection artwork and thumbnails are served from Bitcoin Universe's cache on
-the browsing path. Changing a warmed filter does not contact an artwork host.
+The browse catalog is the set of active, published collections with confirmed
+local inventory. Each row links with its stable collection ID; a provider
+cannot invent a collection or route, and collections with the same name remain
+distinct.
+
+A collection logo is identity media. It is downloaded, decoded, bounded, and
+served from Bitcoin Universe's cache. Featured artwork and item thumbnails are
+separate fields and do not replace that logo. Item thumbnails are also served
+from the cache on the browsing path, so changing a warmed filter does not
+contact an artwork host.
+
 If an upstream reader is unavailable or data is incomplete, the page reports
-that state instead of presenting it as a confirmed empty market. A verified
-zero-result filter is explicitly distinguished from an unavailable response.
+that state instead of presenting it as a confirmed empty market. A successful
+catalog response with no published inventory displays an explicit empty state;
+a verified zero-result filter is separately distinguished from an unavailable
+response.
+
+## Trading availability
+
+Listings overlay the authoritative inventory and never create membership.
+Action controls appear only when the selected protocol's live ownership,
+listing, settlement, and broadcast readiness permits that action. A read-only
+market remains browsable but does not present a buy, list, edit, cancel, or
+offer control as if it could execute. Refresh after an error before signing or
+retrying.
 
 Before buying, review the inscription, seller, price, fees, network, and wallet
 request. Bitcoin Universe is non-custodial and never needs a seed phrase or
