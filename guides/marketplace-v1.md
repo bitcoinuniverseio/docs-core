@@ -123,6 +123,11 @@ this includes the application feature gate, indexer readiness, fresh chain check
 inventory, wallet and network match, clean funding proof, and protocol-specific settlement evidence.
 An unavailable action is a safety decision, not proof that an asset or market does not exist.
 
+Browse and asset-detail pages do not show controls for mutations the protocol does not support. If
+the protocol supports an action but its live authority is not ready, the control is disabled and the
+current reason is shown below it. Refreshing or opening another protocol checks that exact route
+again; an earlier ready result is never reused for the new action.
+
 ## Before signing
 
 1. Confirm the wallet network and connected account.
