@@ -8,7 +8,7 @@ while keeping protocol-specific ownership and transaction rules authoritative.
 
 - Executable, separately authenticated marketplace authorities for Ordinals, TAP, DMT, UNAT,
   Bitmap, Bitcoin Names, ARC-20, Atomicals NFTs, Realms, Subrealms, unified DROPS and OP_DROP,
-  Dogecoin TAP, DRC-20, Doginals, and Tandem integrations.
+  Ordex public asks, Dogecoin TAP, DRC-20, Doginals, and Tandem integrations.
 - Wallet-reviewed prepared actions instead of hidden signing or custodial key handling.
 - Durable listings, reservations, funded offers, broadcast lineage, confirmed settlement, and
   deterministic rollback where the protocol authority supports those operations.
@@ -106,6 +106,20 @@ unburned output, preserve the reviewed seller payout and fees, and pass Bitcoin
 Core preflight. Listing revisions, funded offers, reservations, broadcast
 lineage, confirmation, dropped/replaced transactions, and reorganization
 reconciliation remain durable and protocol-scoped.
+
+### Ordex execution
+
+Ordex public asks use a Core-owned authority backed by the local Bitcoin Core,
+ord index, and Ordex order journal. The authority checks that Core and ord have
+the same block height and hash, then verifies the inscription satpoint, unspent
+output, owner script, and value before it prepares a seller PSBT. The wallet
+signs only the reviewed Ordex input. Finalization rejects a changed template,
+owner, outpoint, price, or signature before the ask enters the journal.
+
+Ordex read and execution access use separate server-side credentials. The
+deployment manifest also binds the exact authority identity, schema, indexer
+revision, wallet executor, and Core release. A missing or mismatched field keeps
+the mutation-ready profile closed.
 
 ### Dogecoin execution
 
