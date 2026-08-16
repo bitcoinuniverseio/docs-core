@@ -33,6 +33,16 @@ feed. If an authority or import becomes unhealthy, the last verified
 collection remains available while new publication fails safely; an upstream
 failure is never shown as an empty collection.
 
+The public browse catalog contains only active, published collections with
+confirmed local inventory and a validated, server-cached logo. A provider may
+enrich a matching collection, but it cannot create a new collection identity,
+route, or inventory row. Collection IDs therefore remain stable even when two
+collections have the same display name or an enrichment provider is offline.
+
+Official synchronization is idempotent. A recoverable failed or cancelled job
+for the current first-party source is requeued within its bounded retry budget;
+an exhausted job remains visible to operators instead of retrying forever.
+
 ## JSON manifest v1
 
 Use the published

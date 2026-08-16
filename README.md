@@ -31,6 +31,8 @@ For private messaging and wallet-verification safety, see
 [Private chat verification](guides/private-chat-verification.md).
 For buyers, see
 [Browse an Ordinals collection market](guides/ordinals-collection-market.md).
+For owners, see
+[Manage assets from Portfolio](guides/portfolio-market-actions.md).
 
 ## Availability and data
 
