@@ -54,3 +54,7 @@ its rendered result before comparing it with an older response. This preserves
 the user-visible guarantee that stale network data cannot replace newer
 marketplace data, without treating temporary runner scheduling as a product
 failure.
+
+Catalog retry checks also reset their mocked data source before each scenario.
+This keeps an intentionally unresolved loading simulation from one interface
+test from leaking into the next test's failure-and-recovery validation.
