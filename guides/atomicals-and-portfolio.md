@@ -18,6 +18,17 @@ execution authority. Realms and Subrealms must also be the verified canonical
 name winner. Mixed outputs, stale ownership, burns, changed transaction
 economics, and signatures for another protocol route are rejected.
 
+## NFT artwork
+
+Atomicals NFT cards display canonical inline artwork when the unified
+Atomicals index publishes a safe media field and SHA-256 digest. The browser
+loads that field from Bitcoin Universe, not from an indexer or third-party
+media origin. Bitcoin Universe caps the response at 16 MiB, accepts only a
+narrow set of image, audio, video, JSON, and plain-text media types, and checks
+the complete body against its digest before returning it. Invalid or tampered
+media falls back to the asset name and identifier; it is never treated as
+ownership, listing, or settlement evidence.
+
 ## Listing an ARC-20 lot
 
 An ARC-20 balance is held in complete colored-sat UTXOs. Open the token from
