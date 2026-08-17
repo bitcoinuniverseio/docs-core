@@ -43,6 +43,13 @@ asset identity, metadata status, traits, and collection metadata. Market data
 from a collection provider may enrich a known local collection, but it cannot
 create a collection or route by itself.
 
+Ordinals, DMT, and UNAT item artwork can be served by the universal local media
+pipeline. It discovers identities from Bitcoin Universe's own inventories,
+caches the source, and publishes content-addressed thumbnail variants. The web
+client accepts these local media routes and does not contact a public artwork
+host when a thumbnail is missing. Until a derivative is ready, a tile shows a
+loading surface or its explicit text identity.
+
 If an upstream reader is unavailable or data is incomplete, the page reports
 that state instead of presenting it as a confirmed empty market. A successful
 catalog response with no published inventory displays an explicit empty state;
