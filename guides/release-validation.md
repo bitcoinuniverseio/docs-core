@@ -43,6 +43,11 @@ keeps transient files from accumulating across projects on a shared runner and
 prevents runner storage pressure from being confused with a failed product
 test.
 
+Browser verification uses the project-pinned Chromium revision inside the
+individual validation job. Managed runners are admitted only after their
+browser libraries are verified, so a test run does not alter shared operating
+system packages or inherit a browser from an unrelated job.
+
 Each trusted test job also receives an isolated, memory-backed temporary
 workspace that is removed when the job finishes. Push and pull-request events
 for the same exact revision are coalesced into one validation workload. These
