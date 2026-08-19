@@ -33,6 +33,8 @@ For buyers, see
 [Browse an Ordinals collection market](guides/ordinals-collection-market.md).
 For owners, see
 [Manage assets from Portfolio](guides/portfolio-market-actions.md).
+For authorized platform operators, see the
+[Backend Operations Console](guides/backend-operations-console.md).
 
 ## Availability and data
 
