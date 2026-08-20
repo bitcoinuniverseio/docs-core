@@ -1,21 +1,21 @@
 # Bitcoin data reliability
 
-Bitcoin Universe uses a self-hosted Bitcoin data service as the primary source
-for fee estimates, chain height, transactions, address activity and balances,
-and address UTXOs. Independent public providers are retained as bounded
-fallbacks so a single upstream outage does not silently disable Bitcoin
-workflows.
+Bitcoin Universe uses Universe-operated Mempool and Ordinals services on the
+shared Indexers server for fee estimates, chain height, transactions, address
+activity and balances, address UTXOs, inscriptions, and other Bitcoin data. The
+public API reaches these services through persistent private tunnels. Public
+blockchain providers are never used as fallbacks.
 
 ## What users can expect
 
-- Normal healthy requests use the Bitcoin Universe primary service.
-- A failed or slow provider is temporarily removed from request rotation and
-  retried after a cooldown.
+- Normal healthy requests stay within Universe-operated infrastructure.
+- A failed or slow service uses bounded retries and a circuit breaker. It is
+  retried after a cooldown without redirecting reads to a public provider.
 - Responses are checked for the expected content and shape before they are
   shown or used by a transaction workflow.
 - Fee and chain-tip responses may use short-lived validated cache entries to
   smooth a brief provider interruption.
-- The public application health contract reads its canonical Bitcoin mainnet
+- The public application health contract reads its verified Bitcoin mainnet
   head through the same provider registry. An unavailable or invalid chain tip
   makes application read readiness fail closed.
 - A failed protocol indexer remains visible in health diagnostics but does not
@@ -34,7 +34,7 @@ second provider.
 
 ## During an outage
 
-Fallback is automatic for read requests and is bounded by request timeouts and
-circuit breakers. If every provider is unavailable or returns invalid data,
-the API returns an explicit unavailable response. Wait for service recovery and
-refresh the current Bitcoin state before signing or repeating an action.
+There is no public provider fallback. Short-lived validated cache entries may
+smooth a momentary interruption. If the Universe-operated service is unavailable
+or returns invalid data, the API returns an explicit unavailable response. Wait
+for recovery and refresh Bitcoin state before signing or repeating an action.
