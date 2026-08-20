@@ -14,7 +14,8 @@ reviewed blockchain reader facades provide narrowly validated lookups such as:
 - inscription content, previews, and status;
 - Dogecoin TAP tokens, balances, activity, and protocol state.
 
-Each facade denies unknown routes. Public access accepts read methods only and
+Each facade denies unknown routes. Public access accepts read methods and safe
+browser CORS preflights only, and
 applies per-client burst, sustained-rate, concurrency, request-size, response,
 and upstream-timeout protections. Generic Bitcoin RPC method selection is not
 available through the public API.
