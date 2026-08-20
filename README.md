@@ -25,6 +25,8 @@ Release checks are performed before a change is published; see the
 [release validation note](guides/release-validation.md).
 For the Bitcoin network-data availability contract, see
 [Bitcoin data reliability](guides/bitcoin-data-reliability.md).
+For the HTTPS reader boundary and public access controls, see
+[Secure blockchain data access](guides/secure-blockchain-data-access.md).
 For collection creators, see
 [Add an Ordinals collection](guides/ordinals-collection-imports.md).
 For private messaging and wallet-verification safety, see
@@ -38,8 +40,8 @@ For authorized platform operators, see the
 
 ## Availability and data
 
-Market and protocol data comes from independent nodes, indexers, and provider
-APIs. A healthy page shell does not guarantee that every protocol reader is
+Market and protocol data comes from Bitcoin Universe operated nodes and
+indexers. A healthy page shell does not guarantee that every protocol reader is
 available. The application identifies unavailable readers and avoids presenting
 missing data as a confirmed empty market.
 
