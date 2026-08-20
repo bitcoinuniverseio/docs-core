@@ -2,8 +2,10 @@
 
 Bitcoin Universe uses Universe-operated Mempool and Ordinals services on the
 shared Indexers server for fee estimates, chain height, transactions, address
-activity and balances, address UTXOs, inscriptions, and other Bitcoin data. The
-public API reaches these services through persistent private tunnels. Public
+activity and balances, address UTXOs, validated block metadata, exact raw block
+bytes, inscriptions, and other Bitcoin data. Internal protocol indexers use the
+same operator-owned block routes to verify chain continuity. The public API
+reaches these services through persistent private tunnels. Public
 blockchain providers are never used as fallbacks.
 
 ## What users can expect
