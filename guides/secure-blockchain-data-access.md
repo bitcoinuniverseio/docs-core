@@ -20,6 +20,9 @@ applies per-client burst, sustained-rate, concurrency, request-size, response,
 and upstream-timeout protections. Generic Bitcoin RPC method selection is not
 available through the public API.
 
+Internal backend compatibility listeners are bound to loopback and denied by
+the host firewall, so they cannot bypass the HTTPS facade.
+
 ## Safety and availability
 
 Public responses may include rate-limit headers. A `429` response means the
