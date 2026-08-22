@@ -32,7 +32,11 @@ code it needs.
   portfolio, index and explorer routes no longer download a legacy component
   theme, and the explorer no longer downloads a 500 KB utility library for one
   function. Typical route JavaScript dropped by 25 to 60 KB compressed on
-  every major route.
+  every major route; in the lab (a mid-range phone profile) a collection page
+  reaches its largest paint in less than half the time it used to (7.2 s to
+  3.2 s), the Ordinals index ships a third fewer bytes and shows useful
+  content 1.8 s sooner, and opening the market picker costs a third of the
+  main-thread time it did.
 - **Same primitives everywhere.** The index filter menus, the Mezcal market
   pager, the Mezcal proof console and the market chat spinner now use the
   Universe UI primitives (Menu, Sheet, pagination, spinner): one look, one
