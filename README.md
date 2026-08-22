@@ -35,6 +35,9 @@ For buyers, see
 [Browse an Ordinals collection market](guides/ordinals-collection-market.md).
 For artwork availability and preservation, see
 [Shared collection media](guides/shared-collection-media.md).
+
+What UI 4.0 changed in navigation, speed and continuity:
+[UI 4.0: instant interaction and route continuity](guides/performance-and-ui-4.md).
 For owners, see
 [Manage assets from Portfolio](guides/portfolio-market-actions.md).
 For authorized platform operators, see the
