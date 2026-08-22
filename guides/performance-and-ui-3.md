@@ -30,6 +30,27 @@ that matters, lavender for information, chrome and violet-black for the rest.
 - **Performance mode.** On Save-Data, slow networks or low-power devices the
   app automatically reduces blur, animation and off-screen media work.
 
+## The final evolution (22 August 2026)
+
+A second pass closed the items the first release had deferred:
+
+- **A modern browser edge.** Bitcoin Universe is now served through an HTTP/2,
+  keep-alive, Brotli-capable edge. A page that used to open 50 to 130 TLS
+  connections opens a handful, and API round trips from a warm connection
+  take a third of the time.
+- **Collection pages that do not move.** Collection and inscription pages
+  reserve their final layout before the data arrives: header, stat chips,
+  toolbar, chart and price panel keep their place on phones and desktops
+  (measured layout shift 0.000 on phones).
+- **Only the market you open.** Each market hub downloads only its own code;
+  neighbouring markets load when you reach for them. Phones spend about half
+  the main-thread time they used to on hub pages.
+- **Complete media coverage.** Every discovered inscription, UNAT, DMT,
+  stamp and Atomicals asset is classified (visual, nonvisual, unsupported
+  with a reason, or a recorded source failure), visual assets get right-sized
+  WebP / AVIF derivatives, posters or waveforms, and cards receive immutable
+  object URLs directly, so grids paint from one response.
+
 ## How performance is kept
 
 - Real-user vitals (LCP, INP, CLS, FCP, TTFB and route transitions) are
