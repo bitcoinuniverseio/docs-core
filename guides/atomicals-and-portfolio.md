@@ -29,6 +29,18 @@ the complete body against its digest before returning it. Invalid or tampered
 media falls back to the asset name and identifier; it is never treated as
 ownership, listing, or settlement evidence.
 
+An Atomicals digital object may hold several payload files, or none at all. When
+several images are present the card always shows the same one, so a thumbnail
+does not change between refreshes. When the index confirms an object carries no
+image payload, its card shows a neutral placeholder instead of a name-and-
+identifier tile, which keeps a genuinely image-free object visually distinct
+from artwork that failed to load. Artwork that was briefly unavailable is
+retried rather than left as a placeholder for the rest of the visit.
+
+Selecting anywhere on an NFT card, including its artwork, opens that asset's own
+page. The page has its own address, so it can be linked, opened in a new tab,
+reloaded, and reached again with the browser's Back and Forward buttons.
+
 ## Listing an ARC-20 lot
 
 An ARC-20 balance is held in complete colored-sat UTXOs. Open the token from
