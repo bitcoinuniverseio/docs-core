@@ -40,6 +40,8 @@ What UI 4.0 changed in navigation, speed and continuity:
 [UI 4.0: instant interaction and route continuity](guides/performance-and-ui-4.md).
 For owners, see
 [Manage assets from Portfolio](guides/portfolio-market-actions.md).
+For the Ordex market, its protocol families and its order states, see
+[The Ordex market](guides/ordex-market.md).
 For authorized platform operators, see the
 [Backend Operations Console](guides/backend-operations-console.md).
 
