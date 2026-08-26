@@ -6,6 +6,12 @@ Validation is designed to use the organisation's managed private build fleet
 for trusted release work, so an unrelated hosted-build capacity issue does not
 turn a product release into a failed result.
 
+Portable Core validation is eligible across eighteen certified Linux services
+on four independent hosts. Browser-backed jobs use the shared browser
+capability, while source-only quality jobs use the common portable pool. This
+lets an idle compatible runner accept work immediately and preserves failover
+when one service or host is unavailable.
+
 If that managed fleet has a short infrastructure interruption, an eligible
 first attempt may receive one automatic retry. A retry is never used to hide a
 reported validation failure.
