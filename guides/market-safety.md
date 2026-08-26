@@ -21,6 +21,17 @@ If a market says its reader is unavailable, do not assume that no tokens,
 listings, or activity exist. Retry later or use the protocol’s independent
 explorer. Do not create or repeat a transaction from stale market data.
 
+## Reading market activity
+
+Activity rows are dated from when the trade happened, not from when the
+platform last touched the record. Maintenance passes re-check historical
+trades, and those passes never move a row's date forward or resurface an old
+trade as current activity.
+
+Read the date before treating a row as a signal. Recent activity is a record of
+past trades; it is not a price feed, a measure of current liquidity, or a
+prediction. A quiet market shows older dates rather than hiding them.
+
 ## TAP-DOGE test environment
 
 The TAP-DOGE view on `test.bitcoinuniverse.io` uses its own staging API. It
