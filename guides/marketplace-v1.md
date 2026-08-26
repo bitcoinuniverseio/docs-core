@@ -48,6 +48,8 @@ Universe Wallet sends its supported `/v5` requests and phishing-list download to
 Universe API origin. The compatibility gateway accepts only a fixed route and method list, removes
 browser identity headers, refuses redirects, and bounds request time and response size. Transaction
 broadcast is excluded from that gateway and continues through the Universe mempool route.
+The API validates the phishing-list provider during application startup so a broken provider
+registration cannot pass the production release checks.
 
 ### Market navigation and wallets
 
