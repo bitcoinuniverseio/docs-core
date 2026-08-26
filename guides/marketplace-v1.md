@@ -31,6 +31,24 @@ must report current, matching evidence for three consecutive refresh cycles befo
 traffic can open. Any missing, stale, conflicting, or failed authority resets that gate and keeps
 wallet mutations unavailable while read traffic can continue safely.
 
+### Accurate activity and payment controls
+
+Marketplace activity is dated from when the event was created, not from a later reconciliation
+write. Batch settlements keep each trade row distinct even when several purchases share one Bitcoin
+transaction. Portfolio and sell lists use the full transaction outpoint, so several outputs created
+by one transaction remain separate and keep their own entered prices.
+
+Legacy Launchpad, BRC-20 IDO, and BRC-20 presale payment actions remain unavailable until their
+wallet-authorized settlement paths are ready. Each disabled payment control now states the reason
+beside the button and exposes that explanation to assistive technology.
+
+### Wallet request privacy
+
+Universe Wallet sends its supported `/v5` requests and phishing-list download to the Bitcoin
+Universe API origin. The compatibility gateway accepts only a fixed route and method list, removes
+browser identity headers, refuses redirects, and bounds request time and response size. Transaction
+broadcast is excluded from that gateway and continues through the Universe mempool route.
+
 ### Market navigation and wallets
 
 The primary market navigation is intentionally limited to **ORDINALS, RUNES, ALKANES, STAMPS,
