@@ -17,6 +17,8 @@ informed decision before signing or broadcasting a transaction.
 - Open guided inscription and transaction tools.
 
 Start with the [market and wallet safety guide](guides/market-safety.md).
+For the full list of protocols Universe indexes, see
+[Protocol coverage](guides/protocol-coverage.md).
 For the current Marketplace v1 capabilities and safety gates, read the
 [Marketplace v1 guide](guides/marketplace-v1.md).
 For the Atomicals market tree and the current Portfolio views, read
