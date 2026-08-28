@@ -21,6 +21,18 @@ If a market says its reader is unavailable, do not assume that no tokens,
 listings, or activity exist. Retry later or use the protocol’s independent
 explorer. Do not create or repeat a transaction from stale market data.
 
+An empty market and an unreadable market are never shown the same way:
+
+- **Nothing listed** reads as no tokens found. The market was read and it is
+  genuinely empty.
+- **Market unavailable** names the market, says the read failed, and offers a
+  retry. Treat it as unknown, not empty.
+- **Partial book** means only Universe listings could be loaded. What you see
+  is real but incomplete.
+
+A failed read is reported in plain language. You should never see a status
+code or a raw response payload on the page; if you do, report it.
+
 ## Reading market activity
 
 Activity rows are dated from when the trade happened, not from when the
