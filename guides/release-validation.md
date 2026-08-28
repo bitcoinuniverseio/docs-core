@@ -44,6 +44,19 @@ The production frontend build also runs with a bounded JavaScript heap on the
 managed fleet. This keeps one compilation from exhausting a shared build host
 while still producing and validating the same release artifact.
 
+Screenshot comparison reuses that same validated build instead of compiling a
+second one. A candidate is therefore compared pixel for pixel against the exact
+artifact that passed the browser and accessibility gates, and a shared build
+host is asked to compile the interface once per revision rather than twice.
+
+After a release is activated, a recurring check runs against the live public
+surfaces every ten minutes. It confirms the published release marker, the fee
+response, anonymous collection activity, and that the live event stream stays
+open for a full observation window and keeps sending keepalives that do not
+advance a reader's position. Deeper sweeps that place real load on the
+Universe-operated services stay available for release rehearsal and are not
+part of the recurring check.
+
 Frontend release tests run without a persistent Jest transform cache. This
 keeps transient files from accumulating across projects on a shared runner and
 prevents runner storage pressure from being confused with a failed product

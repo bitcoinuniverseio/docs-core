@@ -16,7 +16,13 @@ blockchain providers are never used as fallbacks.
 - Responses are checked for the expected content and shape before they are
   shown or used by a transaction workflow.
 - Fee and chain-tip responses may use short-lived validated cache entries to
-  smooth a brief provider interruption.
+  smooth a brief provider interruption. Identical requests arriving together
+  share one read of the Universe-operated service instead of each opening
+  their own.
+- Inscription images and previews are immutable, so they are cached and served
+  with a long-lived immutable cache header and a content fingerprint. A browser
+  that already holds a copy revalidates it without downloading it again, and a
+  gallery of many tiles no longer competes with ordinary Bitcoin reads.
 - The public application health contract reads its verified Bitcoin mainnet
   head through the same provider registry. An unavailable or invalid chain tip
   makes application read readiness fail closed.
