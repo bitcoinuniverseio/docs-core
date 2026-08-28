@@ -36,3 +36,8 @@ background. A missing derivative may temporarily show an explicit text or
 loading fallback, but it does not authorize a browser request to an untrusted
 media origin. Missing, corrupt, or unverified media is reported as unavailable
 rather than being presented as a successful empty response.
+
+When the shared media system is enabled, collection cards and market rows use
+only verified shared-media routes. A missing shared logo, original, or
+thumbnail remains visibly unavailable; Bitcoin Universe does not silently
+substitute an older collection-cache URL.
