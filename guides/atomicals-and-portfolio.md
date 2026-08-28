@@ -18,6 +18,12 @@ execution authority. Realms and Subrealms must also be the verified canonical
 name winner. Mixed outputs, stale ownership, burns, changed transaction
 economics, and signatures for another protocol route are rejected.
 
+The same honesty applies to reads. When the Universe Atomicals indexer cannot
+answer, the ARC-20 market, token pages, holder rankings, and ARC-20 portfolio
+balances report that the data is unavailable and offer a retry. They never
+substitute sample rows or show an unreadable balance as zero, so an outage is
+always distinguishable from a genuinely empty market or wallet.
+
 ## NFT artwork
 
 Atomicals NFT cards display canonical inline artwork when the unified
