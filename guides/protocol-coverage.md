@@ -1,9 +1,8 @@
 # Protocol coverage
 
-Bitcoin Universe indexes Bitcoin and Dogecoin metaprotocols on infrastructure
-Universe operates. The `/coverage` page lists every protocol the running
-application serves, grouped by family, with the index and the market for each
-one.
+The `/coverage` page lists every Bitcoin and Dogecoin metaprotocol the running
+application indexes and serves, grouped by family, with the index and the
+market for each one.
 
 ## What the page shows
 
@@ -21,7 +20,7 @@ a release does not appear.
 
 ## What "covered" means
 
-Covered means Universe indexes the protocol and serves it in this application.
+Covered means this application indexes the protocol and serves it here.
 
 It does not mean:
 
@@ -37,11 +36,11 @@ reader.
 
 ## Why the list is worth checking
 
-Most Bitcoin marketplaces cover one or two protocol families and resell data
-from an external provider. Coverage here is a property of infrastructure
-Universe runs, which is why the page can state it as a list you can open rather
-than a claim you have to take on trust. Follow any row and you land on the live
-index or market for that protocol.
+Most Bitcoin marketplaces cover one or two protocol families. This page states
+its breadth as a list you can open rather than a claim you have to take on
+trust: follow any row and you land on the live index or market for that
+protocol. The counts are generated from the routing registry, so they cannot
+drift away from what the application actually serves.
 
 ## Finding it
 
