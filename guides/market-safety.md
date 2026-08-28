@@ -33,6 +33,21 @@ An empty market and an unreadable market are never shown the same way:
 A failed read is reported in plain language. You should never see a status
 code or a raw response payload on the page; if you do, report it.
 
+## Unmeasured figures
+
+A market figure that Bitcoin Universe cannot currently measure is shown as a
+dash, not as a number. Floor, volume, holder counts, listing counts, and any
+score derived from them follow this rule, so a dash means the figure was not
+read and a number means it was.
+
+The platform never fills a gap with a sample row or a figure written into the
+application. If a market cannot be read, its rows are not replaced with stand-in
+tokens, and its totals are not estimated. This is why a market can show a name
+and a dash in every column: that state is honest about what is known.
+
+Treat a dash as unknown rather than as zero, and do not read a ranking into a
+table whose sorted column is entirely dashes.
+
 ## Reading market activity
 
 Activity rows are dated from when the trade happened, not from when the
