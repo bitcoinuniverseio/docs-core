@@ -46,8 +46,8 @@ an exhausted job remains visible to operators instead of retrying forever.
 ## JSON manifest v1
 
 Use the published
-[`OrdinalsCollectionManifest v1` schema](https://bitcoinuniverse.io/schemas/ordinals-collection-manifest-v1.json)
-and [example](https://bitcoinuniverse.io/examples/ordinals-collection-manifest-v1.example.json).
+[`OrdinalsCollectionManifest v1` schema](https://www.bitcoinuniverse.io/schemas/ordinals-collection-manifest-v1.json)
+and [example](https://www.bitcoinuniverse.io/examples/ordinals-collection-manifest-v1.example.json).
 Each item requires a canonical inscription ID. Traits and display metadata are
 optional. Future incompatible formats will use another `schemaVersion`.
 
