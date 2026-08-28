@@ -1,7 +1,7 @@
 # Protocol coverage
 
 The `/coverage` page lists every Bitcoin and Dogecoin metaprotocol the running
-application indexes and serves, grouped by family, with the index and the
+application reads and serves, grouped by family, with the index and the
 market for each one.
 
 ## What the page shows
@@ -20,10 +20,12 @@ a release does not appear.
 
 ## What "covered" means
 
-Covered means this application indexes the protocol and serves it here.
+Covered means this application reads the protocol and serves it here.
 
 It does not mean:
 
+- that Universe operates the index behind that row: some protocols are read
+  through an external provider,
 - that a market has listings right now,
 - that a market has depth or liquidity,
 - that every action is available for that protocol.
