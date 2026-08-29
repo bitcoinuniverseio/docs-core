@@ -1,11 +1,16 @@
 # UI 4.0: instant interaction and route continuity
 
 Bitcoin Universe UI 4.0 (22 August 2026) is the release after the UI 3.0
-final evolution. It keeps the same powerful application and the same Couture
-Noir identity, and makes moving through it feel native: screens you come back
-to are already there, market switches and Back are immediate, the first
-viewport paints what you can act on first, and every screen ships only the
-code it needs.
+final evolution. It keeps the same powerful application and makes moving
+through it feel native: screens you come back to are already there, market
+switches and Back are immediate, the first viewport paints what you can act
+on first, and every screen ships only the code it needs.
+
+This page records what that release changed. The visual identity it shipped
+with was replaced on 29 August 2026; see
+[How the interface is designed](design-and-accessibility.md) for the design
+the product ships today. The navigation and speed work below is still in
+place.
 
 ## What changed for you
 
@@ -46,9 +51,8 @@ code it needs.
 
 - Trading, listing, offers, portfolio and inscription logic are untouched;
   checkout always re-validates listings against fresh data before you sign.
-- Couture Noir: pink for the one action that matters, lavender for
-  information, chrome and violet-black for everything else; light and dark
-  themes; the 300 KB startup budget (measured 251 KB).
+- Light and dark themes, and the 300 KB startup budget (measured 251 KB at
+  the time of this release).
 - Your privacy: the anonymous performance beacon still carries no wallet,
   asset, account or transaction identifier.
 
