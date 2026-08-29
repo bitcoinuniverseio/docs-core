@@ -1,15 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 268" width="1200" height="268" role="img" aria-label="Bitcoin Universe: Bitcoin and Dogecoin metaprotocols in one place, with the source behind every number">
   <defs>
     <style>
-      .bg { fill: #fffbfe; }
-      .rule { stroke: #e2d4e0; stroke-width: 1; }
-      .cell { fill: none; stroke: #e0cddc; stroke-width: 1; }
-      .cell-filled { fill: #f2dfeb; stroke: #dfc4d8; stroke-width: 1; }
-      .sat { fill: #ff0066; }
-      .wordmark { fill: #171019; font-family: "Space Grotesk", "Segoe UI", Inter, system-ui, sans-serif; font-weight: 700; }
-      .accentword { fill: #ff0066; }
-      .lede { fill: #5c5265; font-family: Inter, "Segoe UI", system-ui, sans-serif; font-weight: 400; }
-      .tick { fill: #9b8fa4; font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 400; letter-spacing: 1.5px; }
+      .bg { fill: #faf9f7; }
+      .rule { stroke: #e3e1dc; stroke-width: 1; }
+      .cell { fill: none; stroke: #e0ded8; stroke-width: 1; }
+      .cell-filled { fill: #efedea; stroke: #d9d6cf; stroke-width: 1; }
+      .sat { fill: #f7931a; }
+      .wordmark { fill: #1a1b1e; font-family: Inter, "Segoe UI", system-ui, sans-serif; font-weight: 700; }
+      .accentword { fill: #c2410c; }
+      .lede { fill: #565b63; font-family: Inter, "Segoe UI", system-ui, sans-serif; font-weight: 400; }
+      .tick { fill: #6a7078; font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 400; letter-spacing: 1.5px; }
     </style>
   </defs>
 
