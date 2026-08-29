@@ -48,7 +48,7 @@ an exhausted job remains visible to operators instead of retrying forever.
 Use the published
 [`OrdinalsCollectionManifest v1` schema](https://www.bitcoinuniverse.io/schemas/ordinals-collection-manifest-v1.json)
 and [example](https://www.bitcoinuniverse.io/examples/ordinals-collection-manifest-v1.example.json).
-Each item requires a authoritative inscription ID. Traits and display metadata are
+Each item requires an authoritative inscription ID. Traits and display metadata are
 optional. Future incompatible formats will use another `schemaVersion`.
 
 ## Safety
