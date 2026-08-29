@@ -77,3 +77,10 @@ failure.
 Catalog retry checks also reset their mocked data source before each scenario.
 This keeps an intentionally unresolved loading simulation from one interface
 test from leaking into the next test's failure-and-recovery validation.
+
+## Next
+
+- [Bitcoin data reliability](bitcoin-data-reliability.md): the readiness contract a release is checked against.
+- [Protocol coverage](protocol-coverage.md): what a release is allowed to claim it serves.
+
+All guides are indexed in the [documentation home](../README.md#guides).

@@ -54,8 +54,13 @@ code it needs.
 
 ## For operators and integrators
 
-Technical details, measurements and the repeatable procedures live in the
-core repository (`docs/performance.md` section 13,
-`frontend/docs/design/ui4-platform-research.md`) and in the developer
-documentation (`docs-dev-core`: release note `2026-08-22-ui4-next-level.md`,
-runbook `performance-measurement.md`).
+The measurements, the budgets each route is held to, and the procedure for
+reproducing them live in the private engineering documentation. This page
+describes what a reader can observe; nothing here depends on access to it.
+
+## Next
+
+- [Earlier performance work](performance-and-ui-3.md): what the previous pass changed.
+- [Release validation](release-validation.md): the checks a release passes.
+
+All guides are indexed in the [documentation home](../README.md#guides).

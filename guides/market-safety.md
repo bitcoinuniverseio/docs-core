@@ -76,3 +76,11 @@ status before approving a live wallet request.
 An on-chain transaction does not by itself prove the identity of a counterparty,
 the value of an asset, or the accuracy of off-chain descriptions. Verify those
 details independently before committing funds.
+
+## Next
+
+- [Protocol coverage](protocol-coverage.md): what this application serves, and what "covered" does not mean.
+- [Bitcoin data reliability](bitcoin-data-reliability.md): where network data comes from and what an outage looks like.
+- [Manage assets from Portfolio](portfolio-market-actions.md): act on what you own once a wallet is connected.
+
+All guides are indexed in the [documentation home](../README.md#guides).

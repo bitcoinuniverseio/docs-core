@@ -41,3 +41,10 @@ When the shared media system is enabled, collection cards and market rows use
 only verified shared-media routes. A missing shared logo, original, or
 thumbnail remains visibly unavailable; Bitcoin Universe does not silently
 substitute an older collection-cache URL.
+
+## Next
+
+- [Browse an Ordinals collection market](ordinals-collection-market.md): where the artwork appears.
+- [Add an Ordinals collection](ordinals-collection-imports.md): for creators supplying it.
+
+All guides are indexed in the [documentation home](../README.md#guides).
