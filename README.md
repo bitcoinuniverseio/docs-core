@@ -27,10 +27,12 @@ redirects to a different Bitcoin Universe application, so a link that drops the
 Without connecting a wallet:
 
 - Search a Bitcoin or Dogecoin address, a transaction, a block, an inscription,
-  a collection, or a ticker, and land on the page that reads it.
+  a sat, or a ticker, and land on the page that reads it. Search says so when
+  it cannot resolve an input rather than guessing at one.
 - Browse markets for each protocol family, with listings, floors, holders, and
   recent activity.
-- Open any protocol's index and inspect individual assets.
+- Open a protocol's index and inspect individual assets. Not every protocol
+  has a standalone index; the coverage page marks the ones that do.
 - Read what the application covers, and what "covered" does and does not mean.
 
 With a self-custody wallet connected:
