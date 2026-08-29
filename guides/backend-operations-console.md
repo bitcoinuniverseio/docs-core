@@ -32,3 +32,9 @@ The readiness label and detailed cards use the same evaluation rules, so the sum
 Access requires the operator password and a short-lived protected session. Requests are checked for the expected browser origin and session fingerprint. Successful and rejected console responses are private, are not cached or indexed, and do not disclose the application framework. Sensitive values are redacted from errors, activity details, provider data, and storage diagnostics.
 
 The interface supports keyboard navigation, visible focus, mobile layouts, and clear availability reasons for disabled actions.
+
+## Next
+
+- [Release validation](release-validation.md): the checks that run before a release.
+
+All guides are indexed in the [documentation home](../README.md#guides).

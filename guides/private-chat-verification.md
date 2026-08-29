@@ -14,3 +14,9 @@ Bitcoin transaction.
 If the request appears without you pressing **Verify wallet**, reject it. Do
 not sign messages you do not understand. Never share a seed phrase, private
 key, wallet backup, or recovery code in Chat.
+
+## Next
+
+- [Market and wallet safety](market-safety.md): the signing rules that apply here too.
+
+All guides are indexed in the [documentation home](../README.md#guides).
