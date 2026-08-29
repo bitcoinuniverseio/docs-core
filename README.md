@@ -28,7 +28,9 @@ Without connecting a wallet:
 
 - Search a Bitcoin or Dogecoin address, a transaction, a block, an inscription,
   a sat, or a ticker, and land on the page that reads it. Search says so when
-  it cannot resolve an input rather than guessing at one.
+  it cannot resolve an input rather than guessing at one. A collection name
+  offers a search of the Ordinals market rather than claiming a match it has
+  not made yet.
 - Browse markets by protocol family, with listings, floors, recent activity,
   and whichever holder or supply figures that protocol publishes.
 - Open a protocol's index and inspect individual assets. Not every protocol
