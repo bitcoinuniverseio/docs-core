@@ -12,6 +12,8 @@ the routes that read it:
 - **Index** opens the protocol explorer at `/index/<protocol>`. Not every
   protocol has a standalone index; those rows show only a market link.
 - **Market** opens the order book or listing view for that protocol.
+- **A read source**, on the rows that have one, names the host your browser
+  fetches that protocol's data from directly.
 
 The counts at the top of the page are computed from the same registry that
 builds the navigation, so the number on the page is always the number of
@@ -24,8 +26,9 @@ Covered means this application reads the protocol and serves it here.
 
 It does not mean:
 
-- that Universe operates the index behind that row: some protocols are read
-  through an external provider,
+- that Universe operates the index behind that row: a row that names a read
+  source is fetched by your browser straight from that host, and a read that
+  does go through Universe may itself come from an external provider,
 - that a market has listings right now,
 - that a market has depth or liquidity,
 - that every action is available for that protocol.
@@ -35,6 +38,19 @@ instead, and offers a retry. The two are never presented the same way, so an
 empty table is never a way of hiding an outage. See
 [Market and wallet safety](market-safety.md) for how to read an unavailable
 reader.
+
+## Rows that name a read source
+
+TAP, DMT and UNAT carry a read source on the coverage list, and the same
+sentence appears again on `/index/tap`, `/index/dmt` and `/index/unat`, beside
+the numbers it applies to. Deployments, mint progress and holder counts for
+those three are read by your browser from `tap-site.trac.network`, a host
+Universe does not operate. They do not pass through a Universe index, so their
+availability and freshness are that host's.
+
+Every other row is read through the Universe API. That API may in turn read an
+external provider for a given protocol, which is what the second bullet above
+records; `GET /indexer-health` names the source it used for each one.
 
 ## Why the list is worth checking
 
