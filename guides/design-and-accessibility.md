@@ -54,6 +54,26 @@ The product separates facts that look similar but are not:
 - An empty screen says what was checked and what to do next. An error says
   what failed, what is unaffected, and whether trying again is worthwhile.
 
+## On a phone
+
+The application is laid out for the device in your hand, not shrunk from a
+desktop screen (last full pass: 29 August 2026):
+
+- Four fixed destinations - Home, Trade, Portfolio, and More - stay within
+  thumb reach at the bottom of the screen. Everything else lives one tap away
+  in the More menu.
+- Data tables become cards or lists on phone widths; nothing asks you to
+  scroll a page sideways.
+- Address and amount fields open the matching keyboard, and address fields
+  turn off auto-capitalisation and autocorrect so a pasted or typed address
+  arrives exactly as entered.
+- While you type, the fixed bottom controls step aside instead of floating
+  over the field.
+- If your connection drops, a notice appears and live data pauses; it resumes
+  on its own when you are back online.
+- Screens with a notch or rounded corners keep their content inside the safe
+  area, in portrait and landscape.
+
 ## Accessibility
 
 - Text and interface colours are checked against the WCAG 2.2 AA contrast
@@ -64,7 +84,8 @@ The product separates facts that look similar but are not:
 - If your system asks for reduced motion, animation is removed rather than
   shortened.
 - Automated accessibility tests run against the application's screens and
-  dialogs as part of the release gate.
+  dialogs as part of the release gate, at a desktop width and at a phone
+  width.
 
 If you find a screen that fails any of the above, open an
 [issue](https://github.com/bitcoinuniverseio/docs-core/issues) and name the
