@@ -49,3 +49,10 @@ drift away from what the application actually serves.
 - The home screen links to it from the first paragraph.
 - The footer links to it from every page.
 - The direct address is `https://www.bitcoinuniverse.io/coverage`.
+
+## Next
+
+- [Market and wallet safety](market-safety.md): how to read an unavailable market before you act on one.
+- [Bitcoin data reliability](bitcoin-data-reliability.md): the availability contract behind the coverage list.
+
+All guides are indexed in the [documentation home](../README.md#guides).

@@ -65,3 +65,9 @@ A second pass closed the items the first release had deferred:
 - [Ordinals collection market](ordinals-collection-market.md)
 - [Secure blockchain data access](secure-blockchain-data-access.md)
 - [Release validation](release-validation.md)
+
+## Next
+
+- [Instant interaction and route continuity](performance-and-ui-4.md): the pass that followed.
+
+All guides are indexed in the [documentation home](../README.md#guides).

@@ -36,3 +36,10 @@ host, port, filesystem path, or RPC method.
 
 Operator access uses separate authenticated private paths. Public client
 credentials never provide access to native node or indexer ports.
+
+## Next
+
+- [Bitcoin data reliability](bitcoin-data-reliability.md): the availability contract these controls protect.
+- [Market and wallet safety](market-safety.md): reading availability on the page.
+
+All guides are indexed in the [documentation home](../README.md#guides).

@@ -75,3 +75,10 @@ the verified Ordex PSBT listing flow.
 If the Portfolio index does not include a BTC balance, the Dashboard attempts a
 Bitcoin address-statistics fallback. If neither source returns valid evidence,
 the balance is shown as unavailable rather than zero.
+
+## Next
+
+- [Manage assets from Portfolio](portfolio-market-actions.md): the actions available on what you hold.
+- [Protocol coverage](protocol-coverage.md): the rest of the families served here.
+
+All guides are indexed in the [documentation home](../README.md#guides).
