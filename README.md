@@ -28,7 +28,9 @@ Without connecting a wallet:
 
 - Search a Bitcoin or Dogecoin address, a transaction, a block, an inscription,
   a sat, or a ticker, and land on the page that reads it. Search says so when
-  it cannot resolve an input rather than guessing at one.
+  it cannot resolve an input rather than guessing at one. A collection name
+  offers a search of the Ordinals market rather than claiming a match it has
+  not made yet.
 - Browse markets by protocol family, with listings, floors, recent activity,
   and whichever holder or supply figures that protocol publishes.
 - Open a protocol's index and inspect individual assets. Not every protocol
@@ -103,7 +105,7 @@ the market for each row. The counts are computed from the same registry that
 builds the navigation, so the number on the page is the number of protocols the
 application can actually open.
 
-![The protocol coverage page: totals for protocols, families, chains, and how many have an index, then every row grouped by family with links to its index and its market](docs/assets/coverage-light.png)
+![The protocol coverage page: totals for protocols, families, chains, and how many have an index, then every row grouped by family with links to its index and its market, and a read source on the rows the browser fetches elsewhere](docs/assets/coverage-light.png)
 
 The whole application ships a light and a dark theme, and the coverage page is
 the same page in both.
@@ -135,7 +137,7 @@ Universe serves, with no wallet connected and nothing to sign.
 Portfolio opens with what connecting gives you, and offers explore mode for
 anyone who would rather inspect a public address than connect.
 
-![The Portfolio page before a wallet is connected, offering connect, explore an address, browse markets, and wallet home](docs/assets/portfolio-disconnected-light.png)
+![The Portfolio page before a wallet is connected, naming what connecting shows and offering connect, explore an address, browse markets, and home](docs/assets/portfolio-disconnected-light.png)
 
 ## Networks, protocols, and actions
 
@@ -163,7 +165,11 @@ flowchart LR
   P --> X["External provider<br/>for some protocol families"]
   P --> H["indexer-health"]
   H --> A
+  A -.-> D["Read straight from your browser:<br/>TAP, DMT and UNAT"]
 ```
+
+The dotted edge is the one case where a request leaves your own browser to a
+host Universe does not operate. The pages that show that data name it.
 
 `indexer-health` names the source, chain tip, lag, and last successful read for
 each protocol, and the application shows what it says rather than a summary of
@@ -180,7 +186,13 @@ describes that contract in full.
 
 **Protocol data.** Some protocol families are read through an external
 provider rather than a Universe-operated index. That is stated on the coverage
-page rather than hidden. The public health response at
+page rather than hidden. TAP, DMT and UNAT are a further step removed: their
+deployments, mint progress and holder counts are fetched by your own browser
+from `tap-site.trac.network`, so they do not pass through a Universe index at
+all, and their availability and freshness are that host's. Those three rows
+name their read source on the coverage page, and the same sentence appears on
+`/index/tap`, `/index/dmt` and `/index/unat` beside the numbers. The public
+health response at
 [api.bitcoinuniverse.io/indexer-health](https://api.bitcoinuniverse.io/indexer-health)
 names the source, chain tip, lag, and last successful read for each protocol
 it serves, so the current answer is always one request away rather than a
