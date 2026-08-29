@@ -38,7 +38,7 @@ from the cache on the browsing path, so changing a warmed filter does not
 contact an artwork host.
 
 A published collection remains browsable while its logo is unavailable. Open
-an item to load the canonical cached inscription details, including its number,
+an item to load the authoritative cached inscription details, including its number,
 asset identity, metadata status, traits, and collection metadata. Market data
 from a collection provider may enrich a known local collection, but it cannot
 create a collection or route by itself.
@@ -69,3 +69,11 @@ retrying.
 Before buying, review the inscription, seller, price, fees, network, and wallet
 request. Bitcoin Universe is non-custodial and never needs a seed phrase or
 private key.
+
+## Next
+
+- [Add an Ordinals collection](ordinals-collection-imports.md): for creators listing a collection.
+- [Shared collection media](shared-collection-media.md): why a thumbnail can be unavailable.
+- [Market and wallet safety](market-safety.md): what to check before buying.
+
+All guides are indexed in the [documentation home](../README.md#guides).

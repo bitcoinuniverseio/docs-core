@@ -48,7 +48,7 @@ an exhausted job remains visible to operators instead of retrying forever.
 Use the published
 [`OrdinalsCollectionManifest v1` schema](https://www.bitcoinuniverse.io/schemas/ordinals-collection-manifest-v1.json)
 and [example](https://www.bitcoinuniverse.io/examples/ordinals-collection-manifest-v1.example.json).
-Each item requires a canonical inscription ID. Traits and display metadata are
+Each item requires an authoritative inscription ID. Traits and display metadata are
 optional. Future incompatible formats will use another `schemaVersion`.
 
 ## Safety
@@ -56,3 +56,10 @@ optional. Future incompatible formats will use another `schemaVersion`.
 Only import a source you trust. A successful import does not prove authorship,
 value, or intellectual-property rights. Never put private keys, seed phrases,
 access tokens, or personal data in a collection manifest.
+
+## Next
+
+- [Browse an Ordinals collection market](ordinals-collection-market.md): what buyers see after an import.
+- [Shared collection media](shared-collection-media.md): how artwork is stored and served.
+
+All guides are indexed in the [documentation home](../README.md#guides).

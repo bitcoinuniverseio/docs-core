@@ -35,3 +35,10 @@ listing revision, and protocol state. Unsupported actions are not shown.
 
 The asset detail presents the same market state and controls as the card, so
 there is no separate Portfolio-only listing workflow.
+
+## Next
+
+- [Market and wallet safety](market-safety.md): what to check before signing.
+- [Atomicals markets and Portfolio](atomicals-and-portfolio.md): the Atomicals views in Portfolio.
+
+All guides are indexed in the [documentation home](../README.md#guides).

@@ -56,7 +56,7 @@ registration cannot pass the production release checks.
 The primary market navigation is intentionally limited to **ORDINALS, RUNES, ALKANES, STAMPS,
 ATOMICALS, and MORE MARKETS**. The obsolete Native Runes entry and the Discover menu are no longer
 shown. Opening /trade selects the Bitmap market; historical Native Runes links resolve to the
-canonical RUNES market.
+authoritative RUNES market.
 
 Wizz Wallet is supported on Bitcoin mainnet. Desktop users connect through the validated Wizz
 extension provider. On mobile, open Bitcoin Universe inside Wizz Discovery and connect from the
@@ -78,11 +78,11 @@ signature mismatch blocks the action instead of being downgraded to an advisory 
 
 ### Bitmap execution
 
-Bitmap trading is bound to the canonical first valid `{block-height}.bitmap` district claim. Listing,
+Bitmap trading is bound to the authoritative first valid `{block-height}.bitmap` district claim. Listing,
 repricing, delisting, buying, and funded offers use the live claim inscription and its exact Bitcoin
 output. The authority rejects later duplicate claims, mixed protocol collateral, stale ownership,
 changed economics, and unsigned or structurally different transactions. Settlement is not final until
-the exact transaction is confirmed and the canonical claim is indexed at the buyer-owned output;
+the exact transaction is confirmed and the authoritative claim is indexed at the buyer-owned output;
 dropped transactions and reorganizations remain recoverable through the durable action journal.
 
 Every Bitmap market surface also consolidates records by block height. Provider listing IDs,
@@ -91,12 +91,12 @@ assets. Supply comes from the authoritative indexer status unless a complete fir
 exact unique total, so duplicate history rows cannot inflate the collection grid or its count.
 
 Bitmap identity comes from the indexed block_number, not an inscription's mined block height or a
-generic numeric presentation field. Activity uses the same canonical identity, and ambiguous
+generic numeric presentation field. Activity uses the same authoritative identity, and ambiguous
 buyer/seller attribution is reported as unresolved instead of being guessed.
 
 ### Bitcoin Names execution
 
-Bitcoin Names trading uses the canonical first Sats Names System registration inscription for each
+Bitcoin Names trading uses the authoritative first Sats Names System registration inscription for each
 name. The authority preserves the exact SNS name and namespace rules, verifies the current Ordinals
 location against Bitcoin Core and the complete output inventory, and groups discovery by namespace
 without implying that namespace registration grants ownership of member names. Listing, repricing,
@@ -105,7 +105,7 @@ funding fences, and idempotent broadcast. A background reconciliation pass recor
 buyer ownership, settlement, dropped transactions, and reorganizations until the lifecycle reaches a
 durable result.
 
-The old `/trade/names` and name-detail URLs now reopen the canonical Marketplace v1 order book.
+The old `/trade/names` and name-detail URLs now reopen the authoritative Marketplace v1 order book.
 Portfolio controls also enter the same reviewed action flow. Legacy registration rows are never
 converted into synthetic `domain-*` asset identifiers; when an inscription ID is not available, the
 action screen requires the authoritative inscription before any signing step.
@@ -114,10 +114,10 @@ action screen requires the authoritative inscription before any signing step.
 
 ARC-20, Atomicals NFTs, Realms, and Subrealms use one isolated Atomicals
 execution service with separate protocol routes and durable state. ARC-20
-resolves the canonical ticker winner and transfers the complete colored value.
-The non-fungible markets accept one canonical compact Atomical ID with quantity
+resolves the authoritative ticker winner and transfers the complete colored value.
+The non-fungible markets accept one authoritative compact Atomical ID with quantity
 one. Generic NFT listings cannot contain a Realm, Subrealm, FT, container, or
-item subtype; Realm markets also require the verified canonical name winner.
+item subtype; Realm markets also require the verified authoritative name winner.
 
 Every mutation rechecks the exact Bitcoin output, owner script, spent state,
 single-Atomical inventory, colored value, and stable Bitcoin/Atomicals
@@ -188,3 +188,11 @@ verified Core release. DogeTap reads remain available, while Marketplace v1
 returns an explicit unavailable state because its execution authorities are
 not configured. This is a deployed safety boundary, not a claim that any
 protocol has passed live listing, purchase, offer, or settlement acceptance.
+
+## Next
+
+- [The Ordex market](ordex-market.md): the order book and its states.
+- [Manage assets from Portfolio](portfolio-market-actions.md): listing and delisting what you own.
+- [Market and wallet safety](market-safety.md): what to check before signing.
+
+All guides are indexed in the [documentation home](../README.md#guides).
