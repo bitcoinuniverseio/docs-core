@@ -7,14 +7,14 @@ The Atomicals market menu contains four distinct views:
 - Realms for top-level Realm names;
 - Subrealms for names below a parent Realm.
 
-All four views use canonical Atomicals identity and ownership evidence. ARC-20
+All four views use authoritative Atomicals identity and ownership evidence. ARC-20
 trades the complete fungible balance at its live output. NFTs, Realms, and
 Subrealms trade one exact Atomical at a time; a browse result does not by itself
 mean that the asset is listed for sale.
 
 Transaction actions remain fail closed until the Marketplace reports current
 Atomicals and Bitcoin checkpoints, a live unspent owner output, and a matching
-execution authority. Realms and Subrealms must also be the verified canonical
+execution authority. Realms and Subrealms must also be the verified authoritative
 name winner. Mixed outputs, stale ownership, burns, changed transaction
 economics, and signatures for another protocol route are rejected.
 
@@ -26,7 +26,7 @@ always distinguishable from a genuinely empty market or wallet.
 
 ## NFT artwork
 
-Atomicals NFT cards display canonical inline artwork when the unified
+Atomicals NFT cards display authoritative inline artwork when the unified
 Atomicals index publishes a safe media field and SHA-256 digest. The browser
 loads that field from Bitcoin Universe, not from an indexer or third-party
 media origin. Bitcoin Universe caps the response at 16 MiB, accepts only a
