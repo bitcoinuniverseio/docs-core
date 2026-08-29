@@ -69,3 +69,10 @@ The market distinguishes conditions that look similar but are not:
 A public ask remains first-claimer-wins. Ordex never labels one reserved.
 Refresh an order and review every transaction detail in a wallet you trust
 immediately before settling.
+
+## Next
+
+- [Marketplace v1 capabilities and safety gates](marketplace-v1.md): what each gate means.
+- [Market and wallet safety](market-safety.md): what to check before signing.
+
+All guides are indexed in the [documentation home](../README.md#guides).

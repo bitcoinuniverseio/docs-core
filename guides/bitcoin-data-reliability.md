@@ -46,3 +46,10 @@ There is no public provider fallback. Short-lived validated cache entries may
 smooth a momentary interruption. If the Universe-operated service is unavailable
 or returns invalid data, the API returns an explicit unavailable response. Wait
 for recovery and refresh Bitcoin state before signing or repeating an action.
+
+## Next
+
+- [Secure blockchain data access](secure-blockchain-data-access.md): the public reader boundary.
+- [Market and wallet safety](market-safety.md): what to do when a reader is unavailable.
+
+All guides are indexed in the [documentation home](../README.md#guides).
