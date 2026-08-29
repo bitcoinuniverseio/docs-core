@@ -79,6 +79,23 @@ transaction.
 Every image below is the running product at `www.bitcoinuniverse.io`, captured
 without a wallet connected.
 
+### Home
+
+The first screen states how many protocols this build serves, counted from the
+same registry that builds the routes, and offers four next steps. Nothing on it
+needs a wallet.
+
+![The Bitcoin Universe home screen: a headline counting the protocols this build serves, a sentence naming the families and chains with a link to the full list, and four start cards for connecting a wallet, buying, selling, and market activity](docs/assets/home-light.png)
+
+The same screen in dark theme.
+
+![The same home screen in dark theme](docs/assets/home-dark.png)
+
+On a phone the same content stacks, and the four persistent destinations sit in
+a bottom bar that never covers the page.
+
+<img alt="The home screen on a phone, with the headline, the start cards stacked, and a bottom bar holding Home, Trade, Portfolio and More" src="docs/assets/home-light-mobile.png" width="320">
+
 ### Protocol coverage
 
 One page lists what this build serves, grouped by family, with the index and
