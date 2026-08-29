@@ -188,3 +188,11 @@ verified Core release. DogeTap reads remain available, while Marketplace v1
 returns an explicit unavailable state because its execution authorities are
 not configured. This is a deployed safety boundary, not a claim that any
 protocol has passed live listing, purchase, offer, or settlement acceptance.
+
+## Next
+
+- [The Ordex market](ordex-market.md): the order book and its states.
+- [Manage assets from Portfolio](portfolio-market-actions.md): listing and delisting what you own.
+- [Market and wallet safety](market-safety.md): what to check before signing.
+
+All guides are indexed in the [documentation home](../README.md#guides).

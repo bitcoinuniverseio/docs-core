@@ -56,3 +56,10 @@ optional. Future incompatible formats will use another `schemaVersion`.
 Only import a source you trust. A successful import does not prove authorship,
 value, or intellectual-property rights. Never put private keys, seed phrases,
 access tokens, or personal data in a collection manifest.
+
+## Next
+
+- [Browse an Ordinals collection market](ordinals-collection-market.md): what buyers see after an import.
+- [Shared collection media](shared-collection-media.md): how artwork is stored and served.
+
+All guides are indexed in the [documentation home](../README.md#guides).
