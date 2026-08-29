@@ -37,8 +37,8 @@ With a self-custody wallet connected:
 
 - See your holdings grouped by network, protocol, and asset type.
 - List, update, and delist items in the markets that support it.
-- Review the exact inputs, outputs, fees, and change of a transaction before
-  your wallet asks you to approve it.
+- See the asset, the amount, the service fee, the network fee estimate, and
+  the total before your wallet asks you to sign.
 - Follow a pending transaction until it confirms.
 
 ## Start in under a minute
@@ -194,8 +194,10 @@ stateDiagram-v2
   moves an asset without a signature you approve in your own wallet.
 - Nobody working on Bitcoin Universe will ever ask for your seed phrase or
   private key. There is no support process that needs either.
-- Every action shows the network, the protocol, the asset, the fees, and the
-  outputs before your wallet asks you to approve anything.
+- Every action shows the asset, the amount, the fees, and the total before
+  your wallet asks you to sign, and says that a broadcast transaction cannot
+  be recalled. Your wallet shows the transaction’s own inputs and outputs;
+  read them there before you approve.
 - Assets can live on a single satoshi. The application protects asset-bearing
   outputs from being spent as ordinary change.
 - A transaction that has been broadcast cannot be recalled.
