@@ -38,7 +38,7 @@ from the cache on the browsing path, so changing a warmed filter does not
 contact an artwork host.
 
 A published collection remains browsable while its logo is unavailable. Open
-an item to load the canonical cached inscription details, including its number,
+an item to load the authoritative cached inscription details, including its number,
 asset identity, metadata status, traits, and collection metadata. Market data
 from a collection provider may enrich a known local collection, but it cannot
 create a collection or route by itself.
