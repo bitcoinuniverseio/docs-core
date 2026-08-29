@@ -83,7 +83,7 @@ the market for each row. The counts are computed from the same registry that
 builds the navigation, so the number on the page is the number of protocols the
 application can actually open.
 
-![The protocol coverage page listing 24 protocols across 7 families on 2 chains, grouped by family, each row linking to its index and its market](docs/assets/coverage-light.png)
+![The protocol coverage page: totals for protocols, families, chains, and how many have an index, then every row grouped by family with links to its index and its market](docs/assets/coverage-light.png)
 
 The whole application ships a light and a dark theme, and the coverage page is
 the same page in both.
