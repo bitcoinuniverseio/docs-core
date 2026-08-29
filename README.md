@@ -260,8 +260,9 @@ your first transaction.
 - [Add an Ordinals collection](guides/ordinals-collection-imports.md)
 - [Private chat verification](guides/private-chat-verification.md)
 
-**Speed, navigation, and releases**
+**Design, speed, navigation, and releases**
 
+- [How the interface is designed](guides/design-and-accessibility.md)
 - [Instant interaction and route continuity](guides/performance-and-ui-4.md)
 - [Earlier performance work](guides/performance-and-ui-3.md)
 - [Release validation](guides/release-validation.md)

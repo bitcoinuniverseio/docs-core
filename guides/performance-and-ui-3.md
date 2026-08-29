@@ -2,9 +2,13 @@
 
 Bitcoin Universe renders its trading, portfolio, collection and explorer
 screens from Universe-operated infrastructure only. The UI 3.0 release
-(August 2026) makes those screens materially faster and more consistent on
-every device while keeping the Couture Noir identity: pink for the one action
-that matters, lavender for information, chrome and violet-black for the rest.
+(August 2026) made those screens materially faster and more consistent on
+every device.
+
+This page records what that release changed. The visual identity it shipped
+with was replaced on 29 August 2026; see
+[How the interface is designed](design-and-accessibility.md) for the design
+the product ships today. The performance work below is still in place.
 
 ## What changed for you
 
