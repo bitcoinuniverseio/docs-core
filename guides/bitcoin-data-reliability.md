@@ -47,6 +47,21 @@ smooth a momentary interruption. If the Universe-operated service is unavailable
 or returns invalid data, the API returns an explicit unavailable response. Wait
 for recovery and refresh Bitcoin state before signing or repeating an action.
 
+## Fiat prices
+
+The USD figures next to Bitcoin amounts (portfolio totals, floor prices, fee
+costs, the header price chip) come from one Universe-operated market price
+service that the browser reads once a minute. No exchange API is called from
+the page.
+
+- When the service has not answered yet, and when it cannot answer at all,
+  there is no price. The USD figure is left out. It is never replaced with a
+  placeholder number, a last-known guess with no age, or $0.
+- The Bitcoin amount is always shown. Fiat is a convenience on top of it, so
+  losing the quote never hides the number that matters.
+- A quote that did answer is kept in the browser for up to a day, so a single
+  failed refresh still shows the last measured price rather than nothing.
+
 ## Next
 
 - [Secure blockchain data access](secure-blockchain-data-access.md): the public reader boundary.
