@@ -41,6 +41,24 @@ A family or subprotocol selection is part of the address, for example
 token, source, state, safety, side, and sort selections travel with it. Back,
 forward, reload, and a shared link all restore the same view.
 
+## Browse a changing order book without losing your place
+
+Ordex pages by the selected sort value and the order ID that breaks ties. The
+next-page marker therefore resumes after the last order you saw instead of
+counting rows from the start again. A listing that is added, sold, or withdrawn
+between reads does not shift the page boundary and cause an older row to be
+skipped or repeated. An invalid or mismatched marker is rejected rather than
+silently reopening page one.
+
+Offers are the live bid side of the same order book. Activity is different: it
+is the append-only record of listing lifecycle changes, such as an order being
+created, cancelled, filled, expired, or found spent. The market does not turn a
+listing's current state into a made-up historical event.
+
+Collection labels come from published Ordinals collection membership. When no
+published collection contains an inscription, the inscription keeps its own
+identity instead of being grouped into a shared fallback collection.
+
 ## Settlement is not the same for every family
 
 Bitcoin families carry a real PSBT. Ordex builds it from the live asset output,
