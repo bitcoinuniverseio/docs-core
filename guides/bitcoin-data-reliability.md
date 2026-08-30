@@ -61,6 +61,14 @@ the page.
   losing the quote never hides the number that matters.
 - A quote that did answer is kept in the browser for up to a day, so a single
   failed refresh still shows the last measured price rather than nothing.
+- The price says where it came from and when it was measured. Open the fee
+  panel in the header and the line under the price reads the source and the
+  time, for example "Coinbase, 16:05". A quote resting on yesterday's reading
+  shows yesterday's time, so a stale price is visible rather than silent.
+- The exchange rate is the one figure Bitcoin Universe does not read from its
+  own infrastructure, because Bitcoin Universe does not run an exchange. It is
+  read once a minute by the API and shared, so no visitor's browser contacts
+  the exchange. Chain data is never sourced this way.
 
 ## Next
 
