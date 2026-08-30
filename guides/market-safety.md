@@ -48,6 +48,24 @@ and a dash in every column: that state is honest about what is known.
 Treat a dash as unknown rather than as zero, and do not read a ranking into a
 table whose sorted column is entirely dashes.
 
+## Retired markets
+
+Some legacy markets are retired: their listings and history stay viewable,
+but buying and listing are closed. A retired market says so in a notice on
+the page, and its buy and list controls read as closed instead of
+actionable. OP-20 and OP Names are retired today.
+
+A retired market is not an outage. Retrying does not reopen it, and no
+transaction is created by anything you press there.
+
+## Pending mint activity
+
+Where a protocol's Universe index also reads the mempool, its index table
+shows a Pending column with the number of unconfirmed mints per token
+(Alkanes today). A market whose source cannot answer that question shows no
+Pending column at all rather than a zero, following the unmeasured-figures
+rule above.
+
 ## Reading market activity
 
 Activity rows are dated from when the trade happened, not from when the
