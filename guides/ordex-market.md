@@ -59,11 +59,61 @@ Collection labels come from published Ordinals collection membership. When no
 published collection contains an inscription, the inscription keeps its own
 identity instead of being grouped into a shared fallback collection.
 
+## Buying a listing
+
+Buying happens in your own wallet, in four named steps.
+
+1. **Review this purchase.** Ordex rechecks the listing against Bitcoin Core
+   and the ordinals index, reads the value of the outputs your wallet would
+   spend from the node itself, and composes the buyer half of the transaction.
+   You are shown the seller's proceeds, the Ordex fee, the creator royalty, the
+   network fee and the rate it was priced at, the change coming back to you,
+   the total you pay, and the exact address the asset arrives at. Nothing has
+   been signed at this point.
+2. **Approve in my wallet.** Your wallet signs your own inputs only. The
+   seller's half arrived already signed and is never touched.
+3. **The node's own verdict.** The signed transaction goes back to Ordex, which
+   binds it to the order again, proves the asset movement, and asks Bitcoin
+   Core whether it would accept the transaction. Nothing has been sent yet.
+4. **Send this transaction.** Only this step reaches the network, and only the
+   exact bytes the node checked are sent.
+
+Ordex never receives a private key or a seed phrase, never contributes funds,
+and never broadcasts on its own initiative.
+
+### Why a purchase needs two small outputs
+
+A public ask is signed so that the seller's payment output must sit at the same
+position as the offered output being spent. Sats leave a transaction in the
+order their inputs appear, so if the offered output were first, its sats would
+be the first thing the seller's payment is paid from, and the inscription, its
+sat position, and its postage would go straight back to the seller. The
+transaction would be perfectly valid and the buyer would receive nothing.
+
+Ordex therefore places two small outputs of yours ahead of the offered one, so
+the asset lands in an output you own. Those outputs come back to you in the
+first output of the same transaction, so they are not a cost. A wallet holding
+no small outputs is told so plainly rather than handed a purchase built from
+the wrong ones.
+
+Ordex refuses to spend an output that carries an inscription or a rune balance
+as fees or as padding, and treats an output the ordinals index has not examined
+as unknown rather than as empty.
+
+### Completing in another wallet
+
+The raw signed order is still available, behind a disclosure, for a wallet
+Ordex cannot drive. Building, funding, and sending it is then entirely yours,
+including placing the asset in an output you own. Read the section above before
+using it.
+
 ## Settlement is not the same for every family
 
-Bitcoin families carry a real PSBT. Ordex builds it from the live asset output,
-your wallet signs it, and only then is it indexed. Ordex never receives a
-private key, funds a transaction, signs on your behalf, or broadcasts.
+Bitcoin families carry a real PSBT. For a listing, Ordex builds it from the
+live asset output, your wallet signs it, and only then is it indexed. For a
+purchase, Ordex composes the buyer half and checks it, your wallet signs your
+own inputs, and you send it. Ordex never receives a private key, contributes
+funds, signs on your behalf, or broadcasts on its own initiative.
 
 Dogecoin and Stamps orders are recorded peer-to-peer intents settled with a
 Dogecoin or Counterparty aware wallet. The market labels them clearly and never
