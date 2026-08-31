@@ -14,16 +14,21 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  route:
-    uses: bitcoinuniverseio/.github-private/.github/workflows/route.yml@develop
-    secrets: inherit
-    with:
-      plan: '{"check_2":"light"}'
-
+  # This repository is public and `route.yml` lives in the private
+  # `.github-private`. A public repository cannot resolve a reusable workflow
+  # from a private one, so every run since the router landed ended as a
+  # 0-second failure with no jobs created, on `develop`, on `main` and on pull
+  # requests. The documentation gate has not run at all in that window.
+  #
+  # `universe-ci-actions` below is fine to keep: that repository is public, so
+  # a public caller can reach it.
+  #
+  # Nothing about the routing layer is wrong for the private repositories it
+  # was built for. Restore it here only if `route.yml` is published somewhere a
+  # public caller can reach.
   check:
-    needs: route
     name: Check published pages
-    runs-on: ${{ fromJSON(needs.route.outputs.targets).check_2 }}
+    runs-on: [self-hosted, linux-ultra]
     steps:
       - name: Check out exact source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
