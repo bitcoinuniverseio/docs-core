@@ -1,9 +1,10 @@
 # The Ordex market
 
-Ordex is a permanent part of Bitcoin Universe. Every build ships the Ordex
+Ordex is a first-class part of Bitcoin Universe. Every build ships the Ordex
 market at `/ordex` and the Ordex orders desk at `/ordex/orders`, and Ordex
-leads the Trade market picker. There is no setting that removes the product
-from the application.
+leads the Trade market picker. An operator holds one deliberate kill switch:
+when it is used, the market and the desk stay where they are and say they were
+switched off. Nothing else takes the product out of a build.
 
 ## Browse by protocol family
 
@@ -19,8 +20,13 @@ then narrow to a single subprotocol inside it.
 | Atomicals | ARC-20 |
 | Runes | Runes |
 | Tokens / Metaprotocols | Alkanes, Mezcal, DUST20 |
-| Dogecoin | TAP-DOGE, DRC-20, Doginals |
-| Stamps | Stamps, SRC-20 |
+
+Every family above settles as a Bitcoin transaction. Dogecoin, Stamps, SRC-20
+and Counterparty assets are deliberately absent: Ordex builds, verifies and
+settles Bitcoin PSBTs, and it has no builder, verifier or source adapter for
+those protocols. Listing them would put a creation flow in front of you that
+ends in a builder that cannot run, and it would let a plain Bitcoin PSBT carry
+a label nothing had checked. They return when a real adapter exists.
 
 Choosing **Ordinals** shows every Ordinals-family order. Choosing **BRC-20**
 shows only BRC-20 orders. The same applies to every family, and the result
@@ -73,8 +79,9 @@ Buying happens in your own wallet, in four named steps.
 2. **Approve in my wallet.** Your wallet signs your own inputs only. The
    seller's half arrived already signed and is never touched.
 3. **The node's own verdict.** The signed transaction goes back to Ordex, which
-   binds it to the order again, proves the asset movement, and asks Bitcoin
-   Core whether it would accept the transaction. Nothing has been sent yet.
+   binds it to the order again, proves the asset movement, checks that the
+   transaction would not destroy a rune balance, and asks Bitcoin Core whether
+   it would accept the transaction. Nothing has been sent yet.
 4. **Send this transaction.** Only this step reaches the network, and only the
    exact bytes the node checked are sent.
 
@@ -96,6 +103,19 @@ first output of the same transaction, so they are not a cost. A wallet holding
 no small outputs is told so plainly rather than handed a purchase built from
 the wrong ones.
 
+### Why a purchase can be refused over runes
+
+A rune balance is assigned by a small marker output, not by the address holding
+it. When that marker is malformed the transaction is still perfectly valid to
+Bitcoin: it confirms normally and every rune balance it spent is destroyed. No
+fee check and no node acceptance test can see this, because nothing about the
+transaction is invalid.
+
+Ordex reads that marker on every purchase and refuses to hand you a transaction
+that would burn a balance. An output the rune index has not examined is refused
+on the same footing as one known to hold runes, because not having looked is
+not the same as having found nothing.
+
 Ordex refuses to spend an output that carries an inscription or a rune balance
 as fees or as padding, and treats an output the ordinals index has not examined
 as unknown rather than as empty.
@@ -107,17 +127,26 @@ Ordex cannot drive. Building, funding, and sending it is then entirely yours,
 including placing the asset in an output you own. Read the section above before
 using it.
 
-## Settlement is not the same for every family
+## Settlement, and how much of it Ordex proves
 
-Bitcoin families carry a real PSBT. For a listing, Ordex builds it from the
-live asset output, your wallet signs it, and only then is it indexed. For a
+Every family carries a real Bitcoin PSBT. For a listing, Ordex builds it from
+the live asset output, your wallet signs it, and only then is it indexed. For a
 purchase, Ordex composes the buyer half and checks it, your wallet signs your
 own inputs, and you send it. Ordex never receives a private key, contributes
 funds, signs on your behalf, or broadcasts on its own initiative.
 
-Dogecoin and Stamps orders are recorded peer-to-peer intents settled with a
-Dogecoin or Counterparty aware wallet. The market labels them clearly and never
-presents them as a Bitcoin PSBT.
+What Ordex proves before it hands you an order is not the same for every
+family, and each listing states its own scope rather than leaving you to
+assume it.
+
+| Scope | Families | What Ordex proves |
+| --- | --- | --- |
+| Inscription position | Ordinals, Bitmap, Names, OP Inscriptions, OP Names, Taproot OP_DROP | Where the inscription sits right now, read from the ordinals index |
+| Inscription position only | BRC-20, TAP, DMT, UNAT, OP-20, Mezcal, DUST20 | Where the inscription sits right now. Token balances and transfer state are not read |
+| Output is unspent | Bitcoin PSBT, ARC-20, Runes, Alkanes | That the exact output is unspent and the ask is built around it. Balances carried by the output are not read |
+
+A scope that stops short of the protocol balance is stated plainly on the
+listing. Read those balances in a wallet you trust before you sign.
 
 ## What the market states mean
 
