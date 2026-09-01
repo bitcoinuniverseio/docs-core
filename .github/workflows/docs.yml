@@ -74,7 +74,10 @@ jobs:
         run: test -f dist/llms.txt && test -f dist/robots.txt && test -f dist/openapi/core-public-read.json
 
       - name: Install a browser for the accessibility audit
-        run: npx playwright install --with-deps chromium
+        # The certified runner already owns its system browser dependencies.
+        # Install the pinned browser as the service user; `--with-deps` would
+        # request sudo and fail correctly on the non-privileged runner account.
+        run: npx playwright install chromium
 
       - name: Serve the built site
         run: npx astro preview --port 4323 &
