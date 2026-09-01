@@ -79,6 +79,21 @@ window and keeps sending keepalives that do not advance a reader's position.
 Deeper sweeps that place real load on Universe-operated services are reserved
 for release rehearsal and are not part of the recurring check.
 
+## Control Center evidence
+
+The restricted Inscribe Control Center can also read Core's release identity,
+health, readiness, and recent run history through a private, authenticated
+adapter. This gives operators one correlated view without turning operational
+controls into public Core endpoints.
+
+The adapter is evidence, not an override. A healthy row does not bypass Core's
+marketplace gates, and an action remains closed when Core's own policy or
+readiness checks reject it. The public health response above remains the safe
+way for readers to verify the deployed Core commit.
+
+[Read the Inscribe Control Center guide](https://github.com/bitcoinuniverseio/docs-inscribe/blob/main/admin-control-center.md)
+for the user-visible boundaries of that restricted workspace.
+
 ## What a passing result claims
 
 **A passing validation result is release evidence. It is not a claim that a
