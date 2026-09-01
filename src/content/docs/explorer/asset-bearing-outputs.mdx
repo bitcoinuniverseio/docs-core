@@ -1,0 +1,121 @@
+---
+title: Asset-bearing outputs
+description: >-
+  An asset-bearing output looks exactly like an ordinary one. What Core does to
+  keep one from being spent as change or burned as fees, why a rune burn is
+  invisible to every validity check, and why an unexamined output is refused.
+sidebar:
+  order: 6
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="backend/packages/ecosystem-contracts/lib/protocols.js (mutation gates), Ordex authority"
+  chain="bitcoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+This is the most important concept page on this site after
+[reading the numbers](/docs-core/start/reading-the-numbers/).
+
+An output holding an inscription looks, to Bitcoin, exactly like an output
+holding 546 satoshis of ordinary change. Nothing in the script, the value, or
+the address distinguishes them. A wallet that does not know better will happily
+spend one as fee padding, and the transaction will be perfectly valid.
+
+## Two ways an asset is destroyed by a valid transaction
+
+### Spending it as change or fees
+
+A `utxo` asset lives on a specific satoshi in a specific output. Spend that
+output as ordinary change and the asset follows the satoshi wherever the
+transaction sends it, which is usually somewhere you did not intend. Use it as
+fee padding and the asset goes to the miner.
+
+Core refuses to spend an output that carries an inscription or a rune balance
+as fees or as padding.
+
+### Burning a rune balance with a malformed marker
+
+This one is worse, because no check can see it.
+
+A rune balance is assigned by a small marker output, not by the address holding
+it. When that marker is malformed the transaction is still perfectly valid to
+Bitcoin: it confirms normally, and every rune balance it spent is destroyed. No
+fee check and no node acceptance test can detect this, because nothing about
+the transaction is invalid.
+
+Core reads that marker on every purchase and refuses to hand you a transaction
+that would burn a balance.
+
+## Unexamined is refused, like known-carrying
+
+The rule that makes the protection actually work:
+
+> An output the rune index has not examined is refused on the same footing as
+> one known to hold runes, because not having looked is not the same as having
+> found nothing.
+
+The same applies to the ordinals index: an output it has not examined is
+treated as **unknown** rather than as empty.
+
+This is the [reading the numbers](/docs-core/start/reading-the-numbers/)
+principle applied where it costs something. A system that treated unexamined as
+empty would be faster and would occasionally burn an asset.
+
+## The complete inventory gate
+
+Several protocols go further and require a **complete output inventory** across
+all 29 protocols before a mutation is allowed. The registry states this
+explicitly for TAP, DMT, UNAT, Bitmap, Names, and DROPS: ownership must be
+proven against the exact protocol state *and* a complete inventory of every
+protocol that could be co-located on the same output.
+
+Ordinals states a narrower version of the same idea: every mutation requires
+one confirmed, unspent, single-inscription output with **no co-located Runes**,
+and the Ordinals index and Bitcoin must agree on value, outpoint, and owner.
+
+Atomicals states it as a rejection list: mutations fail closed on mixed
+collateral, the wrong NFT subtype, a spent outpoint, checkpoint drift, a burn,
+or an ownership mismatch. A generic NFT listing cannot contain a Realm,
+Subrealm, fungible token, container, or item subtype.
+
+ARC-20 works in complete colored-sat outputs, and the application never splits
+a selected colored lot or uses it as ordinary Bitcoin change.
+
+## Why an Ordex purchase needs two small outputs
+
+A worked example of the same physics.
+
+A public ask is signed so that the seller's payment output must sit at the same
+position as the offered output being spent. Satoshis leave a transaction in the
+order their inputs appear. If the offered output were first, its satoshis would
+be the first thing the seller's payment is paid from, so the inscription, its
+satoshi position, and its postage would go straight back to the seller. The
+transaction would be perfectly valid and the buyer would receive nothing.
+
+Ordex therefore places two small outputs of yours ahead of the offered one, so
+the asset lands in an output you own. Those outputs come back to you in the
+first output of the same transaction, so they are not a cost. A wallet holding
+no small outputs is told so plainly rather than handed a purchase built from
+the wrong ones.
+
+## What you should do
+
+1. Keep asset-bearing outputs in the address role your wallet reserves for
+   them, and keep ordinary spending separate.
+2. Use a wallet that understands inscriptions and runes. A generic wallet with
+   coin control off is the usual way an asset is lost.
+3. Read the inputs and outputs in your own wallet's prompt, not only in Core's
+   review screen. The wallet is the final authorization boundary.
+4. If Core refuses an action citing an unexamined or co-located output, do not
+   route around it in another tool. That refusal is doing its job.
+
+## Next
+
+- [Transaction safety](/docs-core/wallets/transaction-safety/)
+- [Ordex](/docs-core/markets/ordex/)
+- [UTXOs](/docs-core/explorer/utxos/)

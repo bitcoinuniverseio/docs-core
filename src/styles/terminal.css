@@ -1,0 +1,494 @@
+/*
+ * Core docs: an instrument panel, not a brochure.
+ *
+ * Three rules drive every choice below.
+ *
+ * 1. Density. This documentation is mostly tables of chain data. Rows are
+ *    compact, columns are aligned, and figures are tabular so a column does
+ *    not shimmer while values change.
+ * 2. Two data colours carry meaning, and only meaning. Signal (cool cyan)
+ *    marks live, fresh, enabled, supported. Stale (amber) marks stale,
+ *    unavailable, read-only, gated, unsupported. Nothing decorative uses
+ *    either one.
+ * 3. Monospace for anything a reader might copy or compare character by
+ *    character: hashes, ids, outpoints, tickers, amounts, route paths.
+ *
+ * Colour is never the only signal. Every state carries a text label as well,
+ * so the page reads the same without colour vision, in high contrast mode,
+ * and when printed.
+ *
+ * Fonts are the platform's own. No font is downloaded, from this origin or
+ * any other, so there is no font-driven layout shift and no third party sees
+ * a request.
+ */
+
+:root {
+  --bu-font-ui:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, 'Noto Sans', sans-serif;
+  --bu-font-mono:
+    ui-monospace, 'SFMono-Regular', 'SF Mono', Menlo, Consolas, 'Liberation Mono',
+    'Roboto Mono', monospace;
+
+  --sl-font: var(--bu-font-ui);
+  --sl-font-mono: var(--bu-font-mono);
+
+  --bu-radius: 3px;
+  --bu-row-pad-y: 0.34rem;
+  --bu-row-pad-x: 0.6rem;
+}
+
+/* ---------------------------------------------------------------- palette */
+/* Dark is the design the product's own operators read at night: a cool
+ * graphite base, no pure black, no pure white text. */
+:root {
+  --sl-color-accent-low: #0a2b33;
+  --sl-color-accent: #12798c;
+  --sl-color-accent-high: #7fd8e8;
+
+  --sl-color-white: #f2f6f8;
+  --sl-color-gray-1: #dde5e9;
+  --sl-color-gray-2: #b3c0c7;
+  --sl-color-gray-3: #7d8d96;
+  --sl-color-gray-4: #4c5b64;
+  --sl-color-gray-5: #2c383f;
+  --sl-color-gray-6: #1c262c;
+  --sl-color-black: #10181d;
+
+  --bu-surface: #131c22;
+  --bu-surface-raised: #18232a;
+  --bu-grid: #27353d;
+  --bu-grid-strong: #37474f;
+
+  --bu-signal: #4fd1c5;
+  --bu-signal-dim: #0f3d3a;
+  --bu-signal-text: #7fe3d9;
+
+  --bu-stale: #f0b429;
+  --bu-stale-dim: #3d2f0c;
+  --bu-stale-text: #f3c860;
+
+  --bu-muted: #8fa0a9;
+}
+
+:root[data-theme='light'] {
+  --sl-color-accent-low: #d3ecf1;
+  --sl-color-accent: #0b6d80;
+  --sl-color-accent-high: #06414d;
+
+  --sl-color-white: #10181d;
+  --sl-color-gray-1: #1c262c;
+  --sl-color-gray-2: #33434b;
+  --sl-color-gray-3: #5b6c75;
+  --sl-color-gray-4: #8296a0;
+  --sl-color-gray-5: #ccd7dd;
+  --sl-color-gray-6: #e6edf1;
+  --sl-color-gray-7: #f2f6f8;
+  --sl-color-black: #ffffff;
+
+  --bu-surface: #f6f9fb;
+  --bu-surface-raised: #ffffff;
+  --bu-grid: #d5dfe5;
+  --bu-grid-strong: #b3c2cb;
+
+  --bu-signal: #0f766e;
+  --bu-signal-dim: #dcf3f0;
+  --bu-signal-text: #0b5a54;
+
+  --bu-stale: #8a5a00;
+  --bu-stale-dim: #fbf0d8;
+  --bu-stale-text: #6f4900;
+
+  --bu-muted: #5b6c75;
+}
+
+/* ------------------------------------------------------------- typography */
+body {
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+.sl-markdown-content {
+  font-size: var(--sl-text-body);
+  line-height: 1.62;
+}
+
+.sl-markdown-content h2 {
+  border-top: 1px solid var(--bu-grid);
+  padding-top: 1.4rem;
+  letter-spacing: -0.01em;
+}
+
+.sl-markdown-content h2:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.sl-markdown-content code:not(:where(pre code)) {
+  font-family: var(--bu-font-mono);
+  font-size: 0.86em;
+  background: var(--bu-surface-raised);
+  border: 1px solid var(--bu-grid);
+  border-radius: var(--bu-radius);
+  padding: 0.08em 0.34em;
+  overflow-wrap: anywhere;
+}
+
+/* ----------------------------------------------------------------- tables */
+/* Starlight gives every table `overflow: auto` of its own. Combined with the
+ * scroll region this site wraps each table in, that produced two nested
+ * scrollers, and axe correctly reported the inner one as a scrollable region
+ * with no keyboard access. The wrapper is the scroller; the table is not. */
+.sl-markdown-content table:not(:where(.not-content *)) {
+  overflow: visible;
+}
+/* The centrepiece. Sticky header, hairline grid, zebra-free (density does
+ * the work instead), and every cell aligned to the top so a wrapped reason
+ * does not push its row's short cells to the middle. */
+.sl-markdown-content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  margin-block: 1rem;
+}
+
+.sl-markdown-content thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--bu-surface-raised);
+  border-bottom: 2px solid var(--bu-grid-strong);
+  text-align: left;
+  vertical-align: bottom;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--bu-muted);
+  padding: var(--bu-row-pad-y) var(--bu-row-pad-x);
+  white-space: nowrap;
+}
+
+.sl-markdown-content tbody td {
+  border-bottom: 1px solid var(--bu-grid);
+  padding: var(--bu-row-pad-y) var(--bu-row-pad-x);
+  vertical-align: top;
+}
+
+.sl-markdown-content tbody tr:hover td {
+  background: var(--bu-surface);
+}
+
+/* A table wider than its column scrolls inside its own region rather than
+ * pushing the page sideways. rehype-table-scroll.mjs adds the wrapper and
+ * names it after the heading it sits under. */
+.table-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+  border: 1px solid var(--bu-grid);
+  border-radius: var(--bu-radius);
+  margin-block: 1.25rem;
+  /* A scroll region needs a visible boundary, otherwise there is no way to
+   * tell that content continues past the edge. */
+  background:
+    linear-gradient(to right, var(--sl-color-bg) 30%, transparent),
+    linear-gradient(to left, var(--sl-color-bg) 30%, transparent) 100% 0,
+    radial-gradient(farthest-side at 0 50%, rgb(0 0 0 / 18%), transparent),
+    radial-gradient(farthest-side at 100% 50%, rgb(0 0 0 / 18%), transparent) 100% 0;
+  background-repeat: no-repeat;
+  background-size: 2.5rem 100%, 2.5rem 100%, 0.7rem 100%, 0.7rem 100%;
+  background-attachment: local, local, scroll, scroll;
+}
+
+.table-scroll > table {
+  margin: 0;
+}
+
+.table-scroll:focus-visible {
+  outline: 2px solid var(--sl-color-accent-high);
+  outline-offset: 2px;
+}
+
+/* Monospace, non-wrapping identity columns. Applied through a class on the
+ * cell content in Markdown, so the plain text stays readable in the source. */
+.sl-markdown-content td code {
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------ state chips */
+/* Every chip carries its own word. The colour repeats the word; it never
+ * replaces it. */
+.chip {
+  display: inline-block;
+  font-family: var(--bu-font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.1rem 0.4rem;
+  border-radius: var(--bu-radius);
+  border: 1px solid currentcolor;
+  white-space: nowrap;
+}
+
+.chip-live {
+  color: var(--bu-signal-text);
+  background: var(--bu-signal-dim);
+}
+
+.chip-stale {
+  color: var(--bu-stale-text);
+  background: var(--bu-stale-dim);
+}
+
+.chip-off {
+  color: var(--bu-muted);
+  background: transparent;
+}
+
+/* ------------------------------------------------------------ data panels */
+.panel {
+  border: 1px solid var(--bu-grid);
+  border-radius: var(--bu-radius);
+  background: var(--bu-surface);
+  padding: 0.9rem 1rem;
+  margin-block: 1.25rem;
+}
+
+.panel > :first-child {
+  margin-top: 0;
+}
+
+.panel > :last-child {
+  margin-bottom: 0;
+}
+
+.panel-title {
+  font-family: var(--bu-font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bu-muted);
+  margin-bottom: 0.5rem;
+}
+
+/* A row of small figures, the way a terminal shows its readouts. */
+.readout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 1px;
+  background: var(--bu-grid);
+  border: 1px solid var(--bu-grid);
+  border-radius: var(--bu-radius);
+  margin-block: 1.5rem;
+  overflow: hidden;
+}
+
+.readout > div {
+  background: var(--bu-surface);
+  padding: 0.7rem 0.85rem;
+}
+
+.readout dt,
+.readout .readout-label {
+  font-family: var(--bu-font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bu-muted);
+}
+
+.readout dd,
+.readout .readout-value {
+  margin: 0.2rem 0 0;
+  font-family: var(--bu-font-mono);
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--sl-color-white);
+}
+
+.readout .readout-note {
+  display: block;
+  margin-top: 0.15rem;
+  font-family: var(--bu-font-ui);
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--bu-muted);
+}
+
+/* ------------------------------------------------- provenance strip */
+/* Sits under the H1 of every material page and says where the page's facts
+ * were read from, and when they were last checked against the product. */
+.provenance {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 1.1rem;
+  border: 1px solid var(--bu-grid);
+  border-left: 3px solid var(--bu-signal);
+  border-radius: var(--bu-radius);
+  background: var(--bu-surface);
+  padding: 0.6rem 0.8rem;
+  margin-block: 0 1.75rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.provenance > div {
+  display: flex;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.provenance b {
+  font-family: var(--bu-font-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--bu-muted);
+  align-self: center;
+}
+
+.provenance span,
+.provenance a {
+  font-family: var(--bu-font-mono);
+  overflow-wrap: anywhere;
+}
+
+/* ------------------------------------------------------------ home splash */
+.hero-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1rem;
+  margin-block: 1.75rem;
+}
+
+.hero-card {
+  border: 1px solid var(--bu-grid);
+  border-radius: var(--bu-radius);
+  background: var(--bu-surface);
+  padding: 1rem;
+}
+
+.hero-card h3 {
+  margin-top: 0;
+  font-size: 1rem;
+}
+
+.hero-card p {
+  font-size: 0.85rem;
+  color: var(--sl-color-gray-2);
+}
+
+.hero-card > :last-child {
+  margin-bottom: 0;
+}
+
+/* --------------------------------------------------------------- diagrams */
+figure.diagram {
+  margin-block: 1.75rem;
+  border: 1px solid var(--bu-grid);
+  border-radius: var(--bu-radius);
+  background: var(--bu-surface);
+  padding: 1rem;
+}
+
+figure.diagram svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+}
+
+figure.diagram figcaption {
+  margin-top: 0.75rem;
+  font-size: 0.78rem;
+  color: var(--bu-muted);
+  line-height: 1.5;
+}
+
+figure.shot {
+  margin-block: 1.75rem;
+}
+
+figure.shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--bu-grid);
+  border-radius: var(--bu-radius);
+}
+
+figure.shot figcaption {
+  margin-top: 0.6rem;
+  font-size: 0.78rem;
+  color: var(--bu-muted);
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------------------- footer */
+.bu-footer-note {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--bu-grid);
+  font-size: 0.78rem;
+  color: var(--bu-muted);
+  line-height: 1.6;
+}
+
+.bu-footer-note ul {
+  list-style: none;
+  padding: 0;
+  margin: 0.4rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.1rem;
+}
+
+/* ------------------------------------------------------------ small screens */
+@media (max-width: 30rem) {
+  :root {
+    --bu-row-pad-x: 0.45rem;
+  }
+
+  .sl-markdown-content table {
+    font-size: 0.82rem;
+  }
+
+  .readout dd,
+  .readout .readout-value {
+    font-size: 1.05rem;
+  }
+}
+
+/* ------------------------------------------------------------ preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .chip,
+  .panel,
+  .readout > div,
+  .provenance,
+  .table-scroll {
+    border: 1px solid CanvasText;
+  }
+}
+
+@media print {
+  .table-scroll {
+    overflow: visible;
+    background: none;
+  }
+}

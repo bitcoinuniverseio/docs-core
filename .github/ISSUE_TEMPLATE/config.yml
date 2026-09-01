@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/bitcoinuniverseio/docs-core/security/advisories/new
+    about: Report privately. Never open a public issue for a suspected vulnerability.
+  - name: All Bitcoin Universe documentation
+    url: https://docs.bitcoinuniverse.io
+    about: Other products, protocols, and indexers.
+  - name: Open Core
+    url: https://www.bitcoinuniverse.io
+    about: The application these pages describe.

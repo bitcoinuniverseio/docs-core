@@ -1,0 +1,110 @@
+---
+title: What Core is
+description: >-
+  Core is the Bitcoin Universe explorer, portfolio, activity, and marketplace
+  application. What it does, what it deliberately does not do, who it is for,
+  and where it sits among the other Bitcoin Universe products.
+sidebar:
+  order: 1
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="frontend/src/pages/Indexer.js, frontend/src/configs/protocolTree.js"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  lifecycle="production"
+  verified="2026-09-01"
+/>
+
+Core is the application at
+[www.bitcoinuniverse.io](https://www.bitcoinuniverse.io). It reads Bitcoin and
+Dogecoin, and the metaprotocol assets carried on them, and it lets you act on
+what you own through your own wallet.
+
+:::caution[Use the www address]
+The bare `bitcoinuniverse.io` address redirects to a different Bitcoin
+Universe application. A link that drops the `www` will not open the pages
+described here. Confirmed on 1 September 2026.
+:::
+
+## Four jobs in one place
+
+| Surface | What it answers |
+| --- | --- |
+| **Explorer** | What does this address hold, across every protocol Core reads? |
+| **Index** | What tokens, names, or collections exist under this protocol, and who holds them? |
+| **Portfolio** | What do I own, and what can I do with each item right now? |
+| **Markets** | What is for sale, at what price, and can I actually buy it? |
+
+Activity sits across all four: a record of what has listed, sold, delisted, or
+moved, dated from when the event happened rather than when a maintenance pass
+last touched the record.
+
+## Who it is for
+
+- **Collectors** checking what an address holds without connecting anything.
+- **Buyers** who want the asset, the price, the fees, and the total in front of
+  them before a wallet asks for a signature.
+- **Sellers** listing, repricing, or delisting an item they hold.
+- **Developers and analysts** who need to know which index answered a question,
+  how far behind it was, and whether a figure was measured or simply not read.
+
+You do not need a wallet to use most of Core. Searching, exploring an address,
+browsing an index, and browsing a market all work with nothing connected.
+
+## What Core deliberately does not do
+
+Being clear about this is more useful than a feature list.
+
+- **Core does not custody anything.** Keys stay in your wallet. No asset moves
+  without a signature you approve there.
+- **Core is not a general block explorer.** It has no in-app block list, block
+  detail page, transaction detail page, or UTXO browser. Search recognises a
+  block height, a block hash, a transaction id, and an outpoint, and hands each
+  one to an external block explorer. What Core builds itself is the *address*
+  view and the *protocol asset* view. [Blocks](/docs-core/explorer/blocks/) and
+  [transactions](/docs-core/explorer/transactions/) explain exactly where the
+  line falls.
+- **Core does not invent a number.** A figure that was not read is shown as a
+  dash. A market that could not be read says so rather than showing an empty
+  table. [Reading the numbers](/docs-core/start/reading-the-numbers/) is the
+  page that makes this usable.
+- **Core does not present an unreleased capability as available.** A protocol
+  whose execution path is incomplete is browsable and not tradable, and the
+  interface says which. The
+  [support matrix](/docs-core/protocols/support-matrix/) is the list.
+- **Core does not run an exchange.** The one figure it does not read from its
+  own infrastructure is the fiat exchange rate, and the interface names the
+  source and the time it was measured.
+
+## Where Core sits
+
+The Bitcoin Universe protocol registry records capabilities per product
+surface. Core is the surface called `main`. The siblings that appear beside it
+are **Wallet**, **Inscribe**, and **StampDEX**. Each protocol page on this site
+lists what the registry records for every surface, so a reader who cannot do
+something in Core can see whether another product can.
+
+Inscribe is a hand-off rather than an embedded screen: opening Inscribe from
+Core navigates to the Inscribe application rather than loading it inside Core.
+
+## Chains and networks
+
+| Chain | Network | What Core does with it |
+| --- | --- | --- |
+| Bitcoin | mainnet | Full explorer, index, portfolio, and market surfaces. 33 of the registry's protocols. |
+| Dogecoin | mainnet | Address explorer and markets for DRC-20, Doginals, and TAP on Doge. All three are behind one feature gate. |
+| Zcash | mainnet | Two protocols, Zerdinals and ZRunes, recorded in the registry with `read` and `explore` actions only. They are documented at [docs-zerdinals-and-zrunes](https://bitcoinuniverseio.github.io/docs-zerdinals-and-zrunes). |
+
+A staging deployment exists for release validation. It runs against its own
+isolated API lane and never falls back to production data. It is not a place to
+move real funds.
+
+## Next
+
+- [Your first five minutes](/docs-core/start/first-five-minutes/), a guided walk with nothing connected.
+- [Reading the numbers](/docs-core/start/reading-the-numbers/), the one concept that makes the rest safe.
+- [The protocol support matrix](/docs-core/protocols/support-matrix/), before you assume you can trade something.

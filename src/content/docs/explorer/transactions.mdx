@@ -1,0 +1,101 @@
+---
+title: Transactions
+description: >-
+  How Core reads transactions: the public transaction endpoint and its shape,
+  what an outpoint search does, how a broadcast is handled, and why activity
+  rows are dated from the event rather than the write.
+sidebar:
+  order: 3
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="frontend/src/util/advanced-search.js, backend mempool facade"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+Like blocks, transactions have no dedicated Core page: search hands a
+transaction id to an external block explorer. What Core *does* own is the
+transaction data behind every figure it shows, and the safety rules around
+transactions it helps you build.
+
+## Reading a transaction
+
+The public facade serves the full transaction, including previous outputs, so a
+caller can compute a fee and see what each input was worth without a second
+round trip.
+
+```bash
+curl -s https://api.bitcoinuniverse.io/mempool/api/tx/<txid>
+```
+
+The response carries `txid`, `version`, `locktime`, `size`, `weight`, `fee`,
+`vin`, `vout`, and `status`. Each `vin` includes its `prevout`, and `status`
+carries `confirmed`, `block_hash`, `block_height`, and `block_time`. The full
+shape is in the [OpenAPI reference](/docs-core/api/reference/).
+
+:::caution[An output tells you nothing about what it carries]
+Nothing in a `vout` says whether that output holds an inscription, a rune
+balance, or any other protocol asset. An asset-bearing output looks exactly
+like an ordinary one. This is the single most consequential fact about
+transactions on Bitcoin metaprotocols, and
+[asset-bearing outputs](/docs-core/explorer/asset-bearing-outputs/) is the page
+that deals with it.
+:::
+
+## Searching an outpoint
+
+An outpoint, `<txid>:<vout>`, is recognised exactly. It resolves to that
+specific output of that transaction, labelled "Output *n* of *txid*". Outpoints
+matter more than transaction ids in this product, because a metaprotocol asset
+lives at an outpoint, not at an address, and several outputs created by one
+transaction are separate assets with separate histories.
+
+That separation is preserved throughout: Portfolio and the sell lists key on
+the full outpoint, so several outputs from one transaction stay distinct and
+keep their own entered prices, and a batch settlement that shares one Bitcoin
+transaction still produces distinct activity rows per trade.
+
+## Broadcasting
+
+A transaction broadcast is submitted **once**. If the network response is
+uncertain, Core checks whether the transaction is already visible before
+returning success. It does not blindly send the same transaction to a second
+provider, and there is no public-provider fallback to send it to.
+
+Once broadcast, a transaction cannot be recalled. Every Core review screen says
+so before the wallet prompt, and
+[transaction safety](/docs-core/wallets/transaction-safety/) covers what to
+check first.
+
+## Transactions in activity
+
+Activity rows are dated from **when the event happened**, not from when a
+record was last written. Maintenance passes re-check historical trades, and
+those passes never move a row's date forward or resurface an old trade as
+current activity.
+
+Read the date before treating a row as a signal. Recent activity is a record of
+past trades. It is not a price feed, a measure of current liquidity, or a
+prediction. A quiet market shows older dates rather than hiding them.
+
+## Confirmation is not settlement
+
+A confirmed transaction is necessary for a settlement and rarely sufficient.
+Most protocols also require the protocol-level state transition that
+transaction was supposed to cause, observed at a stable index checkpoint. A
+settlement can therefore stay pending after a block: the chain agreed, and the
+index has not caught up.
+
+[Confirmation and reorg policy](/docs-core/protocols/confirmation-and-reorg/)
+gives the per-protocol rule.
+
+## Next
+
+- [Asset-bearing outputs](/docs-core/explorer/asset-bearing-outputs/)
+- [UTXOs](/docs-core/explorer/utxos/)
+- [Transaction safety](/docs-core/wallets/transaction-safety/)

@@ -1,0 +1,121 @@
+---
+title: What is public
+description: >-
+  The Core public read API: the thirteen verified unauthenticated endpoints, the
+  headers every response carries, rate limits, the error envelope, and what is
+  deliberately not documented.
+sidebar:
+  order: 1
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="verified live against https://api.bitcoinuniverse.io"
+  chain="bitcoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+The public API is at **`https://api.bitcoinuniverse.io`**, port 443. It serves
+reads. There is no public write surface.
+
+## What is documented, and what is not
+
+The [OpenAPI 3.1 document](/docs-core/api/reference/) describes **thirteen GET
+operations**, every one of which was verified against the live service on
+1 September 2026 from an unauthenticated client.
+
+Private, operator, admin, and authenticated mutation routes are deliberately
+absent. Their absence is not an oversight: they are not part of the public
+surface, and documenting something you cannot call would be worse than saying
+nothing. A `404` on a path that is not in the document is intentional and does
+not imply that an internal service exists there.
+
+## The endpoints
+
+| Endpoint | Answers |
+| --- | --- |
+| `GET /health` | Release identity, read readiness, marketplace profile, and every reason mutation traffic is closed |
+| `GET /indexer-health` | Per-protocol index identity, tip, node tip, lag, freshness, and status, for all 29 |
+| `GET /ordinals/status` | The Ordinals index status page, as HTML |
+| `GET /mempool/api/blocks/tip/height` | Chain tip height, as plain text |
+| `GET /mempool/api/blocks/tip/hash` | Chain tip hash, as plain text |
+| `GET /mempool/api/block-height/{height}` | Block hash at a height, as plain text |
+| `GET /mempool/api/blocks` | Recent block summaries |
+| `GET /mempool/api/mempool` | Mempool transaction count and virtual size |
+| `GET /mempool/api/v1/fees/recommended` | Fee rates in satoshis per virtual byte |
+| `GET /mempool/api/address/{address}` | Funded and spent totals, confirmed and mempool kept apart |
+| `GET /mempool/api/address/{address}/utxo` | Unspent outputs |
+| `GET /mempool/api/address/{address}/txs` | Transactions involving an address |
+| `GET /mempool/api/tx/{txid}` | One transaction, with previous outputs |
+
+## Headers every response carries
+
+| Header | What it is for |
+| --- | --- |
+| `X-Universe-Release` | The exact commit the deployment was built from. Core's release identifier: there is no semantic version string |
+| `X-Request-Id` | Correlation id. Quote it when reporting a problem |
+| `Server-Timing` | Attribution to database, upstream, and application time, so a slow response can be explained |
+
+Health responses additionally carry `Cache-Control: no-store`. A cached
+readiness answer would be worse than none.
+
+## Rate limits
+
+Chain reads carry `RateLimit-Limit` and `RateLimit-Remaining`. A `429` means
+wait for the indicated interval before retrying.
+
+Per-client protections cover burst rate, sustained rate, concurrency, request
+size, response size, and upstream timeout.
+
+## The error envelope
+
+Every route uses the same shape:
+
+```json
+{
+  "message": "Ordinals proxy path is not available.",
+  "error": "NOT_FOUND",
+  "statusCode": 404,
+  "requestId": "f40208c7-2a2f-4bcb-86da-0d280f5512f4"
+}
+```
+
+`error` is a stable code you can branch on. `message` is for a human.
+
+## The rule that matters for a caller
+
+A read that fails answers with an explicit failure. It never answers with a
+zero or an empty array.
+
+- An **empty array** from a UTXO or transaction list means the address was read
+  and holds nothing.
+- An **error status** means nothing is known.
+
+There is no public-provider fallback behind these endpoints, so a failure is a
+real failure rather than a hint to try a different upstream. Treat the quantity
+as unknown, wait, and retry.
+
+## A worked example
+
+```bash
+# Which index answered for Ordinals, and how far behind was it?
+curl -s https://api.bitcoinuniverse.io/indexer-health \
+  | jq '.data[] | select(.protocolId=="ordinals")
+        | {indexerIdentity, tip, nodeTip, lag, lastSuccess, status}'
+
+# Is trading open at all right now?
+curl -s https://api.bitcoinuniverse.io/health \
+  | jq '{release, marketplaceProfile,
+         read: .readTraffic.ready,
+         mutate: .mutationTraffic.ready,
+         cycles: .mutationTraffic.authorityCycles}'
+```
+
+## Next
+
+- [Health and readiness](/docs-core/api/health/)
+- [OpenAPI reference](/docs-core/api/reference/)
+- [The public reader boundary](/docs-core/data/reader-boundary/)

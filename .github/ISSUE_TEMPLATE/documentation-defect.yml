@@ -1,0 +1,48 @@
+name: Documentation defect
+description: A page here does not match what the product does, or is wrong.
+labels: [documentation]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A page that does not match the product is a defect in this repository.
+        Thank you for reporting it.
+
+        **Do not report a security issue here.** Use the private advisory form
+        instead: https://github.com/bitcoinuniverseio/docs-core/security/advisories/new
+  - type: input
+    id: page
+    attributes:
+      label: Which page
+      description: The URL on the documentation site.
+      placeholder: https://bitcoinuniverseio.github.io/docs-core/protocols/support-matrix/
+    validations:
+      required: true
+  - type: textarea
+    id: says
+    attributes:
+      label: What the page says
+      description: Quote the sentence or the table row.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What the product does
+      description: What you observed, and where. A screenshot with personal data removed helps.
+    validations:
+      required: true
+  - type: input
+    id: release
+    attributes:
+      label: Release
+      description: >-
+        The X-Universe-Release header, if you have it. Get it with
+        curl -sI https://api.bitcoinuniverse.io/health
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Confirm
+      options:
+        - label: This report contains no seed phrase, private key, session token, or anyone else's address.
+          required: true

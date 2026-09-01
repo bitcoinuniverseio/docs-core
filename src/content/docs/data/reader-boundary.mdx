@@ -1,0 +1,98 @@
+---
+title: The public reader boundary
+description: >-
+  What is reachable from the public internet and what is not, why a 404 on an
+  unregistered path proves nothing, and the protections applied to every public
+  request.
+sidebar:
+  order: 4
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="public HTTPS facade configuration"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+Core serves selected chain and protocol reads through the platform HTTPS API.
+Native node, Ordinals, Mempool, TAP, database, and cache ports are **not**
+public application interfaces.
+
+## Public access
+
+Public applications use `https://api.bitcoinuniverse.io` on port 443. The
+reviewed reader facades provide narrowly validated lookups such as:
+
+- block and fee information;
+- transaction and address lookups;
+- inscription content, previews, and status;
+- Dogecoin TAP tokens, balances, activity, and protocol state.
+
+The verified public read endpoints are described in the
+[OpenAPI reference](/docs-core/api/reference/).
+
+## What the facade does
+
+- **Each facade denies unknown routes.** Public access accepts read methods and
+  safe browser CORS preflights only.
+- **Per-client protections** cover burst rate, sustained rate, concurrency,
+  request size, response size, and upstream timeout. Responses may carry
+  rate-limit headers; a `429` means wait for the indicated interval.
+- **Generic node RPC method selection is not available.** The gateway uses
+  fixed private upstreams, so a caller cannot select an upstream host, port,
+  filesystem path, or RPC method.
+- **Internal compatibility listeners are bound to loopback** and denied by the
+  host firewall, so they cannot bypass the HTTPS facade.
+
+## A 404 proves nothing
+
+A `404` on an unregistered reader path is intentional. It does not mean an
+internal service exists at that path, and it is not an invitation to probe for
+one. The error envelope is the same shape everywhere:
+
+```json
+{
+  "message": "Ordinals proxy path is not available.",
+  "error": "NOT_FOUND",
+  "statusCode": 404,
+  "requestId": "…"
+}
+```
+
+## Operator access is separate
+
+Operator access uses separate authenticated private paths, and public client
+credentials never provide access to native node or indexer ports. Those paths
+are deliberately absent from this documentation and from the OpenAPI document:
+they are not part of the public surface, and describing them would be
+describing something you cannot call.
+
+## Wallet gateway
+
+The Universe Wallet compatibility gateway accepts only a fixed route and method
+list, removes browser identity headers, refuses redirects, and bounds request
+time and response size. Transaction broadcast is excluded from that gateway and
+continues through the mempool route. The phishing-list provider is validated at
+application startup, so a broken registration cannot pass the production
+release checks.
+
+## Please do not
+
+- Run load tests, automated scanners, or denial-of-service attempts against
+  production.
+- Access, modify, or retain another person's data.
+- Use a real transaction to demonstrate a defect when a description or a
+  testnet reproduction would show the same thing.
+
+If you find something that looks wrong, report it privately through
+[the security process](https://github.com/bitcoinuniverseio/docs-core/security/advisories/new).
+
+## Next
+
+- [What is public](/docs-core/api/overview/)
+- [OpenAPI reference](/docs-core/api/reference/)
+- [Bitcoin and Dogecoin data](/docs-core/data/chain-data/)

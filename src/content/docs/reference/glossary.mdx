@@ -1,0 +1,173 @@
+---
+title: Glossary
+description: >-
+  The terms this documentation uses, defined once: availability values,
+  execution modes, marketplace actions, data states, and the chain vocabulary
+  that carries specific meaning in Core.
+sidebar:
+  order: 1
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/docs-core"
+  source="src/content/docs/reference/glossary.mdx"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+## Data states
+
+**Loading** A request is in flight. A placeholder never contains a figure.
+
+**Ready** The reader answered with results.
+
+**Empty** The reader answered and there is nothing there. A fact about the
+market.
+
+**Unavailable** The reader did not answer. A fact about the read. The quantity
+is unknown, and it is never shown as zero.
+
+**Degraded** The surface answered from a partial set of readers. What is shown
+is real and incomplete.
+
+**Dash** A single figure that was not measured. Not a zero.
+
+## Availability
+
+**Enabled** Switched on in the shipped build.
+
+**Feature-gated** Implemented, switched off unless an operator enables the
+named gate.
+
+**Read-only** You can see it but you cannot trade it. No marketplace mutation
+is available.
+
+**Gated, testnet only** Behind a gate and confined to a test network.
+
+**Retired** Listings and history stay viewable; buying and listing are
+permanently closed. Not an outage.
+
+## Execution modes
+
+**In-app execution** Core builds and validates the transaction; your wallet
+signs it. Core owns the order book and the settlement record.
+
+**External execution** An external marketplace or provider owns the order book
+and execution path. Core routes to it.
+
+**Read-only** No execution path is deployed.
+
+**Live read-only** Live reads against a real index, with no production
+execution path.
+
+**Trade preview only** A trade can be previewed but never signed or broadcast:
+there is no signer.
+
+**PSBT routing only** Signed PSBTs are validated and routed. Core never funds,
+signs, or broadcasts settlement.
+
+## Marketplace actions
+
+The thirteen actions the registry tracks per protocol.
+
+**View, view collection, view activity** Reading.
+
+**List** Create a listing.
+
+**Update listing** Change a listing's terms atomically. Several protocols
+require a cancel and a relist instead.
+
+**Delist** (`unlist`) Withdraw a listing.
+
+**Buy** Purchase a listing.
+
+**Make offer, accept offer, cancel offer** The bid side of an order book.
+
+**Sell** A specific executable offer-acceptance workflow. **No protocol in the
+registry supports it.** Selling in the ordinary sense is `list` and
+`accept-offer`.
+
+**Settle** Core records a confirmed settlement itself, rather than delegating.
+
+**Reconcile** Core reconciles its own order state after a dropped, replaced, or
+reorganised transaction.
+
+## Chain vocabulary
+
+**Outpoint** `txid:vout`. The unit a metaprotocol asset actually lives at. An
+address is a convenience.
+
+**Asset-bearing output** An output carrying an inscription, a rune balance, or
+another protocol asset. It looks exactly like an ordinary output.
+
+**Satpoint** The exact satoshi position an inscription occupies within an
+output.
+
+**Cardinal** An output carrying no protocol asset, safe to spend as ordinary
+value.
+
+**Postage** The small satoshi value carried alongside an inscription, commonly
+546 satoshis.
+
+**Chain tip** The current head of the chain, verified from Universe-operated
+infrastructure.
+
+**Index tip** The height a protocol index has processed to. The difference
+between the two is **lag**.
+
+**Reorg** A chain reorganisation. Sixteen protocols reconcile their own order
+state after one; thirteen have no local order state to roll back.
+
+## Ownership models
+
+**UTXO** The asset lives at a specific unspent output. Spend it and the asset
+moves.
+
+**Balance** An indexed balance attached to an address rather than an output.
+
+**Hybrid** An indexed balance whose evidence is anchored to outputs.
+
+## Gates and profiles
+
+**Feature gate** A named switch an operator must enable before a protocol's
+actions can run.
+
+**Mutation gate** Everything a mutation must prove before it proceeds, stated
+per protocol in the registry.
+
+**Fail closed** A check that does not pass **stops** the action rather than
+downgrading to a warning.
+
+**Marketplace profile** `read-only` keeps browsing open with every trading
+action closed. `mutation-ready` opens trading.
+
+**Authority cycle** The gate that opens trading: every protocol authority must
+report current, matching evidence for three consecutive refresh cycles.
+
+## Authorities
+
+**Order book authority** What answers "which orders exist".
+
+**Ownership authority** What answers "who holds this, at which outpoint".
+
+**Settlement authority** What answers "did this trade complete".
+
+**Protocol state authority** The index that answers questions about the
+protocol itself, as distinct from questions about the chain.
+
+## Confidence, in search
+
+**Exact** The query is that entity. Nothing else has this shape.
+
+**Likely** The shape identifies the entity, but another reading exists.
+
+**Candidate** A lookup the protocol's naming rules permit. Not a claim that the
+asset exists.
+
+## Next
+
+- [How to read a protocol row](/docs-core/protocols/how-to-read/)
+- [Reading the numbers](/docs-core/start/reading-the-numbers/)

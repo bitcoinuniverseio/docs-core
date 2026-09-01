@@ -1,0 +1,719 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Bitcoin Universe Core public read API",
+    "version": "2026-09-01",
+    "summary": "The unauthenticated read endpoints of the Core API.",
+    "description": "Only endpoints that answer an unauthenticated GET on https://api.bitcoinuniverse.io are described here, and every one of them was verified against the live service on 1 September 2026.\n\nThis document deliberately omits private, operator, admin, and authenticated mutation routes. Their absence is not an oversight: they are not part of the public surface and describing them would be describing something you cannot call. The Core API denies unknown routes, so a 404 on a path that is not in this document does not imply that an internal service sits behind it.\n\nEvery response carries an `X-Universe-Release` header holding the exact commit the deployment was built from, an `X-Request-Id` for correlating a report, and a `Server-Timing` header attributing the response to database, upstream, and application time.",
+    "contact": {
+      "name": "Core documentation",
+      "url": "https://bitcoinuniverseio.github.io/docs-core/api/overview/"
+    },
+    "license": {
+      "name": "Documentation licensed CC BY 4.0",
+      "url": "https://creativecommons.org/licenses/by/4.0/"
+    }
+  },
+  "externalDocs": {
+    "description": "Public API guide",
+    "url": "https://bitcoinuniverseio.github.io/docs-core/api/overview/"
+  },
+  "servers": [
+    {
+      "url": "https://api.bitcoinuniverse.io",
+      "description": "Production. The only public origin."
+    }
+  ],
+  "tags": [
+    {
+      "name": "status",
+      "description": "Health, readiness, and per-protocol index freshness."
+    },
+    {
+      "name": "chain",
+      "description": "Bitcoin chain reads through the reviewed public facade."
+    },
+    {
+      "name": "address",
+      "description": "Address lookups through the reviewed public facade."
+    },
+    {
+      "name": "ordinals",
+      "description": "The Ordinals index status page."
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": ["status"],
+        "operationId": "getHealth",
+        "summary": "Application health, release identity, and marketplace profile",
+        "description": "The readiness contract. It reports the exact release commit, whether read traffic is ready, whether mutation traffic is open, and the reasons it is not. Read availability and transaction availability are reported separately on purpose: a healthy page is not evidence that trading is open.",
+        "responses": {
+          "200": {
+            "description": "Health report. A 200 does not by itself mean the service is ready: read `readTraffic.ready` and `mutationTraffic.ready`.",
+            "headers": {
+              "X-Universe-Release": { "$ref": "#/components/headers/XUniverseRelease" },
+              "X-Request-Id": { "$ref": "#/components/headers/XRequestId" },
+              "Server-Timing": { "$ref": "#/components/headers/ServerTiming" },
+              "Cache-Control": {
+                "description": "Always `no-store`. Health is never cached.",
+                "schema": { "type": "string" }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Health" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/indexer-health": {
+      "get": {
+        "tags": ["status"],
+        "operationId": "getIndexerHealth",
+        "summary": "Per-protocol index identity, tip, lag, and freshness",
+        "description": "One entry per marketplace protocol. This is the answer to \"where did that number come from, and how old is it\", for every protocol at once.\n\nRead `tip` against `nodeTip` rather than trusting `lag` alone: a protocol that has never been read successfully reports zeroes and a null `lastSuccess`, which is not a chain at height zero.",
+        "responses": {
+          "200": {
+            "description": "Freshness report for every protocol the deployment serves.",
+            "headers": {
+              "X-Universe-Release": { "$ref": "#/components/headers/XUniverseRelease" },
+              "X-Request-Id": { "$ref": "#/components/headers/XRequestId" }
+            },
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/IndexerHealth" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ordinals/status": {
+      "get": {
+        "tags": ["ordinals"],
+        "operationId": "getOrdinalsStatus",
+        "summary": "The Ordinals index status page",
+        "description": "The status page of the Ordinals index that Core reads, served through the public facade. It answers with HTML, not JSON: it is the index's own page rather than a Core-shaped response. It reports the chain, the indexed height, inscription counts, and index uptime.\n\nUse `/indexer-health` instead when you want a machine-readable answer about Ordinals freshness.",
+        "responses": {
+          "200": {
+            "description": "The index status page.",
+            "content": {
+              "text/html": {
+                "schema": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mempool/api/blocks/tip/height": {
+      "get": {
+        "tags": ["chain"],
+        "operationId": "getTipHeight",
+        "summary": "Current Bitcoin chain tip height",
+        "responses": {
+          "200": {
+            "description": "The tip height as a bare decimal integer in the body.",
+            "headers": {
+              "RateLimit-Limit": { "$ref": "#/components/headers/RateLimitLimit" },
+              "RateLimit-Remaining": { "$ref": "#/components/headers/RateLimitRemaining" }
+            },
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string", "pattern": "^[0-9]+$" },
+                "example": "964970"
+              }
+            }
+          },
+          "429": { "$ref": "#/components/responses/TooManyRequests" },
+          "503": { "$ref": "#/components/responses/Unavailable" }
+        }
+      }
+    },
+    "/mempool/api/blocks/tip/hash": {
+      "get": {
+        "tags": ["chain"],
+        "operationId": "getTipHash",
+        "summary": "Current Bitcoin chain tip block hash",
+        "responses": {
+          "200": {
+            "description": "The tip block hash as a bare hex string in the body.",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+              }
+            }
+          },
+          "429": { "$ref": "#/components/responses/TooManyRequests" },
+          "503": { "$ref": "#/components/responses/Unavailable" }
+        }
+      }
+    },
+    "/mempool/api/block-height/{height}": {
+      "get": {
+        "tags": ["chain"],
+        "operationId": "getBlockHashByHeight",
+        "summary": "Block hash at a height",
+        "parameters": [{ "$ref": "#/components/parameters/Height" }],
+        "responses": {
+          "200": {
+            "description": "The block hash at that height, as a bare hex string.",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "429": { "$ref": "#/components/responses/TooManyRequests" },
+          "503": { "$ref": "#/components/responses/Unavailable" }
+        }
+      }
+    },
+    "/mempool/api/blocks": {
+      "get": {
+        "tags": ["chain"],
+        "operationId": "listRecentBlocks",
+        "summary": "Recent blocks",
+        "description": "A compact summary of the most recent blocks. Each entry carries the block id, height, timestamp in seconds, transaction count, and median fee rate.",
+        "responses": {
+          "200": {
+            "description": "Recent block summaries, newest first.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/BlockSummary" }
+                }
+              }
+            }
+          },
+          "429": { "$ref": "#/components/responses/TooManyRequests" },
+          "503": { "$ref": "#/components/responses/Unavailable" }
+        }
+      }
+    },
+    "/mempool/api/mempool": {
+      "get": {
+        "tags": ["chain"],
+        "operationId": "getMempoolSummary",
+        "summary": "Mempool transaction count and total virtual size",
+        "responses": {
+          "200": {
+            "description": "Mempool summary.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MempoolSummary" }
+              }
+            }
+          },
+          "429": { "$ref": "#/components/responses/TooManyRequests" },
+          "503": { "$ref": "#/components/responses/Unavailable" }
+        }
+      }
+    },
+    "/mempool/api/v1/fees/recommended": {
+      "get": {
+        "tags": ["chain"],
+        "operationId": "getRecommendedFees",
+        "summary": "Recommended fee rates in satoshis per virtual byte",
+        "description": "Fee estimates read from Universe-operated infrastructure. There is no public-provider fallback: when the service is unavailable the API answers with an explicit failure rather than a stale or invented rate.",
+        "responses": {
+          "200": {
+            "description": "Fee rates in satoshis per virtual byte.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RecommendedFees" }
+              }
+            }
+          },
+          "429": { "$ref": "#/components/responses/TooManyRequests" },
+          "503": { "$ref": "#/components/responses/Unavailable" }
+        }
+      }
+    },
+    "/mempool/api/address/{address}": {
+      "get": {
+        "tags": ["address"],
+        "operationId": "getAddressStats",
+        "summary": "Funded and spent output totals for an address",
+        "description": "Confirmed chain totals and mempool totals are reported separately, so an unconfirmed change is never folded into a confirmed balance.",
+        "parameters": [{ "$ref": "#/components/parameters/Address" }],
+        "responses": {
+          "200": {
+            "description": "Address statistics.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AddressStats" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "429": { "$ref": "#/components/responses/TooManyRequests" },
+          "503": { "$ref": "#/components/responses/Unavailable" }
+        }
+      }
+    },
+    "/mempool/api/address/{address}/utxo": {
+      "get": {
+        "tags": ["address"],
+        "operationId": "listAddressUtxos",
+        "summary": "Unspent outputs held by an address",
+        "description": "A failure to read is reported as unavailable. It is never presented as a confirmed empty wallet. An empty array means the address was read and holds nothing.\n\nThis response says nothing about whether an output carries an inscription, a rune balance, or any other protocol asset. Treat every output as potentially asset-bearing until an index says otherwise.",
+        "parameters": [{ "$ref": "#/components/parameters/Address" }],
+        "responses": {
+          "200": {
+            "description": "Unspent outputs. An empty array is a confirmed empty result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Utxo" }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "429": { "$ref": "#/components/responses/TooManyRequests" },
+          "503": { "$ref": "#/components/responses/Unavailable" }
+        }
+      }
+    },
+    "/mempool/api/address/{address}/txs": {
+      "get": {
+        "tags": ["address"],
+        "operationId": "listAddressTransactions",
+        "summary": "Transactions involving an address",
+        "parameters": [{ "$ref": "#/components/parameters/Address" }],
+        "responses": {
+          "200": {
+            "description": "Transactions, most recent first.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Transaction" }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "429": { "$ref": "#/components/responses/TooManyRequests" },
+          "503": { "$ref": "#/components/responses/Unavailable" }
+        }
+      }
+    },
+    "/mempool/api/tx/{txid}": {
+      "get": {
+        "tags": ["chain"],
+        "operationId": "getTransaction",
+        "summary": "One transaction, with its inputs and outputs",
+        "parameters": [{ "$ref": "#/components/parameters/Txid" }],
+        "responses": {
+          "200": {
+            "description": "The transaction.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Transaction" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "429": { "$ref": "#/components/responses/TooManyRequests" },
+          "503": { "$ref": "#/components/responses/Unavailable" }
+        }
+      }
+    }
+  },
+  "components": {
+    "headers": {
+      "XUniverseRelease": {
+        "description": "The exact commit the deployment was built from. This is Core's release identifier: there is no semantic version string.",
+        "schema": { "type": "string", "pattern": "^[0-9a-f]{40}$" }
+      },
+      "XRequestId": {
+        "description": "Correlation id for this response. Quote it when reporting a problem.",
+        "schema": { "type": "string", "format": "uuid" }
+      },
+      "ServerTiming": {
+        "description": "Attribution of the response time to database, upstream, and application work.",
+        "schema": { "type": "string" }
+      },
+      "RateLimitLimit": {
+        "description": "Requests permitted in the current window.",
+        "schema": { "type": "integer" }
+      },
+      "RateLimitRemaining": {
+        "description": "Requests remaining in the current window.",
+        "schema": { "type": "integer" }
+      }
+    },
+    "parameters": {
+      "Address": {
+        "name": "address",
+        "in": "path",
+        "required": true,
+        "description": "A Bitcoin address.",
+        "schema": { "type": "string", "minLength": 20, "maxLength": 100 },
+        "example": "bc1qgdjqv0av3q56jvd82tkdjpy7gdp9ut8tlqmgrpmv24sq90ecnvqqjwvw97"
+      },
+      "Txid": {
+        "name": "txid",
+        "in": "path",
+        "required": true,
+        "description": "A transaction id, 64 lowercase hexadecimal characters.",
+        "schema": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      },
+      "Height": {
+        "name": "height",
+        "in": "path",
+        "required": true,
+        "description": "A block height.",
+        "schema": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "The request did not validate. The facade rejects a malformed identifier rather than passing it upstream.",
+        "content": {
+          "application/json": { "schema": { "$ref": "#/components/schemas/Error" } }
+        }
+      },
+      "NotFound": {
+        "description": "No such record, or the path is not a registered public reader route. A 404 on an unregistered path is intentional and does not imply that an internal service exists there.",
+        "content": {
+          "application/json": { "schema": { "$ref": "#/components/schemas/Error" } }
+        }
+      },
+      "TooManyRequests": {
+        "description": "The caller exceeded its rate budget. Wait for the interval the rate-limit headers indicate before retrying.",
+        "content": {
+          "application/json": { "schema": { "$ref": "#/components/schemas/Error" } }
+        }
+      },
+      "Unavailable": {
+        "description": "The Universe-operated service behind this reader could not answer. There is no public-provider fallback, so this is an explicit unavailable answer rather than a zero or a stale value. Treat the quantity as unknown.",
+        "content": {
+          "application/json": { "schema": { "$ref": "#/components/schemas/Error" } }
+        }
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "description": "The error envelope every public route uses.",
+        "required": ["message", "error", "statusCode"],
+        "properties": {
+          "message": { "type": "string", "description": "Plain-language description." },
+          "error": { "type": "string", "description": "Stable error code, for example NOT_FOUND." },
+          "statusCode": { "type": "integer" },
+          "requestId": { "type": "string", "format": "uuid" }
+        },
+        "examples": [
+          {
+            "message": "Ordinals proxy path is not available.",
+            "error": "NOT_FOUND",
+            "statusCode": 404,
+            "requestId": "f40208c7-2a2f-4bcb-86da-0d280f5512f4"
+          }
+        ]
+      },
+      "Health": {
+        "type": "object",
+        "required": ["ok", "timestamp", "release", "marketplaceProfile"],
+        "properties": {
+          "ok": { "type": "boolean" },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "release": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$",
+            "description": "The commit this deployment was built from."
+          },
+          "marketplaceProfile": {
+            "type": "string",
+            "description": "Which profile the deployment is running. `read-only` keeps browsing open while every trading action stays closed.",
+            "examples": ["read-only", "mutation-ready"]
+          },
+          "service": {
+            "type": "object",
+            "properties": {
+              "identity": { "type": "string" },
+              "healthy": { "type": "boolean" }
+            }
+          },
+          "readTraffic": {
+            "type": "object",
+            "description": "Whether reads are ready. Reported separately from mutation readiness on purpose.",
+            "properties": { "ready": { "type": "boolean" } }
+          },
+          "mutationTraffic": {
+            "$ref": "#/components/schemas/MutationTraffic"
+          },
+          "dependencies": {
+            "type": "object",
+            "additionalProperties": { "type": "string" },
+            "description": "Named dependencies and their state, for example database and bitcoinNetwork."
+          },
+          "networks": {
+            "type": "object",
+            "description": "Keyed by `chain:network`.",
+            "additionalProperties": { "$ref": "#/components/schemas/NetworkState" }
+          },
+          "indexers": {
+            "type": "array",
+            "description": "A compact per-protocol summary. `/indexer-health` carries the full form.",
+            "items": { "type": "object" }
+          }
+        }
+      },
+      "MutationTraffic": {
+        "type": "object",
+        "description": "Whether trading actions are open. A read-only deployment reports `ready: false` here while read traffic stays available.",
+        "properties": {
+          "enabled": { "type": "boolean" },
+          "preflightReady": { "type": "boolean" },
+          "ready": { "type": "boolean" },
+          "status": { "type": "string", "examples": ["not_ready", "ready"] },
+          "reasons": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Stable reason codes naming every gate that is closed."
+          },
+          "authorityCycles": { "$ref": "#/components/schemas/AuthorityCycles" },
+          "authoritiesReady": { "type": "boolean" }
+        }
+      },
+      "AuthorityCycles": {
+        "type": "object",
+        "description": "The mutation gate. Every protocol authority must report current, agreeing evidence for `requiredHealthyCycles` consecutive refresh cycles before trading can open. Any missing, stale, conflicting, or failed authority resets the count.",
+        "properties": {
+          "completedCycles": { "type": "integer" },
+          "consecutiveHealthyCycles": { "type": "integer" },
+          "requiredHealthyCycles": { "type": "integer" },
+          "lastCycleAt": { "type": ["string", "null"], "format": "date-time" },
+          "lastCycleHealthy": { "type": "boolean" },
+          "ready": { "type": "boolean" },
+          "total": { "type": "integer", "description": "Protocol authorities in the cycle." },
+          "current": { "type": "integer" },
+          "stale": { "type": "integer" },
+          "unknown": { "type": "integer" },
+          "error": { "type": "integer" }
+        }
+      },
+      "NetworkState": {
+        "type": "object",
+        "properties": {
+          "chainTip": { "type": "integer", "description": "The verified chain head." },
+          "indexedHeight": { "type": "integer" },
+          "lag": { "type": "integer" },
+          "ready": { "type": "boolean" },
+          "synchronized": { "type": "boolean" },
+          "lastSuccessfulUpdate": { "type": ["string", "null"], "format": "date-time" },
+          "indexers": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "IndexerHealth": {
+        "type": "object",
+        "required": ["status", "total", "data"],
+        "properties": {
+          "status": { "type": "string", "examples": ["success"] },
+          "total": { "type": "integer", "description": "Number of protocol entries in `data`." },
+          "authorityCycles": { "$ref": "#/components/schemas/AuthorityCycles" },
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/IndexerEntry" }
+          }
+        }
+      },
+      "IndexerEntry": {
+        "type": "object",
+        "required": ["protocolId", "status"],
+        "properties": {
+          "protocolId": { "type": "string", "description": "The registry protocol id." },
+          "indexerIdentity": {
+            "type": ["string", "null"],
+            "description": "Which index actually answered."
+          },
+          "network": { "type": ["string", "null"], "examples": ["bitcoin:mainnet"] },
+          "source": { "type": ["string", "null"] },
+          "configuredIndexers": {
+            "type": "object",
+            "properties": {
+              "primary": { "type": ["string", "null"] },
+              "fallbacks": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "observedAt": { "type": ["string", "null"], "format": "date-time" },
+          "ageMs": { "type": ["integer", "null"], "description": "Null when there is no successful observation to age." },
+          "freshnessLimitMs": { "type": ["integer", "null"] },
+          "lastRefreshAttemptAt": { "type": ["string", "null"], "format": "date-time" },
+          "lastSuccess": {
+            "type": ["string", "null"],
+            "format": "date-time",
+            "description": "Null means this index has never been read successfully in the current process. It does not mean the protocol is empty."
+          },
+          "lastError": { "type": ["string", "null"], "format": "date-time" },
+          "lastTimeout": { "type": ["string", "null"], "format": "date-time" },
+          "errorRate": { "type": ["number", "null"] },
+          "schema": {
+            "type": "object",
+            "properties": {
+              "version": { "type": ["string", "null"] },
+              "valid": { "type": "boolean" }
+            }
+          },
+          "tip": { "type": "integer", "description": "The index's own height. Zero with a null `lastSuccess` means unread, not height zero." },
+          "nodeTip": { "type": "integer", "description": "The node height the index is compared against." },
+          "lag": { "type": "integer", "description": "Blocks between `nodeTip` and `tip`." },
+          "capabilities": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Actions this authority is currently able to execute."
+          },
+          "declaredCapabilities": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Actions the registry declares for this protocol. Compare with `capabilities`: declared is not live."
+          },
+          "authority": {
+            "type": "object",
+            "properties": {
+              "orders": { "type": "string" },
+              "ownership": { "type": "string" },
+              "settlement": { "type": "string" },
+              "agreement": { "type": "string", "examples": ["unknown", "agree", "disagree"] }
+            }
+          },
+          "freshness": {
+            "type": "object",
+            "description": "Stale and disagreeing are separate booleans because an old observation and two authorities that disagree are different problems.",
+            "properties": {
+              "enforced": { "type": "boolean" },
+              "declaredMaxObservationAgeMs": { "type": ["integer", "null"] },
+              "declaredMaxLagBlocks": { "type": ["integer", "null"] },
+              "effectiveMaxObservationAgeMs": { "type": ["integer", "null"] },
+              "effectiveMaxLagBlocks": { "type": ["integer", "null"] },
+              "stale": { "type": "boolean" },
+              "lagging": { "type": "boolean" },
+              "disagreeing": { "type": "boolean" }
+            }
+          },
+          "status": { "type": "string", "examples": ["ready", "stale", "error", "unknown"] },
+          "mutationReady": { "type": "boolean" },
+          "reasonCode": { "type": ["string", "null"], "description": "A stable code naming the dominant reason for the current status." },
+          "reasons": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "BlockSummary": {
+        "type": "object",
+        "required": ["id", "height"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "height": { "type": "integer" },
+          "timestamp": { "type": "integer", "description": "Unix seconds." },
+          "tx_count": { "type": "integer" },
+          "medianFee": { "type": "number", "description": "Satoshis per virtual byte." }
+        }
+      },
+      "MempoolSummary": {
+        "type": "object",
+        "properties": {
+          "count": { "type": "integer", "description": "Transactions in the mempool." },
+          "vsize": { "type": "integer", "description": "Total virtual size in virtual bytes." }
+        }
+      },
+      "RecommendedFees": {
+        "type": "object",
+        "description": "Satoshis per virtual byte.",
+        "properties": {
+          "fastestFee": { "type": "number" },
+          "halfHourFee": { "type": "number" },
+          "hourFee": { "type": "number" },
+          "economyFee": { "type": "number" },
+          "minimumFee": { "type": "number" }
+        }
+      },
+      "AddressStats": {
+        "type": "object",
+        "properties": {
+          "address": { "type": "string" },
+          "chain_stats": { "$ref": "#/components/schemas/TxoStats" },
+          "mempool_stats": { "$ref": "#/components/schemas/TxoStats" }
+        }
+      },
+      "TxoStats": {
+        "type": "object",
+        "description": "Sums are in satoshis. Subtract `spent_txo_sum` from `funded_txo_sum` for a balance, and keep confirmed and mempool figures apart.",
+        "properties": {
+          "funded_txo_count": { "type": "integer" },
+          "funded_txo_sum": { "type": "integer" },
+          "spent_txo_count": { "type": "integer" },
+          "spent_txo_sum": { "type": "integer" },
+          "tx_count": { "type": "integer" }
+        }
+      },
+      "Utxo": {
+        "type": "object",
+        "required": ["txid", "vout", "value"],
+        "properties": {
+          "txid": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "vout": { "type": "integer" },
+          "value": { "type": "integer", "description": "Satoshis." },
+          "status": { "$ref": "#/components/schemas/TxStatus" }
+        }
+      },
+      "TxStatus": {
+        "type": "object",
+        "properties": {
+          "confirmed": { "type": "boolean" },
+          "block_height": { "type": "integer" },
+          "block_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "block_time": { "type": "integer", "description": "Unix seconds." }
+        }
+      },
+      "Transaction": {
+        "type": "object",
+        "required": ["txid"],
+        "properties": {
+          "txid": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "version": { "type": "integer" },
+          "locktime": { "type": "integer" },
+          "size": { "type": "integer" },
+          "weight": { "type": "integer" },
+          "fee": { "type": "integer", "description": "Satoshis." },
+          "vin": { "type": "array", "items": { "$ref": "#/components/schemas/Vin" } },
+          "vout": { "type": "array", "items": { "$ref": "#/components/schemas/Vout" } },
+          "status": { "$ref": "#/components/schemas/TxStatus" }
+        }
+      },
+      "Vin": {
+        "type": "object",
+        "properties": {
+          "txid": { "type": "string" },
+          "vout": { "type": "integer" },
+          "is_coinbase": { "type": "boolean" },
+          "scriptsig": { "type": "string" },
+          "scriptsig_asm": { "type": "string" },
+          "witness": { "type": "array", "items": { "type": "string" } },
+          "sequence": { "type": "integer" },
+          "prevout": { "$ref": "#/components/schemas/Vout" }
+        }
+      },
+      "Vout": {
+        "type": "object",
+        "description": "An output. Nothing here says whether the output carries a protocol asset; an output holding an inscription or a rune balance looks exactly like one that does not.",
+        "properties": {
+          "value": { "type": "integer", "description": "Satoshis." },
+          "scriptpubkey": { "type": "string" },
+          "scriptpubkey_asm": { "type": "string" },
+          "scriptpubkey_type": { "type": "string" },
+          "scriptpubkey_address": { "type": "string" }
+        }
+      }
+    }
+  }
+}

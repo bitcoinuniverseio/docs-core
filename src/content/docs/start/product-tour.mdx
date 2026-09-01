@@ -1,0 +1,143 @@
+---
+title: Product tour
+description: >-
+  Real captures of Core running at www.bitcoinuniverse.io with no wallet
+  connected: the home screen, the coverage page, an Ordinals market, a market
+  whose reader failed, the address explorer, and Portfolio before connecting.
+sidebar:
+  order: 5
+---
+
+import { Image } from 'astro:assets';
+import Provenance from '../../../components/Provenance.astro';
+import homeLight from '../../../assets/shots/home-light.webp';
+import homeDark from '../../../assets/shots/home-dark.webp';
+import homeMobile from '../../../assets/shots/home-light-mobile.webp';
+import coverageLight from '../../../assets/shots/coverage-light.webp';
+import coverageDark from '../../../assets/shots/coverage-dark.webp';
+import marketsOrdinals from '../../../assets/shots/markets-ordinals-light.webp';
+import marketsRunes from '../../../assets/shots/markets-runes-light.webp';
+import explorer from '../../../assets/shots/explorer-light.webp';
+import portfolio from '../../../assets/shots/portfolio-disconnected-light.webp';
+
+<Provenance
+  repo="bitcoinuniverseio/docs-core"
+  source="src/assets/shots/"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+Every image on this page is the running product at
+`www.bitcoinuniverse.io`, captured by a script that visits the public origin,
+waits for each route to render rather than its skeleton, declines optional
+storage, and connects no wallet. None of them is a mock.
+
+## Home
+
+The first screen states how many protocols this build serves, counted from the
+same registry that builds the routes, and offers four next steps. Nothing on it
+needs a wallet.
+
+<figure class="shot">
+  <Image src={homeLight} alt="The Bitcoin Universe home screen: a headline counting the protocols this build serves, a sentence naming the families and chains with a link to the full list, and four start cards for connecting a wallet, buying, selling, and market activity." widths={[420, 840, 1440]} sizes="(max-width: 60rem) 100vw, 55rem" />
+  <figcaption>Home, light theme.</figcaption>
+</figure>
+
+Light and dark are two complete designs rather than one theme with inverted
+colours.
+
+<figure class="shot">
+  <Image src={homeDark} alt="The same home screen in dark theme, with the same headline, the same four start cards, and a graphite background." widths={[420, 840, 1440]} sizes="(max-width: 60rem) 100vw, 55rem" />
+  <figcaption>Home, dark theme.</figcaption>
+</figure>
+
+On a phone the same content stacks, and four persistent destinations sit in a
+bottom bar that never covers the page.
+
+<figure class="shot" style="max-width:22rem">
+  <Image src={homeMobile} alt="The home screen on a phone, with the headline, the start cards stacked vertically, and a bottom bar holding Home, Trade, Portfolio and More." widths={[390]} sizes="22rem" />
+  <figcaption>Home on a phone, 390 pixels wide.</figcaption>
+</figure>
+
+## Protocol coverage
+
+One page lists what this build serves, grouped by family, with the index and
+the market for each row. The counts are computed from the same registry that
+builds the navigation, so the number on the page is the number of protocols
+the application can actually open.
+
+<figure class="shot">
+  <Image src={coverageLight} alt="The protocol coverage page: totals for protocols, families, chains, and how many have an index, then every row grouped by family with links to its index and its market, and a read source named on the rows the browser fetches elsewhere." widths={[420, 840, 1440]} sizes="(max-width: 60rem) 100vw, 55rem" />
+  <figcaption>Coverage, light theme.</figcaption>
+</figure>
+
+<figure class="shot">
+  <Image src={coverageDark} alt="The same protocol coverage page in dark theme." widths={[420, 840, 1440]} sizes="(max-width: 60rem) 100vw, 55rem" />
+  <figcaption>Coverage, dark theme.</figcaption>
+</figure>
+
+That page and the [support matrix](/docs-core/protocols/support-matrix/) answer
+different questions. Coverage says what Core *reads*. The matrix says what Core
+can *do*.
+
+## A market
+
+Each protocol family has a market with the same anatomy: a family picker, the
+period the figures cover, a searchable table, and an activity feed. A figure
+the reader did not return is a dash, never a zero.
+
+<figure class="shot">
+  <Image src={marketsOrdinals} alt="The Ordinals market showing featured and top collections, a sortable collections table with floor price and volume columns, and an activity feed beside it." widths={[420, 840, 1440]} sizes="(max-width: 60rem) 100vw, 55rem" />
+  <figcaption>The Ordinals market.</figcaption>
+</figure>
+
+## A market whose reader failed
+
+This is the capture worth studying. When a reader cannot be reached, the market
+says exactly that and offers a retry. It never presents a failed read as an
+empty market.
+
+<figure class="shot">
+  <Image src={marketsRunes} alt="The Runes market showing a message that the order book did not answer so the market could not be read, with a retry link, and a table in a Market unavailable state rather than an empty table." widths={[420, 840, 1440]} sizes="(max-width: 60rem) 100vw, 55rem" />
+  <figcaption>
+    Unavailable, not empty. Compare it with a market that answered and had
+    nothing listed: that one says "nothing listed" and offers no retry, because
+    retrying would not change the answer.
+  </figcaption>
+</figure>
+
+## Explore an address
+
+Paste any Bitcoin or Dogecoin address to see its holdings across the protocols
+Core reads, with no wallet connected and nothing to sign.
+
+<figure class="shot">
+  <Image src={explorer} alt="The Explore address page with an address search field, a bulk watchlist input, and the list of protocols this view reads." widths={[420, 840, 1440]} sizes="(max-width: 60rem) 100vw, 55rem" />
+  <figcaption>The address explorer.</figcaption>
+</figure>
+
+## Portfolio before connecting
+
+Portfolio opens with what connecting gives you, and offers explore mode for
+anyone who would rather inspect a public address than connect a wallet.
+
+<figure class="shot">
+  <Image src={portfolio} alt="The Portfolio page before a wallet is connected, naming what connecting shows and offering four choices: connect, explore an address, browse markets, and home." widths={[420, 840, 1440]} sizes="(max-width: 60rem) 100vw, 55rem" />
+  <figcaption>Portfolio, disconnected.</figcaption>
+</figure>
+
+## What is not pictured here
+
+Screens that need a connected wallet are described in words rather than shown,
+because a real capture of them would contain someone's holdings and a mock
+would be an invention. The
+[Portfolio](/docs-core/portfolio/portfolio/) and
+[market task](/docs-core/markets/buy/) pages describe those interfaces
+precisely instead.
+
+## Next
+
+- [What Core is](/docs-core/start/what-core-is/)
+- [Reading the numbers](/docs-core/start/reading-the-numbers/)
+- [Design and accessibility](/docs-core/quality/design-and-accessibility/)

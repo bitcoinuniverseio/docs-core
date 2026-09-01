@@ -1,0 +1,104 @@
+---
+title: Design and accessibility
+description: >-
+  The design Core ships today: a neutral surface with one brand colour, colour
+  never used as the only signal, tabular figures, and the WCAG 2.2 AA
+  commitments checked on every change.
+sidebar:
+  order: 1
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="frontend/src/configs/theme.js, frontend design system"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+Core is a place to explore, verify, and act on Bitcoin-native assets. The
+interface serves that job: the data comes first, the decoration stays out of
+the way, and the screen says where a number came from and when it was read.
+
+This page describes the design the product ships today. It replaced the earlier
+pink identity on 29 August 2026.
+
+## What you see
+
+**A neutral surface, one brand colour.** Dark mode is a neutral graphite; light
+mode is a warm neutral. Bitcoin orange marks the one action that matters on a
+screen, the current selection, and the focus ring. It is not used as a page
+background, so nothing competes with the data you came to read.
+
+**Both themes are designed.** Light and dark are two complete designs rather
+than one theme with inverted colours. The application follows your system
+setting, and you can pick a theme yourself.
+
+**Colour is never the only signal.** Every status also carries a label or an
+icon, so a price change, a warning, or an unavailable market reads the same way
+whether or not you distinguish those colours.
+
+**Numbers line up.** Prices, amounts, fee rates, and supply figures are set in
+digits of equal width, so a column stays aligned while values update and a
+figure never changes width as it ticks.
+
+**One typeface for the interface, one for data.** Text is set in Inter;
+addresses, hashes, tickers, and code are set in JetBrains Mono. Both are served
+from the application's own origin, so no third party is contacted to render a
+page and no font request can track you across sites.
+
+## States are distinct
+
+The product separates facts that look similar and are not:
+
+- **Nothing is listed** is not **the market could not be read**.
+- **Zero** is not **unknown**, **unavailable**, or **not applicable**.
+- An empty screen says what was checked and what to do next. An error says what
+  failed, what is unaffected, and whether trying again is worthwhile.
+
+[Reading the numbers](/docs-core/start/reading-the-numbers/) is the page that
+makes this usable.
+
+## Accessibility
+
+- Text and interface colours are checked against WCAG 2.2 AA contrast targets
+  in **both** themes, and the check runs on every change.
+- Every action can be reached and operated from the keyboard, and the focused
+  control is always visible.
+- Touch targets are at least 44 by 44 pixels.
+- If your system asks for reduced motion, animation is removed rather than
+  shortened.
+- Automated accessibility tests run against the application's screens and
+  dialogs as part of the release gate, at a desktop width and at a phone width.
+- A disabled control states its reason beside it, and exposes that explanation
+  to assistive technology rather than only to sighted readers. Disabled payment
+  controls do this explicitly.
+
+If you find a screen that fails any of the above,
+[open an issue](https://github.com/bitcoinuniverseio/docs-core/issues) and name
+the screen and the width you saw it at.
+
+## This documentation site
+
+Held to the same commitments, and to a few more that suit a documentation site:
+
+- A skip link, landmark regions, and a heading hierarchy with no skipped
+  levels.
+- Every table that can overflow sits in its own keyboard-focusable scroll
+  region, **named after the heading it sits under** rather than all sharing one
+  label, so a screen reader's landmark list distinguishes them.
+- Every diagram is inline SVG carrying a `<title>` and a `<desc>` that describes
+  the mechanism, not just the picture. Diagram colours come from the same theme
+  tokens as the rest of the page, so they are legible in both themes.
+- Status colours are paired with words. The support matrix says `Yes` and `No`
+  in every cell rather than relying on a tint.
+- Reduced motion and forced-colors modes are both handled.
+- Ordinary content pages work with JavaScript disabled.
+
+## Next
+
+- [Responsive behaviour](/docs-core/quality/responsive/)
+- [Performance](/docs-core/quality/performance/)
+- [Product tour](/docs-core/start/product-tour/)

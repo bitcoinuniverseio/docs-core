@@ -1,0 +1,97 @@
+---
+title: 'Task: update or delist'
+description: >-
+  Repricing a listing and taking it down: which protocols support an atomic
+  update and which require a cancel and relist, plus the exact steps and
+  failure states for each.
+sidebar:
+  order: 5
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="backend/packages/ecosystem-contracts/lib/protocols.js, Marketplace v1 action flow"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+**Intended reader:** someone with an open listing.
+**Goal:** a new price, or no listing.
+**Chain and network:** Bitcoin or Dogecoin mainnet.
+
+## Check which one you can do
+
+Update and delist are separate capabilities, and several protocols support one
+without the other.
+
+| Capability | Supported by | Read this if yours is not on the list |
+| --- | --- | --- |
+| `update-listing` | 16 of 29 | Your protocol requires a cancel and a relist |
+| `unlist` | 19 of 29 | Your protocol has no seller cancellation path |
+
+Three cases are worth naming, in the registry's own words:
+
+- **Bitcoin Stamps, SRC-20, and OP Inscriptions**: *listings must be cancelled
+  and relisted; no atomic listing update is implemented*. Delist, then list
+  again at the new price.
+- **Ordex**: *does not mutate signed PSBT terms; publish a new signed order
+  instead*. And separately, *withdrawal is an operator-admin action; no public
+  seller cancellation authorization is implemented*. An Ordex ask is not
+  something you can take down yourself.
+- **Read-only protocols**: neither, and no gate would change it.
+
+The [support matrix](/docs-core/protocols/support-matrix/) has every row.
+
+## Updating a price
+
+1. Open the asset from Portfolio or its market. An active listing shows its
+   atomic price and marketplace with **Edit**.
+2. Select **Edit** and enter the new price.
+3. Read the review screen: identity, quantity, new price, seller service fee,
+   and net proceeds.
+4. Approve in your wallet.
+
+An update is recorded as a **new revision** of the same listing rather than as
+a replacement, which is what lets the authority reject a stale edit: if the
+listing moved on between your reading it and your signing, the revision check
+fails and the edit is refused rather than silently overwriting a newer state.
+
+## Delisting
+
+1. Open the asset and select **Delist**.
+2. Read the review screen. It rechecks live readiness, ownership, the listing
+   revision, and protocol state before your wallet is asked for anything.
+3. Approve in your wallet.
+
+The asset returns to *Not listed*.
+
+## Expected result
+
+- **Update:** the same listing at the new price, as a new revision, visible
+  from the card, the asset detail, and the market.
+- **Delist:** no open listing. The asset shows *Not listed*.
+
+## How to verify
+
+Reload Portfolio and wait for the listing read to succeed. A card in a
+**checking** state has not confirmed anything yet; do not read it as unlisted.
+Then confirm on the protocol's market and in the activity feed.
+
+## Common failure states
+
+| What happens | What it means | Recovery |
+| --- | --- | --- |
+| No **Edit** control, only **Delist** | The protocol does not support an atomic update | Delist and list again |
+| No **Delist** control either | The protocol has no seller cancellation path. Ordex is the case that surprises people | Read the protocol's page for the registry's reason |
+| The edit is refused on a revision mismatch | The listing changed between your reading and your signing | Refresh and read the current state before retrying |
+| The control is disabled with a live reason | A gate is closed | Refreshing rechecks that exact route |
+| Nothing changed after signing | A check did not match, and the action failed closed | Refresh market state. Never repeat a transaction from stale data |
+
+## Related reference
+
+- [Task: list an asset](/docs-core/markets/list/)
+- [Task: manage assets from Portfolio](/docs-core/portfolio/manage-assets/)
+- [Ordex](/docs-core/markets/ordex/)

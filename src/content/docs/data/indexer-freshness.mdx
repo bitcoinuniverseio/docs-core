@@ -1,0 +1,137 @@
+---
+title: Indexer freshness
+description: >-
+  How to read the per-protocol freshness contract: tip against node tip, stale
+  against disagreeing, declared against effective limits, and why a tip of zero
+  is usually an unread index rather than a chain at height zero.
+sidebar:
+  order: 2
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="GET /indexer-health, backend/packages/ecosystem-contracts/lib/protocols.js"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+An index that is behind is not wrong; it is late. The difference matters
+because a late index can still be trusted for history and cannot be trusted for
+a mutation. Core reports the distinction rather than collapsing it.
+
+## One entry per protocol
+
+`GET /indexer-health` returns one entry for each of the 29 protocols. A single
+entry, abbreviated:
+
+```json
+{
+  "protocolId": "alkanes",
+  "indexerIdentity": "…",
+  "configuredIndexers": { "primary": "…", "fallbacks": ["…"] },
+  "observedAt": "2026-08-19T06:05:18.000Z",
+  "ageMs": null,
+  "freshnessLimitMs": 120000,
+  "lastSuccess": null,
+  "lastError": "2026-08-19T06:05:18.000Z",
+  "tip": 0, "nodeTip": 0, "lag": 0,
+  "capabilities": [],
+  "declaredCapabilities": ["view", "view-collection", "view-activity"],
+  "freshness": { "enforced": false, "stale": true,
+                 "lagging": false, "disagreeing": true },
+  "status": "error",
+  "mutationReady": false,
+  "reasonCode": "restart_refresh_pending"
+}
+```
+
+## Reading it correctly
+
+### `tip: 0` is usually "unread"
+
+A tip of zero with `lastSuccess: null` means this index has never been read
+successfully in the current process. It is **not** a chain at height zero, and
+the `lag: 0` beside it is not a healthy lag: it is the difference between two
+figures neither of which was measured.
+
+Always read `tip`, `nodeTip`, and `lastSuccess` together. A meaningful lag
+requires two real tips.
+
+### `stale`, `lagging`, and `disagreeing` are three different problems
+
+| Flag | Means |
+| --- | --- |
+| `stale` | The observation is older than the freshness limit |
+| `lagging` | The index tip is further behind the node tip than allowed |
+| `disagreeing` | Two authorities do not agree with each other |
+
+They are separate booleans because they need separate responses. A stale
+observation may resolve on the next refresh. A disagreement will not.
+
+### `declared` against `effective`
+
+The freshness object carries both. `declaredMaxObservationAgeMs` and
+`declaredMaxLagBlocks` are what the protocol registry states.
+`effectiveMaxObservationAgeMs` and `effectiveMaxLagBlocks` are what the running
+deployment applies. When they differ, the effective pair is what actually
+gates a mutation.
+
+In the current registry snapshot both declared values are `null` for all 29
+protocols, and only two protocols set `freshness.enforced` at all. The live
+`freshnessLimitMs` in the response is therefore the more useful figure.
+
+### `capabilities` against `declaredCapabilities`
+
+The most useful comparison in the whole response.
+
+- `declaredCapabilities` is what the registry says the protocol supports.
+- `capabilities` is what this authority can execute **right now**.
+
+A protocol with a long declared list and an empty live list is exactly the
+situation the [support matrix](/docs-core/protocols/support-matrix/) warns
+about: gate 1 passed, gate 3 did not.
+
+### `reasonCode` and `reasons`
+
+`reasonCode` names the dominant reason for the current status. `reasons` is the
+full list. They are stable codes rather than prose, so a caller can branch on
+them.
+
+## The authority cycle
+
+Above the per-protocol entries sits the mutation gate:
+
+```json
+"authorityCycles": {
+  "consecutiveHealthyCycles": 0,
+  "requiredHealthyCycles": 3,
+  "ready": false,
+  "total": 29, "current": 0, "stale": 0, "unknown": 29, "error": 0
+}
+```
+
+All 29 authorities must report current, matching evidence for three consecutive
+cycles before trading opens. `current + stale + unknown + error` sums to
+`total`, so the four counters tell you how far the gate is from opening.
+
+## Checking one protocol
+
+```bash
+curl -s https://api.bitcoinuniverse.io/indexer-health \
+  | jq '.data[] | select(.protocolId=="ordinals")'
+```
+
+## What freshness does not tell you
+
+It does not tell you whether an asset exists, whether a market has depth, or
+whether a price is fair. It tells you how much to trust the answer you were
+given, which is a different and prior question.
+
+## Next
+
+- [Where each number comes from](/docs-core/data/provenance/)
+- [Health and readiness](/docs-core/api/health/)
+- [Confirmation and reorg policy](/docs-core/protocols/confirmation-and-reorg/)

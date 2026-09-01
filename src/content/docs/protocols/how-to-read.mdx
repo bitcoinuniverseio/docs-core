@@ -1,0 +1,140 @@
+---
+title: How to read a protocol row
+description: >-
+  What availability, execution mode, feature gate, source of truth, mutation
+  gate, freshness, confirmation, and reorg mean on a Core protocol page, and
+  what each one licences you to conclude.
+sidebar:
+  order: 2
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="backend/packages/ecosystem-contracts/lib/protocols.js"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+Every protocol page on this site is generated from the same registry record.
+This page explains what each field on it means, once, so the 29 protocol pages
+do not have to repeat it.
+
+## Availability
+
+The single most important value. It says whether the protocol's marketplace is
+switched on.
+
+| Value | Read it as |
+| --- | --- |
+| `enabled` | Switched on in the shipped build. The supported actions are the ones Core can execute. |
+| `feature-gated` | Implemented, but switched off unless an operator enables the named gate. Treat the whole protocol as unavailable until you can see it working. |
+| `read-only` | You can see it but you cannot trade it. Core reads the protocol and shows it. No marketplace mutation is available. |
+| `feature-gated-testnet-only` | Behind a gate *and* confined to a test network. There is no mainnet trading. |
+
+Availability is a build-time and operator-time fact. It is not the same as
+whether the live authority is ready right now, which is
+[gate 3](/docs-core/protocols/support-matrix/#the-three-things-that-gate-an-action)
+and is reported by [`/health`](/docs-core/api/health/).
+
+## Execution mode
+
+Who does the work, and how far Core's responsibility extends.
+
+| Mode | What it means |
+| --- | --- |
+| `in-app-execution` | Core builds and validates the transaction. Your wallet signs it. Core owns the order book and the settlement record. |
+| `external-execution` | An external marketplace or provider owns the order book and the execution path. Core routes to it, validates what it can, and records receipts. |
+| `read-only` | Reads only. No execution path is deployed. |
+| `live-read-only` | Live reads against a real index, with no production execution path. Any execution that exists is in a development simulator. |
+| `trade-preview-only` | A trade can be previewed but never signed or broadcast, because there is no signer. |
+| `psbt-routing-only` | Signed PSBTs are validated and routed. Core never funds, signs, or broadcasts settlement. |
+
+The last three are the ones people misread. Code exists in all three cases. A
+released capability does not.
+
+## Feature gate
+
+The name of the switch. A protocol with a gate is closed until an operator
+opens it, whatever the action column says. Eleven distinct gates appear across
+the registry, and some cover several protocols: `dogecoinMarketplaceV1` covers
+all three Dogecoin protocols at once.
+
+## Source of truth
+
+Four questions, four answers, per protocol.
+
+| Question | Why it matters |
+| --- | --- |
+| **Which orders exist** | Whether the order book is Core's own durable store or an external provider's. If it is external, Core cannot guarantee what it does not own. |
+| **Who owns the asset** | The exact evidence a mutation must produce. Read this before assuming a listing implies ownership. |
+| **Whether a trade settled** | What counts as done. For some protocols this is a confirmed chain observation Core made itself; for others it is delegated. |
+| **What the protocol state is** | Which index answers questions about the protocol, as distinct from questions about Bitcoin. |
+
+## Mutation gate
+
+One sentence naming everything a mutation must prove before it can proceed.
+This is the most concrete safety statement in the registry, and it is worth
+reading in full for any protocol you plan to trade. Where it says an action
+"fails closed", it means the action stops rather than proceeding on partial
+evidence.
+
+## Freshness
+
+Whether Core enforces a numeric ceiling on how far behind an index may be
+before it refuses a mutation.
+
+Two of the 29 protocols set `enforced: true`, and neither of them can trade.
+Everywhere else the honest reading is: **the exact state is rechecked for each
+mutation, but no numeric lag ceiling is configured.** Several registry entries
+say so explicitly, and several add that a deployment's own readiness
+configuration is expected to supply the limit.
+
+Two fields carry the ceiling when one exists:
+
+- `maxLagBlocks`, blocks between the node tip and the index tip;
+- `maxObservationAgeMs`, how old an observation used by a mutation may be.
+
+Both are `null` for every protocol in the current snapshot. That is the truthful
+state, and it is why the live [`/indexer-health`](/docs-core/api/health/)
+response is the better place to judge freshness: it reports an actual `lag`,
+`ageMs`, and `freshnessLimitMs` per protocol at the moment you ask.
+
+## Confirmation
+
+Two values, both about depth.
+
+- `listingMinConfirmations` is `null` for all 29 protocols. No protocol
+  requires a listing's backing output to be buried a given number of blocks.
+- `settlementMinConfirmations` is `1` for 16 protocols and `null` for the
+  other 13, because those 13 have no supported action that reaches settlement.
+
+Where it is 1, operators may configure a deeper requirement, in a range the
+registry gives as 1 to 100 for several protocols.
+
+## Reorg
+
+Whether Core reconciles its own order state after a chain reorganisation.
+
+- **Yes** for 16 protocols. These keep a durable order journal, append reorg
+  observations, and reopen or invalidate affected orders deterministically
+  while preserving funding, broadcast, and settlement lineage.
+- **No** for 13. Read that carefully: in almost every case the reason is that
+  there is no local executable order state to roll back, because the protocol
+  is read-only or its execution is delegated. It is not a gap in protection for
+  something Core is doing; it is an absence of the thing.
+
+## Surfaces
+
+The registry records actions per product surface. Core is `main`. The others
+are Wallet, Inscribe, and StampDEX. A protocol page lists all of them, because
+a reader who cannot do something in Core may be able to do it elsewhere in
+Bitcoin Universe.
+
+## Next
+
+- [The support matrix](/docs-core/protocols/support-matrix/)
+- [Confirmation and reorg policy](/docs-core/protocols/confirmation-and-reorg/)
+- [Indexer sources of truth](/docs-core/protocols/indexer-sources/)

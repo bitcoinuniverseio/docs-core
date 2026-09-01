@@ -1,0 +1,29 @@
+---
+/*
+ * Starlight's own footer (edit link, last updated, previous/next) plus the
+ * lines every page on this site should end with: where the product is, where
+ * the platform portal is, and how to report a problem.
+ */
+import Default from '@astrojs/starlight/components/Footer.astro';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Default><slot /></Default>
+
+<div class="bu-footer-note">
+  <p>
+    Core documentation, published from
+    <a href="https://github.com/bitcoinuniverseio/docs-core">bitcoinuniverseio/docs-core</a>.
+    Nothing here is loaded from a third-party origin, and no analytics or
+    tracker runs on this site.
+  </p>
+  <ul>
+    <li><a href="https://www.bitcoinuniverse.io">Open Core</a></li>
+    <li><a href="https://docs.bitcoinuniverse.io">Bitcoin Universe docs portal</a></li>
+    <li><a href={`${base}/api/health/`}>Live status contract</a></li>
+    <li><a href={`${base}/reference/changelog/`}>Changelog</a></li>
+    <li><a href={`${base}/reference/support/`}>Support</a></li>
+    <li><a href="https://github.com/bitcoinuniverseio/docs-core/security/advisories/new">Report a security issue</a></li>
+  </ul>
+</div>

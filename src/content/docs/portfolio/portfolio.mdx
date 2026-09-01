@@ -1,0 +1,104 @@
+---
+title: Portfolio
+description: >-
+  What Portfolio shows before and after a wallet is connected, how it groups
+  holdings, how it reads listing state safely, and what it does when a balance
+  cannot be read.
+sidebar:
+  order: 1
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="frontend/src/pages/Portfolio/, frontend/src/util/portfolio-route.js"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+Portfolio answers: **what do I own, and what can I do with each item right
+now?**
+
+## Before connecting
+
+Portfolio opens with what connecting gives you, and offers **explore mode** for
+anyone who would rather inspect a public address than connect a wallet.
+Explore mode is the same view, reading a public address, with no signature ever
+requested. Pasting an address into search lands here.
+
+## Two views
+
+| View | Contains |
+| --- | --- |
+| **Dashboard** | Asset filters and asset details. Every item you hold, with its live market state. |
+| **Activity** | Wallet inscription activity. |
+
+The former Holdings view and its bulk-list page are retired. Listing actions
+open the verified listing flow instead.
+
+## What each card shows
+
+Directly below the artwork, each supported collectible shows its identity and
+its live market state:
+
+- **Not listed**, with a **List** control where the protocol supports listing.
+- **An active listing**, with its atomic price and marketplace, plus **Edit**
+  and **Delist** where those operations are supported.
+- **Nothing actionable at all** for a read-only protocol. A control that cannot
+  execute is not shown.
+
+Selecting the artwork, the asset name, or the identifier opens the asset
+detail. Artwork is keyboard-operable with <kbd>Enter</kbd> or
+<kbd>Space</kbd>, and the listing controls do not trigger the detail action.
+
+## Reading listing state safely
+
+Portfolio reads open listings from the authoritative marketplace for the viewed
+owner. It batches those reads by protocol and paginates them, so a large wallet
+does not cause one request per card.
+
+Until that read succeeds, a card shows a **checking** or **retry** state. It
+does not guess that an asset is unlisted. An asset shown as unlisted has been
+confirmed unlisted, not merely unconfirmed as listed.
+
+## Naming
+
+Names prefer verified collection item and asset metadata: a collection item
+appears as its item name with its collection beneath it, rather than as a
+shortened inscription id. When verified metadata is unavailable, the fallback
+order is protocol identity, then inscription number, then a shortened
+identifier. Core never invents a collection and never derives an item number
+from card order.
+
+## When a balance cannot be read
+
+If the Portfolio index does not include a Bitcoin balance, the dashboard
+attempts an address-statistics fallback. If neither source returns valid
+evidence, the balance is shown as **unavailable** rather than as zero.
+
+The same applies per protocol. An ARC-20 balance whose index cannot answer
+reports unavailable and offers a retry. It is never shown as zero, so an outage
+stays distinguishable from an empty wallet.
+
+## Outpoints, not addresses
+
+Portfolio and the sell lists key on the full transaction outpoint. Several
+outputs created by one transaction therefore remain separate items and keep
+their own entered prices, rather than collapsing into one row.
+
+## Common failure states
+
+| What you see | What it means | What to do |
+| --- | --- | --- |
+| A card stuck on **checking** | The listing read has not succeeded yet | Wait, or retry. Do not assume unlisted |
+| A balance reading **unavailable** | Neither the index nor the fallback returned valid evidence | Retry. Do not conclude the wallet is empty |
+| A **List** control that is disabled with a reason below it | The protocol supports the action but its live authority is not ready | Read the reason. Refreshing rechecks that exact route |
+| No action controls at all | The protocol does not support that action | Check the [support matrix](/docs-core/protocols/support-matrix/) |
+
+## Next
+
+- [Activity](/docs-core/portfolio/activity/)
+- [Task: manage assets from Portfolio](/docs-core/portfolio/manage-assets/)
+- [Connecting a wallet](/docs-core/wallets/connecting/)

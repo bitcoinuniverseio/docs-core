@@ -1,0 +1,127 @@
+---
+title: Your first five minutes
+description: >-
+  A guided walk through Core with nothing connected: search an address, read a
+  protocol index, open a market, and learn to tell a read that failed from a
+  market that is empty.
+sidebar:
+  order: 2
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="frontend/src/App.js route table"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+**Who this is for:** anyone opening Core for the first time.
+**Goal:** find your way around and read one figure correctly.
+**Prerequisites:** a browser. No wallet, no account, no extension.
+**Chain and network:** Bitcoin and Dogecoin mainnet.
+**Safety:** nothing in this walk asks for a signature. If a wallet prompt
+appears during it, something is wrong: reject it and read
+[market safety](/docs-core/wallets/market-safety/).
+
+## 1. Open the right address
+
+Go to **[www.bitcoinuniverse.io](https://www.bitcoinuniverse.io)**.
+
+The `www` matters. The bare `bitcoinuniverse.io` address redirects to a
+different Bitcoin Universe application.
+
+**Expected result:** a home screen that states how many protocols this build
+serves, counted from the same registry that builds the navigation, with start
+cards below it.
+
+## 2. Search something
+
+Press <kbd>Ctrl</kbd>+<kbd>K</kbd> (or <kbd>Cmd</kbd>+<kbd>K</kbd>) to focus
+the search field, and paste any Bitcoin address.
+
+**Expected result:** a result list with a confidence label. Core tells you
+whether it is confident, whether the input matched more than one thing, or
+whether it could not resolve it at all. It does not guess.
+
+If you paste something ambiguous, such as a bare number, you will see several
+candidates: that number could be a block height, an inscription number, or a
+bitmap district. Core offers all three rather than picking one.
+
+**Verify:** the result names the kind of thing it found. A result that says
+nothing about what it matched is a defect worth reporting.
+
+## 3. Explore the address
+
+Open the address result.
+
+**Expected result:** what that address holds, across the protocols Core reads,
+with no wallet connected and nothing to sign. Protocols that could not be read
+say so individually rather than being left out of the list.
+
+**Common failure state:** a protocol row reading "unavailable". That is a fact
+about the read, not about the address. See
+[reading the numbers](/docs-core/start/reading-the-numbers/).
+
+## 4. Open a protocol index
+
+Use the navigation to open an index, for example the Ordinals index.
+
+**Expected result:** a table of that protocol's assets with the figures the
+protocol publishes. Figures Core could not measure appear as a dash. Where a
+protocol's index also reads the mempool, a Pending column shows unconfirmed
+mints; where it cannot answer that question, the column is absent rather than
+showing zero.
+
+**Verify:** find one dash. Confirm you can tell it apart from a zero elsewhere
+on the same screen. That distinction is the product working correctly.
+
+## 5. Open a market, and find one that is not available
+
+Open **Trade** and pick a market.
+
+**Expected result:** a family picker, the period the figures cover, a
+searchable table, and an activity feed.
+
+Now find a market whose reader is down, or a protocol marked read-only in the
+[support matrix](/docs-core/protocols/support-matrix/).
+
+**Expected result:** the page states plainly that the read failed and offers a
+retry, or that the protocol is browsable but not tradable. It does not present
+either as an empty market, and it does not show a buy control that cannot
+execute.
+
+## 6. Check the source yourself
+
+Open [api.bitcoinuniverse.io/indexer-health](https://api.bitcoinuniverse.io/indexer-health).
+
+**Expected result:** a JSON document with one entry per protocol, naming the
+index that answered, its tip, the node tip, the lag between them, when it was
+last read successfully, and a reason code if it is not ready.
+
+This is the answer to "where did that number come from", one request away, for
+every protocol at once.
+
+## What you should now be able to do
+
+- Reach Core at the correct address.
+- Search without being guessed at.
+- Read an address with no wallet connected.
+- Tell a dash from a zero, and an outage from an empty market.
+- Check any protocol's data source and freshness yourself.
+
+## Recovery path
+
+If a screen looks wrong, reload once. If it still looks wrong, check
+`/indexer-health` for that protocol before concluding anything about the market.
+If the product and this documentation disagree, the documentation is the
+defect: [open an issue](https://github.com/bitcoinuniverseio/docs-core/issues)
+and name the page and the screen.
+
+## Next
+
+- [Reading the numbers](/docs-core/start/reading-the-numbers/)
+- [Safety in sixty seconds](/docs-core/start/safety/)
+- [Product tour](/docs-core/start/product-tour/)

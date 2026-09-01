@@ -1,0 +1,115 @@
+---
+title: Public integrations
+description: >-
+  What another application can build on: the public read endpoints, the
+  published JSON schemas, the capability snapshot, deep links into Core, and
+  the rules to follow so an integration stays honest.
+sidebar:
+  order: 4
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/docs-core"
+  source="public/openapi/, src/data/capability-snapshot.json"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+Four things are genuinely public and stable enough to build on.
+
+## 1. The read endpoints
+
+Thirteen verified GET operations, described in the
+[OpenAPI reference](/docs-core/api/reference/). Fetch the document from
+[`/openapi/core-public-read.json`](/docs-core/openapi/core-public-read.json)
+and generate a client from it.
+
+Respect the rate limits, read `RateLimit-Remaining`, and back off on a `429`.
+Send a `User-Agent` that identifies your application, so a problem can be
+traced back to you rather than to an anonymous caller.
+
+## 2. The status contract
+
+`/health` and `/indexer-health` are the endpoints to poll if you want to show
+Core's state in your own interface. They are declared as this component's
+status sources in
+[`docs.manifest.json`](https://github.com/bitcoinuniverseio/docs-core/blob/main/docs.manifest.json),
+which is how the Bitcoin Universe documentation portal picks them up.
+
+If you surface them, surface them honestly:
+
+- Show the marketplace profile, not just `ok: true`.
+- Show `lastSuccess: null` as "never read", not as a zero.
+- Keep `stale` and `disagreeing` apart.
+
+## 3. The capability snapshot
+
+The protocol registry snapshot behind every protocol page on this site is
+committed here at
+[`src/data/capability-snapshot.json`](https://github.com/bitcoinuniverseio/docs-core/blob/main/src/data/capability-snapshot.json).
+
+It carries its own provenance block naming the exact Core commit it was
+generated from, and it is the right source for a question like "can this
+protocol be traded". Its authoritative home is the `ecosystem-registry` package
+in `bitcoinuniverseio/docs-platform`; the copy here is pinned so this site's
+pages cannot drift from what they claim.
+
+## 4. Published schemas
+
+Core serves the Ordinals collection manifest schema and an example from its own
+origin:
+
+- `https://www.bitcoinuniverse.io/schemas/ordinals-collection-manifest-v1.json`
+- `https://www.bitcoinuniverse.io/examples/ordinals-collection-manifest-v1.example.json`
+
+A future incompatible format will use another `schemaVersion` rather than
+changing this one, so a validator pinned to v1 stays correct.
+
+## Deep links into Core
+
+Core's routes are stable enough to link to:
+
+| Destination | Route |
+| --- | --- |
+| A protocol's market | `/trade/<protocol>` |
+| A protocol's index | `/index/<protocol>` |
+| The address view | `/portfolio?mode=explore&address=<address>` |
+| An inscription | `/explorer/inscription/<id>` |
+| The Ordex order book, filtered | `/ordex?group=<family>&protocol=<protocol>` |
+| Protocol coverage | `/coverage` |
+
+Ordex filter state travels in the query string, so a link you share restores
+the same view.
+
+## Rules for an honest integration
+
+1. **Do not present a capability Core does not have.** The
+   [support matrix](/docs-core/protocols/support-matrix/) is the list. A
+   protocol Core cannot trade should not appear tradable in your interface
+   because you linked to Core.
+2. **Do not turn an error into a zero.** If a read fails, say so. This is the
+   single easiest way for an integration to be more misleading than the product
+   it wraps.
+3. **Do not cache a health answer.** It carries `no-store` for a reason.
+4. **Quote `X-Request-Id`** when reporting a problem.
+5. **Do not scan or load-test production.** See
+   [the reader boundary](/docs-core/data/reader-boundary/).
+
+## What is not available
+
+There is no public write API, no public order-submission endpoint, and no API
+key programme. Operator access uses separate authenticated private paths that
+are deliberately not documented here.
+
+If you need something that does not exist,
+[open an issue](https://github.com/bitcoinuniverseio/docs-core/issues) and
+describe the problem rather than the endpoint you imagine solving it.
+
+## Next
+
+- [OpenAPI reference](/docs-core/api/reference/)
+- [The support matrix](/docs-core/protocols/support-matrix/)
+- [The public reader boundary](/docs-core/data/reader-boundary/)

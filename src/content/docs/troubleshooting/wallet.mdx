@@ -1,0 +1,75 @@
+---
+title: Wallet and signing problems
+description: >-
+  A wallet that will not connect, a form that disables itself, a purchase
+  refused over runes, a missing asset: what each one means and what to do.
+sidebar:
+  order: 3
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="frontend/src/util/wallet.js, Marketplace v1 action flow"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+## Connection
+
+| Symptom | Cause | What to do |
+| --- | --- | --- |
+| The wallet is not offered at all | Its provider is not exposed to the page | Install from the wallet's own release channel, then reload |
+| The wallet is offered but connecting does nothing | The wallet is locked | Unlock it and connect again |
+| On a phone, the wallet cannot connect | Only Wizz and Xverse can complete a mobile connection | Open Core inside Wizz Discovery, or use Xverse, which hands off to its app from an ordinary mobile browser. For UniSat and OKX, open Core inside that wallet's own app browser |
+| Core says the network is unsupported | The wallet is on the wrong network | Switch to Bitcoin mainnet, or the Dogecoin network for a Dogecoin action |
+| Nothing happens and no prompt appears | A previous connection attempt may still be in flight | Wait for it to time out, then retry once |
+
+Core does not offer to install a desktop extension on a touch device, because
+there is nothing there to install. If you see an extension download link on a
+phone, that is a defect worth reporting.
+
+## Signing
+
+| Symptom | Cause | What to do |
+| --- | --- | --- |
+| The listing form is disabled with an unlock-and-reconnect message | The connected extension stopped exposing a signer | Unlock and reconnect. Nothing was prepared and nothing was signed |
+| The purchase is refused over runes | The transaction would burn a rune balance, or an output has not been examined by the rune index | Do not route around it in another tool. Nothing else can detect this |
+| "A wallet holding no small outputs" | You have no outputs suitable for an Ordex purchase | Create a couple of small ordinary outputs first. See [Ordex](/docs-core/markets/ordex/) |
+| The action failed after you signed | A required ownership, output, fee, or signature check did not match | This is fail-closed behaviour. Refresh market state before retrying |
+| An edit was refused on a revision mismatch | The listing changed between your reading and your signing | Refresh and read the current state first |
+| A wallet prompt appeared that you did not start | Something else is driving your wallet | **Reject it.** See [private chat verification](/docs-core/wallets/chat-verification/) |
+| The wallet shows outputs you do not recognise | Read them carefully. The wallet is the final authorization boundary | Do not approve anything you do not understand |
+
+## Missing assets
+
+| Symptom | Cause | What to do |
+| --- | --- | --- |
+| An asset is missing from Portfolio | It may be held under the other address role. Most wallets expose a payment address and an ordinals address | Check the other address in the [address view](/docs-core/explorer/addresses/) |
+| A card is stuck on **checking** | The listing read has not succeeded yet | Wait. Do not assume the asset is unlisted |
+| A balance reads **unavailable** | Neither the portfolio index nor the address-statistics fallback returned valid evidence | Retry. Do not conclude the wallet is empty |
+| An ARC-20 balance shows unavailable | The Atomicals index cannot answer | Retry. It is never shown as zero, so this is an outage rather than an empty wallet |
+
+## After a broadcast
+
+| Symptom | Cause | What to do |
+| --- | --- | --- |
+| The transaction confirmed but the trade is still pending | Most protocols also require the protocol-level state transition to be observed at a stable index checkpoint | Check `/indexer-health` for that protocol. It may be waiting on an index rather than on the chain |
+| The transaction disappeared from the mempool | It was dropped or replaced | For the 16 protocols with automatic reconciliation, the order is reopened or invalidated deterministically. For the other 13, check in your own wallet or a block explorer |
+| You want to cancel a broadcast | You cannot | A broadcast transaction cannot be recalled |
+
+## Never
+
+- Never share a seed phrase, private key, wallet backup, or recovery code, with
+  anyone, in any channel. Nobody working on Bitcoin Universe will ever ask.
+- Never approve a request because a support account is pressuring you to act.
+- Never demonstrate a defect with a real transaction when a description or a
+  testnet reproduction would show the same thing.
+
+## Next
+
+- [Connecting a wallet](/docs-core/wallets/connecting/)
+- [Transaction safety](/docs-core/wallets/transaction-safety/)
+- [Asset-bearing outputs](/docs-core/explorer/asset-bearing-outputs/)

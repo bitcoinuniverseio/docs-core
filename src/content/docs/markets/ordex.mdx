@@ -1,0 +1,166 @@
+---
+title: Ordex
+description: >-
+  The Ordex public-ask order book: the protocol families it carries and the
+  ones it deliberately refuses, how a purchase runs in four named steps, why
+  two small outputs are needed, and what Ordex proves per family.
+sidebar:
+  order: 8
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="Ordex authority, backend/packages/ecosystem-contracts/lib/protocols.js"
+  chain="bitcoin"
+  network="mainnet"
+  lifecycle="feature-gated"
+  verified="2026-09-01"
+/>
+
+Ordex is the public-ask order book at `/ordex`, with an orders desk at
+`/ordex/orders`. Every build ships it and it leads the Trade market picker. An
+operator holds one deliberate kill switch: when it is used, the market and the
+desk stay where they are and say they were switched off.
+
+:::caution[What the registry says about Ordex]
+Ordex is recorded as `feature-gated`, mode `psbt-routing-only`. It supports
+`view`, `view-collection`, and `list`. It does **not** support `buy`, `unlist`,
+`update-listing`, offers, `settle`, or `reconcile`, and it does not implement
+`view-activity`.
+
+That is not a contradiction with the four-step purchase below. Ordex validates
+and routes PSBTs; it explicitly does not fund, sign, or broadcast settlement.
+The purchase happens in your own wallet.
+:::
+
+## Browse by protocol family
+
+A two-level hierarchy: pick a family, then narrow to a subprotocol inside it.
+
+| Family | Subprotocols |
+| --- | --- |
+| Bitcoin / Generic | Bitcoin PSBT |
+| Ordinals | Ordinals, Bitmap, BRC-20, TAP, DMT, UNAT, Names |
+| OP_RETURN | OP Inscriptions, OP-20, OP Names |
+| OP_DROP | Taproot OP_DROP |
+| Atomicals | ARC-20 |
+| Runes | Runes |
+| Tokens / Metaprotocols | Alkanes, Mezcal, DUST20 |
+
+Every family above settles as a Bitcoin transaction.
+
+### What is deliberately absent
+
+Dogecoin, Stamps, SRC-20, and Counterparty assets are missing on purpose. Ordex
+builds, verifies, and settles Bitcoin PSBTs, and it has no builder, verifier,
+or source adapter for those protocols. Listing them would put a creation flow
+in front of you that ends in a builder that cannot run, and it would let a
+plain Bitcoin PSBT carry a label nothing had checked. They return when a real
+adapter exists.
+
+The family list is read from the live Ordex catalog, so a protocol Ordex adds
+or retires is reflected without a separate update.
+
+## Buying, in four named steps
+
+1. **Review this purchase.** Ordex rechecks the listing against Bitcoin Core
+   and the ordinals index, reads the value of the outputs your wallet would
+   spend from the node itself, and composes the buyer half. You are shown the
+   seller's proceeds, the Ordex fee, the creator royalty, the network fee and
+   the rate it was priced at, the change coming back to you, the total you pay,
+   and the exact address the asset arrives at. Nothing has been signed.
+2. **Approve in my wallet.** Your wallet signs your own inputs only. The
+   seller's half arrived already signed and is never touched.
+3. **The node's own verdict.** The signed transaction goes back to Ordex, which
+   binds it to the order again, proves the asset movement, checks that the
+   transaction would not destroy a rune balance, and asks Bitcoin Core whether
+   it would accept it. Nothing has been sent yet.
+4. **Send this transaction.** Only this step reaches the network, and only the
+   exact bytes the node checked are sent.
+
+Ordex never receives a private key or a seed phrase, never contributes funds,
+and never broadcasts on its own initiative.
+
+## Why a purchase needs two small outputs
+
+A public ask is signed so the seller's payment output must sit at the same
+position as the offered output being spent. Satoshis leave a transaction in the
+order their inputs appear. If the offered output were first, its satoshis would
+be the first thing the seller's payment is paid from, so the inscription, its
+satoshi position, and its postage would go straight back to the seller. The
+transaction would be perfectly valid and the buyer would receive nothing.
+
+Ordex therefore places two small outputs of yours ahead of the offered one, so
+the asset lands in an output you own. They come back to you in the first output
+of the same transaction, so they are not a cost.
+
+## Why a purchase can be refused over runes
+
+A rune balance is assigned by a small marker output, not by the address holding
+it. When that marker is malformed the transaction is still perfectly valid to
+Bitcoin: it confirms normally and every rune balance it spent is destroyed. No
+fee check and no node acceptance test can see this.
+
+Ordex reads that marker on every purchase and refuses to hand you a transaction
+that would burn a balance. An output the rune index has not examined is refused
+on the same footing as one known to hold runes, because not having looked is
+not the same as having found nothing.
+
+Ordex also refuses to spend an inscription-bearing or rune-bearing output as
+fees or padding.
+
+## What Ordex proves, per family
+
+Each listing states its own scope rather than leaving you to assume it.
+
+| Scope | Families | What Ordex proves |
+| --- | --- | --- |
+| Inscription position | Ordinals, Bitmap, Names, OP Inscriptions, OP Names, Taproot OP_DROP | Where the inscription sits right now, read from the ordinals index |
+| Inscription position only | BRC-20, TAP, DMT, UNAT, OP-20, Mezcal, DUST20 | Where the inscription sits. Token balances and transfer state are not read |
+| Output is unspent | Bitcoin PSBT, ARC-20, Runes, Alkanes | That the exact output is unspent and the ask is built around it. Balances carried by the output are not read |
+
+A scope that stops short of the protocol balance is stated plainly on the
+listing. Read those balances in a wallet you trust before you sign.
+
+## Market states
+
+| State | Meaning |
+| --- | --- |
+| **Loading** | The request is still in flight |
+| **No matching artifacts** | Ordex answered and has no order for this selection. A confirmed empty result |
+| **Ordex inventory is unavailable** | The request failed. The number of orders is unknown, and it is never shown as zero |
+| **Switched off by an operator** | Ordex is deliberately paused. The market and desk stay in place and say so |
+| **Degraded** | Ordex is running, but a Bitcoin Core or ordinals reader is unavailable. Existing orders stay listed; new listings cannot be verified until the reader returns |
+
+## Offers, activity, and collections
+
+Offers are the live bid side of the same order book. Activity is different: an
+append-only record of listing lifecycle changes such as created, cancelled,
+filled, expired, or found spent. The market never turns a listing's current
+state into a made-up historical event.
+
+Collection labels come from published Ordinals collection membership. Where no
+published collection contains an inscription, the inscription keeps its own
+identity rather than being grouped into a shared fallback collection.
+
+## Completing in another wallet
+
+The raw signed order is available behind a disclosure, for a wallet Ordex
+cannot drive. Building, funding, and sending it is then entirely yours,
+including placing the asset in an output you own. Read
+[asset-bearing outputs](/docs-core/explorer/asset-bearing-outputs/) before
+using it.
+
+## First-claimer-wins
+
+A public ask remains first-claimer-wins. Ordex never labels one reserved.
+Refresh an order and review every transaction detail in a wallet you trust
+immediately before settling.
+
+## Next
+
+- [Ordex in the registry](/docs-core/protocols/detail/ordex/)
+- [Task: buy a listing](/docs-core/markets/buy/)
+- [Asset-bearing outputs](/docs-core/explorer/asset-bearing-outputs/)

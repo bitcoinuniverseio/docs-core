@@ -1,0 +1,149 @@
+---
+title: Indexer sources of truth
+description: >-
+  Which index answers which question for each of the 29 marketplace protocols,
+  which have a fallback and which have none, and how to check what actually
+  answered for a given protocol right now.
+sidebar:
+  order: 4
+---
+
+import PolicyTable from '../../../components/PolicyTable.astro';
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="backend/packages/ecosystem-contracts/lib/protocols.js"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+No single index answers every question. Core keeps four authorities apart per
+protocol, because conflating them is how a marketplace ends up trusting the
+wrong thing.
+
+## The four authorities
+
+<figure class="diagram">
+  <svg viewBox="0 0 720 250" role="img" aria-labelledby="auth-title auth-desc" xmlns="http://www.w3.org/2000/svg">
+    <title id="auth-title">The four authorities Core keeps separate for each protocol</title>
+    <desc id="auth-desc">
+      A single asset question fans out to four different authorities. The order
+      book answers which orders exist. The ownership authority answers who owns
+      the asset, usually by combining a protocol index with the base chain's
+      own view of the output. The settlement authority answers whether a trade
+      completed. The protocol state index answers what the protocol itself
+      says. A mutation proceeds only when all four agree.
+    </desc>
+    <style>
+      {`
+        .a-box { fill: var(--bu-surface-raised); stroke: var(--bu-grid-strong); stroke-width: 1; }
+        .a-t { fill: var(--sl-color-white); font-family: var(--bu-font-ui); font-size: 12px; font-weight: 600; }
+        .a-d { fill: var(--bu-muted); font-family: var(--bu-font-ui); font-size: 10px; }
+        .a-l { stroke: var(--bu-signal); stroke-width: 1.3; fill: none; }
+        .a-c { fill: var(--bu-surface); stroke: var(--bu-signal); stroke-width: 1.4; }
+        .a-ct { fill: var(--sl-color-white); font-family: var(--bu-font-mono); font-size: 11px; font-weight: 700; }
+      `}
+    </style>
+    <rect class="a-c" x="8" y="98" width="132" height="52" rx="3" />
+    <text class="a-ct" x="20" y="120">One mutation</text>
+    <text class="a-d" x="20" y="136">must satisfy all four</text>
+
+    <rect class="a-box" x="256" y="8" width="220" height="46" rx="3" />
+    <text class="a-t" x="268" y="28">Order book</text>
+    <text class="a-d" x="268" y="44">Which orders exist</text>
+
+    <rect class="a-box" x="256" y="70" width="220" height="46" rx="3" />
+    <text class="a-t" x="268" y="90">Ownership</text>
+    <text class="a-d" x="268" y="106">Who holds it, at which outpoint</text>
+
+    <rect class="a-box" x="256" y="132" width="220" height="46" rx="3" />
+    <text class="a-t" x="268" y="152">Settlement</text>
+    <text class="a-d" x="268" y="168">Whether the trade completed</text>
+
+    <rect class="a-box" x="256" y="194" width="220" height="46" rx="3" />
+    <text class="a-t" x="268" y="214">Protocol state</text>
+    <text class="a-d" x="268" y="230">What the protocol index says</text>
+
+    <path class="a-l" d="M140 124 L198 124 L198 31 L254 31" />
+    <path class="a-l" d="M198 124 L254 93" />
+    <path class="a-l" d="M198 124 L254 155" />
+    <path class="a-l" d="M198 124 L198 217 L254 217" />
+
+    <text class="a-d" x="500" y="120">Disagreement</text>
+    <text class="a-d" x="500" y="134">closes the action.</text>
+    <text class="a-d" x="500" y="148">It does not average</text>
+    <text class="a-d" x="500" y="162">or pick a winner.</text>
+  </svg>
+  <figcaption>
+    Each protocol's page names all four. Where one of them reads "no executable
+    authority is deployed", that is the honest reason the protocol cannot trade.
+  </figcaption>
+</figure>
+
+## Universe-operated, external, or neither
+
+Reading the primary index column tells you who you are trusting.
+
+- **Universe-operated.** Ordinals reads a configured Ord server. Runes read a
+  Universe Ord Rune index. Alkanes read a Universe Alkanes authority. OP
+  Inscriptions read a standalone Universe indexer with a raw-block OP_RETURN
+  scanner behind it.
+- **External provider.** BRC-20 reads the UniSat Open API, and the registry
+  says plainly that order freshness and inventory reconciliation are delegated
+  there. Stamps and SRC-20 read StampDEX and Stampchain. Mezcal reads the
+  mezcal.sh API.
+- **Neither, for a mutation.** Seven read-only protocols record "no executable
+  order authority is deployed" for their order book and "read authority only;
+  no complete transferability proof" for ownership. That is not a gap in the
+  documentation. It is the reason those protocols cannot be traded.
+
+Three protocols go further and are read by *your own browser* rather than
+through Core at all: TAP, DMT, and UNAT deployment, mint progress, and holder
+figures are fetched directly from a host Universe does not operate. Those pages
+name the source beside the numbers.
+[Where each number comes from](/docs-core/data/provenance/) covers that case in
+full.
+
+## Fallbacks
+
+Most protocols have no fallback at all. Where one exists it is usually a
+mempool or Esplora provider used for UTXO and settlement reads, not a second
+opinion on protocol state. Two patterns are worth noting:
+
+- **A fallback for the base chain, not the protocol.** Ordinals, Runes,
+  Alkanes, and Mezcal list configured mempool or Esplora providers as fallbacks.
+  Those answer "is this output unspent", not "does this output carry a rune".
+- **A fallback that is reference data only.** Stamps lists an external service
+  "for reference metadata", and SRC-20 lists activity and mint or deploy
+  reference data. Neither becomes an ownership authority.
+
+An empty fallback list is a real answer. If the primary index cannot be read,
+that protocol has nothing to fall back to, and Core says the read failed rather
+than substituting something.
+
+## Checking what actually answered
+
+The registry says what is configured. The live endpoint says what answered.
+
+```bash
+curl -s https://api.bitcoinuniverse.io/indexer-health \
+  | jq '.data[] | select(.protocolId=="ordinals")
+        | {indexerIdentity, source, tip, nodeTip, lag,
+           lastSuccess, status, reasonCode}'
+```
+
+`configuredIndexers.primary` in that response is what the registry declared.
+`indexerIdentity` and `source` are what served the request. When they differ,
+believe the second pair.
+
+## Every protocol
+
+<PolicyTable kind="indexer" />
+
+## Next
+
+- [Where each number comes from](/docs-core/data/provenance/)
+- [Indexer freshness](/docs-core/data/indexer-freshness/)
+- [Health and readiness](/docs-core/api/health/)

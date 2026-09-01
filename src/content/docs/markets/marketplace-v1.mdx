@@ -1,0 +1,164 @@
+---
+title: Marketplace v1 gates
+description: >-
+  The fail-closed trading foundation: the two availability profiles, the
+  three-cycle mutation gate across all 29 authorities, per-family execution
+  notes, and what the release status actually claims.
+sidebar:
+  order: 10
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="Marketplace v1, backend/packages/ecosystem-contracts/marketplace-v1"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+Marketplace v1 is the fail-closed trading foundation. It gives supported asset
+families a consistent listing, purchase, offer, settlement, and reorg model
+while keeping protocol-specific ownership and transaction rules authoritative.
+
+## Two availability profiles
+
+Core reports **browsing availability separately from transaction
+availability**, and the public health response labels which profile the
+deployment is running.
+
+| Profile | What it means |
+| --- | --- |
+| **read-only** | Portfolio and market views stay online. Every trading action is closed. |
+| **mutation-ready** | Trading traffic is open. |
+
+A healthy page is never evidence that transactions are ready. Read the profile.
+
+:::caution[The production deployment on 1 September 2026]
+`GET /health` reported `marketplaceProfile: "read-only"` with
+`mutationTraffic.ready: false`. That is a live value and it changes.
+[Read it yourself](https://api.bitcoinuniverse.io/health) rather than trusting
+this sentence.
+:::
+
+## The mutation gate
+
+A mutation-ready release has a stronger gate than a read-only one:
+
+> Every one of the 29 supported protocol authorities must report current,
+> matching evidence for **three consecutive refresh cycles** before transaction
+> traffic can open.
+
+Any missing, stale, conflicting, or failed authority resets that counter and
+keeps wallet mutations unavailable while read traffic continues safely.
+
+The counter is public. In `/health` and `/indexer-health`:
+
+```json
+"authorityCycles": {
+  "completedCycles": 0,
+  "consecutiveHealthyCycles": 0,
+  "requiredHealthyCycles": 3,
+  "ready": false,
+  "total": 29, "current": 0, "stale": 0, "unknown": 29, "error": 0
+}
+```
+
+`total` is the number of authorities in the cycle. `current`, `stale`,
+`unknown`, and `error` are how many are in each state right now. Their sum
+tells you how far the gate is from opening.
+
+## What the release candidate supports
+
+- Executable, separately authenticated marketplace authorities for Ordinals,
+  TAP, DMT, UNAT, Bitmap, Bitcoin Names, ARC-20, Atomicals NFTs, Realms,
+  Subrealms, DROPS and OP_DROP, Ordex public asks, Dogecoin TAP, DRC-20, and
+  Doginals.
+- Wallet-reviewed prepared actions rather than hidden signing or custodial key
+  handling.
+- Durable listings, reservations, funded offers, broadcast lineage, confirmed
+  settlement, and deterministic rollback where the protocol authority supports
+  those operations.
+- Protocol-specific explorers and capability messages that distinguish
+  unavailable authority data from a confirmed empty result.
+- Exact network, asset, amount, funding, and destination checks before an
+  action can proceed.
+
+Other protocol families stay visible only where their authoritative execution
+path is complete. Core does not silently fall back to a generic transaction
+path for an unsupported asset.
+
+## Per-family execution notes
+
+**Bitmap** trading is bound to the authoritative first valid
+`{block-height}.bitmap` district claim. The authority rejects later duplicate
+claims, mixed protocol collateral, stale ownership, changed economics, and
+unsigned or structurally different transactions. Settlement is not final until
+the exact transaction is confirmed and the authoritative claim is indexed at
+the buyer-owned output.
+
+**Bitcoin Names** uses the authoritative first Sats Names System registration
+inscription for each name, preserving the exact name and namespace rules, and
+groups discovery by namespace without implying that namespace registration
+grants ownership of member names. Legacy `/trade/names` and name-detail URLs
+reopen the authoritative order book.
+
+**Atomicals** is covered on its [own page](/docs-core/markets/atomicals/).
+
+**Ordex** uses a Core-owned authority backed by local Bitcoin Core, the ord
+index, and the Ordex order journal, with separate server-side read and
+execution credentials. The deployment manifest binds the exact authority
+identity, schema, indexer revision, wallet executor, and Core release; a
+missing or mismatched field keeps the mutation-ready profile closed.
+
+**Dogecoin** actions use a native Dogecoin wallet boundary. The review screen
+binds the protocol, action, connected account, asset, amounts, transaction
+template, fees, and owned inputs before the wallet is asked to sign.
+Listing-authority messages use standard Dogecoin signed messages; transaction
+actions require a signature envelope for every owned input. The backend
+recovers the signing key and verifies it matches the claimed address.
+Mismatched, partial, reordered, or structurally changed results fail closed.
+
+## Payment controls that are deliberately closed
+
+Legacy Launchpad, BRC-20 IDO, and BRC-20 presale payment actions remain
+unavailable until their wallet-authorized settlement paths are ready. Each
+disabled payment control states the reason beside the button and exposes that
+explanation to assistive technology.
+
+## Activity and payment accuracy
+
+Activity is dated from when the event was created, not from a later
+reconciliation write. Batch settlements keep each trade row distinct even where
+several purchases share one Bitcoin transaction. Portfolio and sell lists use
+the full outpoint, so several outputs created by one transaction remain
+separate and keep their own entered prices.
+
+## Before signing
+
+1. Confirm the wallet network and connected account.
+2. Review the protocol, asset identity, quantity, price, fees, inputs, and
+   outputs.
+3. Treat every wallet prompt as the final authorization boundary.
+4. Do not continue when Core reports stale, incomplete, conflicting, or
+   unavailable authority data.
+5. Keep seed phrases and private keys outside the application and every support
+   channel.
+
+## What the release status claims
+
+The code is a validated release candidate. That is not a statement that every
+production gate is enabled. Protocol authorities, protected configuration, live
+readiness checks, and funded canaries must pass before production execution is
+declared available.
+
+The staging Marketplace uses an isolated staging API lane and does not fall
+back to the production Marketplace API. The staging edge permits read and
+preflight requests only while authorities are being verified.
+
+## Next
+
+- [The support matrix](/docs-core/protocols/support-matrix/)
+- [Health and readiness](/docs-core/api/health/)
+- [Release evidence](/docs-core/quality/release-evidence/)

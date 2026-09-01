@@ -1,0 +1,236 @@
+---
+/*
+ * A static rendering of the OpenAPI document.
+ *
+ * Deliberately not a bundled API-explorer widget: those pull a large script,
+ * usually from a CDN, and produce a page that is empty without JavaScript.
+ * This reads the same document at build time and emits plain HTML, so the
+ * reference is searchable by Pagefind, readable with JavaScript disabled, and
+ * costs the reader nothing to load.
+ */
+import spec from '../../public/openapi/core-public-read.json' with { type: 'json' };
+
+const server = spec.servers[0];
+
+/** Resolve a local $ref one level; the document only uses local refs. */
+function deref(node) {
+  if (!node || typeof node !== 'object') return node;
+  if (typeof node.$ref === 'string' && node.$ref.startsWith('#/')) {
+    const path = node.$ref.slice(2).split('/');
+    let cursor = spec;
+    for (const key of path) cursor = cursor?.[key];
+    return cursor;
+  }
+  return node;
+}
+
+function typeOf(schema) {
+  if (!schema) return '';
+  const resolved = deref(schema);
+  if (resolved?.$ref) return resolved.$ref.split('/').pop();
+  if (Array.isArray(resolved?.type)) return resolved.type.join(' or ');
+  if (resolved?.type === 'array') {
+    const inner = deref(resolved.items);
+    const name = resolved.items?.$ref?.split('/').pop();
+    return `array of ${name ?? inner?.type ?? 'item'}`;
+  }
+  return resolved?.type ?? 'object';
+}
+
+const operations = Object.entries(spec.paths).map(([path, item]) => {
+  const op = item.get;
+  const parameters = (op.parameters ?? []).map(deref);
+  const responses = Object.entries(op.responses).map(([status, response]) => {
+    const resolved = deref(response);
+    const media = resolved.content ? Object.keys(resolved.content)[0] : null;
+    return {
+      status,
+      description: resolved.description,
+      media,
+      schema: media ? typeOf(resolved.content[media].schema) : null,
+    };
+  });
+  return { path, op, parameters, responses };
+});
+
+const schemas = Object.entries(spec.components.schemas);
+---
+
+<div class="api-meta">
+  <p>
+    <b>Document</b>
+    <a href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/openapi/core-public-read.json`}>
+      core-public-read.json
+    </a>
+    · OpenAPI {spec.openapi} · version {spec.info.version}
+  </p>
+  <p><b>Server</b> <code>{server.url}</code> · {server.description}</p>
+</div>
+
+{operations.map(({ path, op, parameters, responses }) => (
+  <section class="op">
+    <h3 id={op.operationId}>
+      <span class="verb">GET</span>
+      <code class="op-path">{path}</code>
+    </h3>
+    <p class="op-summary">{op.summary}</p>
+    {op.description && (
+      <div class="op-desc">
+        {op.description.split('\n\n').map((paragraph) => <p>{paragraph}</p>)}
+      </div>
+    )}
+
+    {parameters.length > 0 && (
+      <div class="table-scroll" tabindex="0" role="region" aria-label={`${op.operationId} parameters, scrollable table`}>
+        <table>
+          <thead>
+            <tr><th scope="col">Parameter</th><th scope="col">In</th><th scope="col">Type</th><th scope="col">Description</th></tr>
+          </thead>
+          <tbody>
+            {parameters.map((parameter) => (
+              <tr>
+                <th scope="row"><code>{parameter.name}</code></th>
+                <td class="mono">{parameter.in}</td>
+                <td class="mono">{typeOf(parameter.schema)}</td>
+                <td>{parameter.description}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+
+    <div class="table-scroll" tabindex="0" role="region" aria-label={`${op.operationId} responses, scrollable table`}>
+      <table>
+        <thead>
+          <tr><th scope="col">Status</th><th scope="col">Media type</th><th scope="col">Schema</th><th scope="col">Meaning</th></tr>
+        </thead>
+        <tbody>
+          {responses.map((response) => (
+            <tr>
+              <th scope="row"><code>{response.status}</code></th>
+              <td class="mono">{response.media ?? 'none'}</td>
+              <td class="mono">{response.schema ?? ''}</td>
+              <td>{response.description}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+))}
+
+<h2 id="schemas">Schemas</h2>
+
+{schemas.map(([name, schema]) => (
+  <section class="schema">
+    <h3 id={`schema-${name}`}><code>{name}</code></h3>
+    {schema.description && <p>{schema.description}</p>}
+    {schema.properties && (
+      <div class="table-scroll" tabindex="0" role="region" aria-label={`${name} fields, scrollable table`}>
+        <table>
+          <thead>
+            <tr><th scope="col">Field</th><th scope="col">Type</th><th scope="col">Required</th><th scope="col">Notes</th></tr>
+          </thead>
+          <tbody>
+            {Object.entries(schema.properties).map(([field, property]) => (
+              <tr>
+                <th scope="row"><code>{field}</code></th>
+                <td class="mono">{typeOf(property)}</td>
+                <td class="mono">{schema.required?.includes(field) ? 'yes' : ''}</td>
+                <td>{deref(property)?.description ?? ''}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+  </section>
+))}
+
+<style>
+  .api-meta {
+    border: 1px solid var(--bu-grid);
+    border-left: 3px solid var(--bu-signal);
+    border-radius: var(--bu-radius);
+    background: var(--bu-surface);
+    padding: 0.7rem 0.9rem;
+    margin-block: 1.5rem;
+    font-size: 0.82rem;
+  }
+
+  .api-meta p {
+    margin: 0.15rem 0;
+  }
+
+  .api-meta b {
+    font-family: var(--bu-font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--bu-muted);
+    margin-right: 0.4rem;
+  }
+
+  section.op {
+    border-top: 1px solid var(--bu-grid);
+    padding-top: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  section.op h3 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.55rem;
+    margin-bottom: 0.4rem;
+    font-size: 1rem;
+  }
+
+  .verb {
+    font-family: var(--bu-font-mono);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--bu-signal-text);
+    background: var(--bu-signal-dim);
+    border: 1px solid currentcolor;
+    border-radius: var(--bu-radius);
+    padding: 0.08rem 0.35rem;
+  }
+
+  code.op-path {
+    font-size: 0.92rem;
+    overflow-wrap: anywhere;
+  }
+
+  p.op-summary {
+    margin: 0 0 0.5rem;
+    font-size: 0.92rem;
+  }
+
+  .op-desc p {
+    font-size: 0.87rem;
+    margin: 0.4rem 0;
+  }
+
+  section.schema {
+    margin-top: 1.75rem;
+  }
+
+  section.schema h3 {
+    font-size: 0.95rem;
+    margin-bottom: 0.3rem;
+  }
+
+  table {
+    font-size: 0.8rem;
+  }
+
+  td.mono {
+    font-family: var(--bu-font-mono);
+    font-size: 0.74rem;
+    color: var(--bu-muted);
+    white-space: nowrap;
+  }
+</style>

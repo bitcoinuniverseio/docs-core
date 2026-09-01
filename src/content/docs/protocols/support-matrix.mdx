@@ -1,0 +1,180 @@
+---
+title: Protocol support matrix
+description: >-
+  Every one of the 29 marketplace protocols in Core against every one of the 13
+  marketplace actions, generated from the Core protocol registry: which are
+  enabled, read-only, or feature-gated, what each can execute, and the stated
+  reason for every action that is not supported.
+sidebar:
+  order: 1
+---
+
+import ProtocolMatrix from '../../../components/ProtocolMatrix.astro';
+import MatrixSummary from '../../../components/MatrixSummary.astro';
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="backend/packages/ecosystem-contracts/lib/protocols.js"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  lifecycle="mixed, per row"
+  verified="2026-09-01"
+/>
+
+This is the most important page on this site. It answers one question for each
+protocol Core knows about: **can I actually do this, or can I only look at
+it?**
+
+Every value below is generated at build time from `MARKETPLACE_PROTOCOL_REGISTRY`
+in the Core protocol registry. Nothing on this page is written by hand, so it
+cannot drift away from what the application enforces.
+
+<MatrixSummary />
+
+## The three things that gate an action
+
+A protocol row saying `Yes` is necessary but not sufficient. Three separate
+gates stand between you and an executed trade, and all three must agree.
+
+<figure class="diagram">
+  <svg viewBox="0 0 720 210" role="img" aria-labelledby="gates-title gates-desc" xmlns="http://www.w3.org/2000/svg">
+    <title id="gates-title">The three gates between a reader and an executed marketplace action</title>
+    <desc id="gates-desc">
+      An action passes left to right through three gates. First, the registry
+      capability: does the protocol declare the action supported at all.
+      Second, the feature gate: is the protocol switched on in this build.
+      Third, live authority readiness: is the indexer current, is ownership
+      proven, and is the marketplace profile mutation-ready. Failing any gate
+      stops the action, and the interface names which gate stopped it.
+    </desc>
+    <style>
+      {`
+        .gate-box { fill: var(--bu-surface-raised); stroke: var(--bu-grid-strong); stroke-width: 1; }
+        .gate-label { fill: var(--sl-color-white); font-family: var(--bu-font-ui); font-size: 13px; font-weight: 600; }
+        .gate-sub { fill: var(--bu-muted); font-family: var(--bu-font-ui); font-size: 11px; }
+        .gate-num { fill: var(--bu-signal); font-family: var(--bu-font-mono); font-size: 11px; font-weight: 700; }
+        .flow { stroke: var(--bu-signal); stroke-width: 1.5; fill: none; }
+        .fail { stroke: var(--bu-stale); stroke-width: 1.5; fill: none; stroke-dasharray: 4 3; }
+        .fail-label { fill: var(--bu-stale-text); font-family: var(--bu-font-mono); font-size: 10px; }
+        .end-label { fill: var(--sl-color-white); font-family: var(--bu-font-mono); font-size: 11px; font-weight: 600; }
+      `}
+    </style>
+    <g>
+      <rect class="gate-box" x="8" y="42" width="150" height="56" rx="3" />
+      <text class="gate-num" x="18" y="60">01</text>
+      <text class="gate-label" x="18" y="76">Registry capability</text>
+      <text class="gate-sub" x="18" y="91">Is the action declared?</text>
+
+      <rect class="gate-box" x="188" y="42" width="150" height="56" rx="3" />
+      <text class="gate-num" x="198" y="60">02</text>
+      <text class="gate-label" x="198" y="76">Feature gate</text>
+      <text class="gate-sub" x="198" y="91">Switched on in this build?</text>
+
+      <rect class="gate-box" x="368" y="42" width="170" height="56" rx="3" />
+      <text class="gate-num" x="378" y="60">03</text>
+      <text class="gate-label" x="378" y="76">Live authority</text>
+      <text class="gate-sub" x="378" y="91">Index current, owner proven?</text>
+
+      <rect class="gate-box" x="568" y="42" width="144" height="56" rx="3" />
+      <text class="end-label" x="578" y="70">Wallet signs</text>
+      <text class="gate-sub" x="578" y="87">You approve, or you do not</text>
+
+      <path class="flow" d="M158 70 L186 70" marker-end="url(#arrow)" />
+      <path class="flow" d="M338 70 L366 70" marker-end="url(#arrow)" />
+      <path class="flow" d="M538 70 L566 70" marker-end="url(#arrow)" />
+
+      <path class="fail" d="M83 98 L83 150 L453 150" />
+      <path class="fail" d="M263 98 L263 150" />
+      <path class="fail" d="M453 98 L453 150" />
+      <text class="fail-label" x="90" y="168">Any gate that disagrees closes the action and says which one it was</text>
+
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--bu-signal)" />
+        </marker>
+      </defs>
+    </g>
+  </svg>
+  <figcaption>
+    Gate 1 is the matrix below. Gate 2 is the feature-gate column. Gate 3 is
+    live and changes minute to minute; the
+    <a href="/docs-core/api/health/">health contract</a> reports it.
+  </figcaption>
+</figure>
+
+An action that is blocked at gate 2 or gate 3 is a safety decision. It is not
+evidence that a market is empty or that an asset does not exist.
+
+## The matrix
+
+`Yes` means the Core registry declares that Core can execute the action for
+that protocol. `No` means it does not. Follow a protocol name for the exact
+reason behind every `No` on its row, plus its indexer, freshness, confirmation,
+and reorg policy.
+
+<ProtocolMatrix />
+
+## Reading a row
+
+| Column | What it tells you |
+| --- | --- |
+| **Availability** | `Enabled` is switched on in the shipped build. `Feature-gated` is implemented but switched off unless an operator turns it on. `Read-only` means you can see it but you cannot trade it. `Gated, testnet only` means it is behind a gate and confined to a test network. |
+| **Feature gate** | The name of the switch an operator must turn on. If a row shows one, treat the whole row as unavailable until you can see it working. |
+| **View, view collection, view activity** | Reading. Available for every protocol except Ordex activity, which Ordex does not implement. |
+| **List, update listing, delist** | The seller side. `Update listing` is separate from `list` because several protocols require a cancel and a relist rather than an atomic edit. |
+| **Buy** | The buyer side. |
+| **Make offer, accept offer, cancel offer** | The bid side of an order book, where one exists. |
+| **Sell** | A specific executable offer workflow. No protocol in the registry supports it. See below. |
+| **Settle** | Whether Core records a confirmed settlement itself, rather than delegating that to an external provider. |
+| **Reconcile** | Whether Core reconciles its own order state after a dropped, replaced, or reorganised transaction. |
+
+## Sell is unavailable everywhere, and that is the honest answer
+
+Zero of the 29 protocols support the `sell` action. Nearly every one gives the
+same reason, in the registry's own words: the protocol *has no executable offer
+workflow on this marketplace surface*.
+
+This is worth stating plainly because "sell" appears in ordinary trading
+vocabulary and a reader could reasonably assume it works. In this registry
+`sell` is a specific thing: an executable offer-acceptance workflow. Selling in
+the ordinary sense is done through `list`, which 20 protocols support, and
+through `accept-offer`, which 15 support.
+
+## Where the honest edges are
+
+Four rows deserve reading before anything else, because each is a case where
+code exists and capability does not.
+
+| Protocol | What exists | What that does not give you |
+| --- | --- | --- |
+| [Ordex](/docs-core/protocols/detail/ordex/) | A validated PSBT routing layer, and a public ask order book | Ordex explicitly does not fund, sign, or broadcast settlement. `buy` is `No`. Buying happens in your own wallet, and the [Ordex page](/docs-core/markets/ordex/) explains the four steps. |
+| [Rare Sats](/docs-core/protocols/detail/rare-sats/) | A complete local execution path in a development and test simulator | Production trading requires an external marketplace. Nothing about the simulator makes a mainnet trade possible. |
+| [CAT-20](/docs-core/protocols/detail/cat20/) | Fractal testnet reads and a trade preview | There is no CAT-20 signer and no broadcaster. A preview is not an authorisation. |
+| [OP-20 and OP Names](/docs-core/protocols/detail/op-return/) | Listings and history stay viewable | The legacy mutation path is retired and fails closed with HTTP 410. The registry notes that the current interface can reach a broadcast step before registration fails, which is exactly why `buy` is not declared supported. |
+
+## Checking this yourself
+
+The matrix is generated from a sanitized snapshot of the registry, published by
+the Bitcoin Universe documentation platform and pinned to an exact Core commit.
+Its provenance block travels with the data:
+
+```json
+{
+  "repository": "bitcoinuniverseio/core",
+  "sourcePath": "backend/packages/ecosystem-contracts/lib/protocols.js",
+  "sourceCommit": "15dd03b5986a0a7ceba2b1a1ed30f3888ae4712c",
+  "generatedBy": "packages/ecosystem-registry/bin/generate-capability-snapshot.mjs"
+}
+```
+
+The snapshot itself is committed to this repository at
+[`src/data/capability-snapshot.json`](https://github.com/bitcoinuniverseio/docs-core/blob/main/src/data/capability-snapshot.json).
+A check in this repository's continuous integration regenerates every protocol
+page from it and fails if the published pages and the snapshot disagree.
+
+## Next
+
+- [How to read a protocol row](/docs-core/protocols/how-to-read/), for what each registry value means in practice.
+- [Confirmation and reorg policy](/docs-core/protocols/confirmation-and-reorg/), for what happens after you sign.
+- [Indexer sources of truth](/docs-core/protocols/indexer-sources/), for which index answers which question.

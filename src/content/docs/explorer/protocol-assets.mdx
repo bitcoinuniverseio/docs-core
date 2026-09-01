@@ -1,0 +1,111 @@
+---
+title: Protocol assets
+description: >-
+  How Core identifies and names a metaprotocol asset, why identity comes from
+  the authoritative index rather than a display field, and how artwork is
+  served and verified.
+sidebar:
+  order: 7
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="backend/packages/ecosystem-contracts/lib/protocols.js, shared media system"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+An asset page is the same shape for every protocol: identity, ownership,
+market state, and media. What changes per protocol is which authority answers
+each of those, which is on that protocol's own page.
+
+## Identity comes from the index, never from a label
+
+The rule Core applies throughout: identity is whatever the authoritative index
+says, not whatever is convenient to display.
+
+- **Bitmap** identity is the indexed block number. Not an inscription's mined
+  block height, and not a generic numeric presentation field. Every Bitmap
+  surface consolidates by block height, because provider listing ids,
+  inscription ids, and historical activity ids are observations of the same
+  district rather than separate assets.
+- **Bitcoin Names** identity is the authoritative first Sats Names System
+  registration inscription. Legacy registration rows are never converted into
+  synthetic `domain-*` identifiers; when an inscription id is not available,
+  the action screen requires the authoritative inscription before any signing
+  step.
+- **Realms and Subrealms** identity is the verified authoritative name winner,
+  resolved by the realm resolver. A mutation fails closed unless the resolver
+  returns that winner at the exact live owner outpoint.
+- **ARC-20** identity is the authoritative ticker winner, and a trade moves the
+  complete colored value.
+- **Atomicals NFTs** identity is one authoritative compact Atomical id with
+  quantity one.
+
+Where attribution genuinely cannot be resolved, it is reported as unresolved
+rather than guessed. Bitmap activity does exactly this for ambiguous buyer and
+seller attribution.
+
+## Naming
+
+Asset names prefer verified collection item and asset metadata. A collection
+item shows as its item name with its collection beneath it, rather than as a
+shortened inscription id.
+
+When verified metadata is unavailable, the fallback order is: protocol
+identity, then inscription number, then a shortened identifier. Core never
+invents a collection and never derives an item number from card order.
+
+## Artwork
+
+Artwork is served through the shared Universe media system rather than from a
+public artwork host.
+
+- The exact bytes discovered from a chain or an authoritative index are kept as
+  the original. A thumbnail, compressed SVG, responsive image, poster,
+  waveform, or deterministic render is a separate derivative and never replaces
+  the original.
+- Objects are identified by their SHA-256 content hash, so identical bytes used
+  by different assets share one stored object.
+- The browser loads media from Core, not from an indexer or third-party media
+  origin.
+- For Atomicals, the response is capped at 16 MiB, restricted to a narrow set
+  of image, audio, video, JSON, and plain-text media types, and the complete
+  body is checked against its digest before being returned. Invalid or tampered
+  media falls back to the asset name and identifier, and is never treated as
+  ownership, listing, or settlement evidence.
+
+An Atomicals digital object may hold several payload files or none. When
+several images are present, the card always shows the same one, so a thumbnail
+does not change between refreshes. When the index confirms an object carries no
+image payload, its card shows a neutral placeholder, which keeps a genuinely
+image-free object visually distinct from artwork that failed to load. Artwork
+that was briefly unavailable is retried rather than left as a placeholder for
+the rest of the visit.
+
+Missing, corrupt, or unverified media is reported as unavailable rather than
+presented as a successful empty response.
+
+## Market state on an asset
+
+An asset page presents the same market state and controls as its Portfolio
+card, so there is no separate Portfolio-only listing workflow. A control
+appears only where the protocol supports the action *and* its live authority is
+ready. Where a supported action's authority is not ready, the control is
+disabled and the current reason is shown below it.
+
+## Decimals
+
+The registry records a decimals model per protocol: `none`, `asset-defined`, or
+`protocol-defined`. An `asset-defined` protocol takes its precision from the
+asset's own deployment, which is why two tokens under the same protocol can
+display differently. Each protocol page states its model.
+
+## Next
+
+- [Protocol indexes](/docs-core/explorer/protocol-indexes/)
+- [Collection media](/docs-core/markets/collection-media/)
+- [The support matrix](/docs-core/protocols/support-matrix/)

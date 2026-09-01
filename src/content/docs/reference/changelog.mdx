@@ -1,0 +1,92 @@
+---
+title: Changelog
+description: >-
+  What changed in this documentation, and the dated product changes it records.
+sidebar:
+  order: 2
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/docs-core"
+  source="git history"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+This is the changelog for the documentation. Core itself has no semantic
+version: its release identifier is the exact commit a deployment was built
+from, reported by [`GET /health`](/docs-core/api/health/) and by the
+`X-Universe-Release` header on every response.
+
+## Documentation
+
+### 2026-09-01
+
+Rebuilt as a documentation site rather than a folder of Markdown guides.
+
+- **New:** a protocol support matrix generated from the Core registry snapshot,
+  covering all 29 marketplace protocols against all 13 marketplace actions,
+  with the registry's own stated reason for every unsupported action.
+- **New:** a page per marketplace protocol, generated from the same snapshot,
+  carrying its source of truth, indexer, mutation gate, freshness,
+  confirmation, and reorg policy.
+- **New:** an OpenAPI 3.1 document for the 13 public read endpoints, every one
+  verified against the live service, plus a rendered reference that works
+  without JavaScript.
+- **New:** explorer pages for search, blocks, transactions, addresses, UTXOs,
+  protocol assets, asset-bearing outputs, and protocol indexes, including an
+  explicit statement of what Core does not do with blocks and transactions.
+- **New:** task guides for buying, listing, updating and delisting, managing
+  assets from Portfolio, and adding an Ordinals collection, each with
+  prerequisites, verification, failure states, and a recovery path.
+- **New:** local search, sidebar navigation, breadcrumbs, previous and next,
+  and a source strip on every material page.
+- **New:** `docs.manifest.json`, so the Bitcoin Universe documentation portal
+  can ingest this repository.
+- **Kept:** every accurate fact from the previous guides, and the real product
+  screenshots, converted to WebP.
+
+## Product changes recorded here
+
+Dates are the product's, not this repository's.
+
+### 2026-08-29, design
+
+The pink identity was replaced by a neutral surface with one brand colour, and
+a full mobile pass landed. See
+[design and accessibility](/docs-core/quality/design-and-accessibility/) and
+[responsive behaviour](/docs-core/quality/responsive/).
+
+### 2026-08-22, UI 4.0
+
+Route continuity: Back restores a grid in the first frame at the same scroll
+position, index pages load only the protocol you opened, and typical route
+JavaScript dropped by 25 to 60 KB compressed on every major route. See
+[performance](/docs-core/quality/performance/).
+
+### August 2026, UI 3.0 and its final evolution
+
+Startup JavaScript cut from 446 KB to 250 KB compressed, immutable asset
+caching, right-sized WebP derivatives, an HTTP/2 and Brotli-capable edge, and
+per-market code splitting.
+
+### 2026-08-09, staging
+
+The test frontend and its isolated staging API run the same verified Core
+release. Dogecoin TAP reads remain available while Marketplace v1 returns an
+explicit unavailable state, because its execution authorities are not
+configured there. That is a deployed safety boundary, not a claim about any
+protocol's acceptance.
+
+## Superseded
+
+The following guides from the previous structure have moved. Every old path
+redirects; see [moved pages](/docs-core/reference/moved-pages/).
+
+## Next
+
+- [Moved pages](/docs-core/reference/moved-pages/)
+- [Release evidence](/docs-core/quality/release-evidence/)

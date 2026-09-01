@@ -1,0 +1,115 @@
+---
+title: Confirmation and reorg policy
+description: >-
+  How deep a trade must be buried before Core calls it settled, which protocols
+  reconcile their own order state after a chain reorganisation, and what
+  happens to a listing when a transaction is dropped or replaced.
+sidebar:
+  order: 3
+---
+
+import PolicyTable from '../../../components/PolicyTable.astro';
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="backend/packages/ecosystem-contracts/lib/protocols.js"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+A transaction that has been broadcast cannot be recalled, and a chain that has
+confirmed a transaction can still reorganise. This page states what Core does
+about both, per protocol.
+
+## Confirmation depth
+
+Two questions, answered separately.
+
+**How deep must a listing's backing output be?** No protocol sets a minimum.
+`listingMinConfirmations` is `null` for all 29. What replaces it is stricter in
+practice: most in-app protocols require the output to be *confirmed and
+unspent* at the moment of the mutation, rechecked each time, rather than buried
+to a fixed depth.
+
+**How deep must a settlement be before Core records it?** Sixteen protocols
+require one confirmation by default, and several registry entries note that an
+operator may configure a value between 1 and 100. The other thirteen record no
+depth, because no supported action reaches settlement for them.
+
+One confirmation is a deliberate default, not a strong finality claim. It means
+Core has observed the exact expected spend in a block. It does not mean that
+block is safe from reorganisation. If you are settling a large amount, wait for
+more blocks yourself before treating the trade as final.
+
+## What settlement actually requires
+
+Depth is the least interesting part. Every in-app protocol requires a set of
+exact facts to agree before it will record a settlement. Read one:
+
+> Settlement requires the exact confirmed Bitcoin transaction, the consumed
+> transfer inscription, and the buyer indexed balance at stable checkpoints.
+
+The pattern repeats. A confirmation alone never settles an order. What settles
+it is a confirmed transaction *plus* the protocol-level state transition that
+transaction was supposed to cause, observed at a stable index checkpoint.
+That is why a settlement can stay pending after a block: the chain agreed, and
+the index has not caught up yet.
+
+## Reorg reconciliation
+
+Sixteen of the 29 protocols reconcile automatically. Those keep a durable
+order journal and, on a reorg:
+
+- append the reorg observation rather than overwriting history;
+- reopen or invalidate affected orders deterministically;
+- preserve funding, broadcast, settlement, and replacement lineage, so a
+  rebroadcast can be traced to the order it belongs to.
+
+Thirteen do not, and the reason is almost always the same: there is no local
+executable order state to roll back. A read-only protocol has no order to
+reopen. A protocol whose execution is delegated has an order book somewhere
+else, and the registry says so plainly rather than implying Core protects
+something it does not own.
+
+Two entries deserve their own reading:
+
+- **Rare Sats**: live checks fail closed when the index reports a reorg. There
+  is no local production order state, because production trading is not
+  implemented.
+- **Ordex**: manual revalidation can change whether an order is actionable.
+  There is no automatic reorg state transition. Refresh an Ordex order and
+  review it immediately before settling.
+
+## Dropped and replaced transactions
+
+The protocols with automatic reconciliation treat a dropped or replaced
+transaction as a first-class outcome rather than an error. The order is
+reopened or invalidated deterministically, and the replacement is linked to the
+same order. For the generic order book, the registry names the evidence that
+drives that decision: authoritative chain evidence, not a timeout.
+
+For a protocol without local reconciliation, a dropped transaction is a
+question you have to answer yourself, in your own wallet or a block explorer.
+
+## Every protocol
+
+<PolicyTable kind="policy" />
+
+## What to do about it
+
+1. Before signing, read the protocol's own page for its settlement policy.
+2. After signing, do not treat a single confirmation as final for an amount you
+   would mind losing.
+3. If a settlement stays pending after several blocks, check
+   [`/indexer-health`](/docs-core/api/health/) for that protocol before
+   concluding anything. A settlement can be waiting on an index rather than on
+   the chain.
+4. Never repeat a transaction from stale market state. Refresh first.
+
+## Next
+
+- [Indexer sources of truth](/docs-core/protocols/indexer-sources/)
+- [Transaction safety](/docs-core/wallets/transaction-safety/)
+- [Health and readiness](/docs-core/api/health/)
