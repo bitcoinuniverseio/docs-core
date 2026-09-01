@@ -15,7 +15,9 @@ concurrency:
 
 jobs:
   check:
-    name: Gates
+    # This exact job name is the required status check on main. Renaming it
+    # would leave branch protection waiting forever for a check nothing reports.
+    name: Check published pages
     # This repository is public, so `route.yml` in the private `.github-private`
     # is unreachable from here: a public repository cannot resolve a reusable
     # workflow from a private one. `universe-ci-actions` below is public and is
