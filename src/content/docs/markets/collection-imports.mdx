@@ -1,0 +1,119 @@
+---
+title: 'Task: add an Ordinals collection'
+description: >-
+  Publishing collection membership from a JSON URL, a file, pasted JSON, or a
+  gallery parent inscription: the limits, the four verification labels, what an
+  import does not control, and the manifest schema.
+sidebar:
+  order: 7
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="collection import service, OrdinalsCollectionManifest v1"
+  chain="bitcoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+**Intended reader:** a creator or curator with collection membership to
+publish.
+**Goal:** a published collection with confirmed inventory in Core.
+**Chain and network:** Bitcoin mainnet.
+
+## Prerequisites
+
+- Membership data in one of four supported sources: a public JSON URL, a JSON
+  file, pasted JSON, or an Ordinal Gallery parent inscription.
+- An authoritative inscription id for each item.
+- Limits: **4 MiB** per JSON file, **10,000 items**.
+
+## Safety considerations
+
+- Only import a source you trust.
+- A successful import does not prove authorship, value, or intellectual
+  property rights.
+- Never put private keys, seed phrases, access tokens, or personal data in a
+  collection manifest. A manifest is published.
+
+## Steps
+
+1. Open **Ordinals Market** and choose **Add Collection**.
+2. **Source.** Pick one of the four sources and supply it.
+3. **Validate.** Validation reports the exact field that needs correction.
+4. **Preview.** Check the membership and metadata that will be published.
+5. **Publish.**
+
+Gallery imports read the parent inscription's children and are published as
+**Unverified**.
+
+## What an import controls, and what it does not
+
+An import proposes collection **metadata and membership**. It does not control:
+
+- ownership;
+- outputs;
+- listing state or price;
+- verification status;
+- inscription number;
+- confirmation state.
+
+Core obtains all of those from its configured chain authority and publishes
+only confirmed inscriptions.
+
+## The four verification labels
+
+| Label | Meaning |
+| --- | --- |
+| **Official** | Synchronised from a configured first-party collection source |
+| **Verified** | Reviewed and approved through the platform verification process |
+| **Community** | Community-maintained membership information |
+| **Unverified** | Imported metadata with no official identity claim |
+
+## Declared supply and confirmed count
+
+A declared supply is informational. The **confirmed count** is the number of
+members independently reconciled with the Bitcoin chain authority. The two can
+differ while a collection is still minting, and that difference is a real
+signal rather than an error.
+
+## The manifest
+
+Use the published `OrdinalsCollectionManifest v1` schema and its example, both
+served from the application origin:
+
+- Schema: `https://www.bitcoinuniverse.io/schemas/ordinals-collection-manifest-v1.json`
+- Example: `https://www.bitcoinuniverse.io/examples/ordinals-collection-manifest-v1.example.json`
+
+Each item requires an authoritative inscription id. Traits and display metadata
+are optional. A future incompatible format will use another `schemaVersion`
+rather than changing this one.
+
+## Expected result
+
+A published collection with confirmed local inventory, a validated
+server-cached logo, and a stable collection id, browsable from the collection
+catalog.
+
+## How to verify
+
+1. Find the collection in the browse catalog.
+2. Open an item and confirm its authoritative inscription details load.
+3. Compare the confirmed count with your declared supply.
+
+## Common failure states
+
+| What happens | What it means | Recovery |
+| --- | --- | --- |
+| Validation names a field | That field does not meet the schema | Correct it and revalidate |
+| The collection is browsable with no logo | The logo could not be validated or cached | The collection stays available. Supply a valid logo |
+| The confirmed count is below the declared supply | Some members are not yet reconciled with the chain authority | Expected while minting. Not an error |
+| Publication fails but an older version stays available | An authority or import became unhealthy | The last verified collection remains available while new publication fails safely. An upstream failure is never shown as an empty collection |
+| A job appears stuck | Official synchronisation is idempotent and requeues recoverable failures within a bounded retry budget | An exhausted job stays visible to operators rather than retrying forever |
+
+## Related reference
+
+- [Collection markets](/docs-core/markets/collection-markets/)
+- [Collection media](/docs-core/markets/collection-media/)

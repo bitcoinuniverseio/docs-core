@@ -1,0 +1,145 @@
+---
+title: Health and readiness
+description: >-
+  Reading GET /health correctly: why a 200 is not readiness, what the
+  marketplace profile means, how the three-cycle mutation gate is reported, and
+  the reason codes that name every closed gate.
+sidebar:
+  order: 2
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="GET /health, GET /indexer-health"
+  chain="bitcoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+`GET /health` is the contract that tells you whether Core can do anything, as
+distinct from whether its web server is answering.
+
+## A 200 is not readiness
+
+The endpoint answers `200` whenever it can compute an answer. Whether the
+service is *ready* is inside the body, in two independent places:
+
+```json
+{
+  "ok": true,
+  "release": "157f82ae…",
+  "marketplaceProfile": "read-only",
+  "readTraffic":     { "ready": true },
+  "mutationTraffic": { "ready": false, "status": "not_ready", "reasons": [ … ] }
+}
+```
+
+Read availability and transaction availability are reported separately on
+purpose. A healthy page is never evidence that trading is open.
+
+## `release`
+
+The exact commit the deployment was built from, also present as the
+`X-Universe-Release` header on every response. This is Core's release
+identifier. There is no semantic version string, and this documentation will
+not invent one.
+
+To check that a deployment is running what you think it is:
+
+```bash
+curl -sI https://api.bitcoinuniverse.io/health | grep -i x-universe-release
+```
+
+## `marketplaceProfile`
+
+Which profile the deployment is running.
+
+| Value | Meaning |
+| --- | --- |
+| `read-only` | Portfolio and market views stay online. Every trading action is closed |
+| `mutation-ready` | Trading traffic is open |
+
+## The mutation gate
+
+`mutationTraffic.authorityCycles` reports the gate:
+
+```json
+{
+  "completedCycles": 0,
+  "consecutiveHealthyCycles": 0,
+  "requiredHealthyCycles": 3,
+  "ready": false,
+  "total": 29, "current": 0, "stale": 0, "unknown": 29, "error": 0
+}
+```
+
+All 29 protocol authorities must report current, matching evidence for
+`requiredHealthyCycles` consecutive refresh cycles before trading opens. Any
+missing, stale, conflicting, or failed authority resets
+`consecutiveHealthyCycles` to zero.
+
+`current + stale + unknown + error` sums to `total`, so those four counters
+tell you exactly how far the gate is from opening. Twenty-nine in `unknown`
+means nothing has been established yet, not that 29 things are broken.
+
+## `reasons`
+
+`mutationTraffic.reasons` is a list of stable codes naming every gate that is
+closed. They are grouped by concern, so a caller can tell a configuration
+problem from a runtime one:
+
+| Prefix | Concern |
+| --- | --- |
+| `authority_…`, `action_authorities_…` | The per-protocol authority cycle |
+| `deployment_manifest_…` | The deployment manifest binding authority identity, schema, indexer revision, wallet executor, and Core release |
+| `settlement_…` | The settlement worker and its evidence authorities and finality policies |
+| `broadcast_…` | The broadcast worker and its authorities |
+| `marketplace_profile_…` | The profile itself |
+
+A reason such as `marketplace_profile_read_only` is not a fault. It is the
+deployment saying it is deliberately in the read-only profile.
+
+## `networks`
+
+Keyed by `chain:network`:
+
+```json
+"networks": {
+  "bitcoin:mainnet": {
+    "chainTip": 964969, "indexedHeight": 0, "lag": 964969,
+    "ready": false, "synchronized": false,
+    "lastSuccessfulUpdate": "2026-08-16T08:04:35.000Z",
+    "indexers": ["arc20", "mezcal"]
+  }
+}
+```
+
+`chainTip` is the verified chain head, read from Universe-operated
+infrastructure. An unavailable or invalid tip makes read readiness fail closed;
+it never degrades to zero.
+
+## `/indexer-health`
+
+The same authority cycle, plus a full entry per protocol with its index
+identity, tip, node tip, lag, freshness flags, live capabilities, and reason
+codes. [Indexer freshness](/docs-core/data/indexer-freshness/) is the page for
+reading it.
+
+## Monitoring these endpoints
+
+Both are safe to poll. Health carries `Cache-Control: no-store`, so an answer
+is never cached. Respect the rate limits, and prefer polling `/health` for a
+readiness signal and `/indexer-health` only when you need per-protocol detail:
+the second response is substantially larger.
+
+The Bitcoin Universe documentation portal is pointed at both endpoints as this
+component's status sources, declared in this repository's
+[`docs.manifest.json`](https://github.com/bitcoinuniverseio/docs-core/blob/main/docs.manifest.json).
+
+## Next
+
+- [Indexer freshness](/docs-core/data/indexer-freshness/)
+- [OpenAPI reference](/docs-core/api/reference/)
+- [Marketplace v1 gates](/docs-core/markets/marketplace-v1/)

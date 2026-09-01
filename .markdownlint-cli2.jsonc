@@ -1,0 +1,25 @@
+{
+  "config": {
+    "default": true,
+    // Prose here is wrapped by hand at 80 columns. The rule itself is off
+    // because markdownlint cannot tell a JSX attribute or a long alt string
+    // in an .mdx file from an unwrapped paragraph, and a rule that fires on
+    // correct markup stops being read.
+    "MD013": false,
+    // Starlight pages carry their title in frontmatter, so the body starts at
+    // an h2 and there is no h1 in the source.
+    "MD041": false,
+    "MD025": { "front_matter_title": "" },
+    // Sibling pages legitimately repeat headings such as "Next" and "Steps".
+    "MD024": { "siblings_only": true },
+    // MDX pages contain components, which are not raw HTML abuse.
+    "MD033": false,
+    // Off for the same reason as MD013: indented JSX and inline SVG inside an
+    // .mdx file read as indented code blocks to a Markdown-only parser.
+    "MD046": false,
+    // Frontmatter description blocks legitimately end without punctuation.
+    "MD036": false
+  },
+  "globs": ["src/content/**/*.{md,mdx}", "*.md"],
+  "ignores": ["node_modules", "dist"]
+}

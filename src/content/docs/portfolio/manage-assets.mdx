@@ -1,0 +1,111 @@
+---
+title: 'Task: manage assets from Portfolio'
+description: >-
+  List, reprice, or delist an asset you hold, starting from Portfolio: the
+  prerequisites, the exact steps, what to verify before signing, and how to
+  recover when a step fails.
+sidebar:
+  order: 3
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="frontend/src/pages/Portfolio/, Marketplace v1 action flow"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+**Intended reader:** someone who holds an asset and wants to sell it.
+**Goal:** an open listing, a repriced listing, or a delisted asset.
+**Chain and network:** Bitcoin or Dogecoin mainnet.
+
+## Prerequisites
+
+1. A supported wallet, installed from its own trusted release channel, holding
+   the asset. See [connecting a wallet](/docs-core/wallets/connecting/).
+2. The protocol supports the action. Check its row in the
+   [support matrix](/docs-core/protocols/support-matrix/) first. If `list` is
+   `No` for your protocol, no amount of retrying will change that.
+3. The protocol's live authority is ready. A supported action whose authority
+   is not ready appears as a disabled control with the reason below it.
+4. Enough ordinary spendable Bitcoin, held **separately** from the asset, to
+   pay a network fee.
+
+## Safety considerations
+
+- Read [asset-bearing outputs](/docs-core/explorer/asset-bearing-outputs/)
+  before your first listing. An asset can be destroyed by a transaction Bitcoin
+  considers valid.
+- A broadcast transaction cannot be recalled.
+- Nobody working on Bitcoin Universe will ever ask for a seed phrase or private
+  key. There is no support process that needs either.
+- Confirm you are on `www.bitcoinuniverse.io` before connecting.
+
+## Steps
+
+1. **Open Portfolio** and connect your wallet, or use explore mode first to
+   confirm the asset is where you expect.
+2. **Find the asset.** Its card shows its live market state below the artwork:
+   *Not listed* with a **List** control, or an active listing with its atomic
+   price and marketplace plus **Edit** and **Delist**.
+   :::caution
+   If the card is still in a **checking** state, wait. Portfolio does not guess
+   that an asset is unlisted, and neither should you.
+   :::
+3. **Choose the action.** List, Edit, or Delist all open the same review flow.
+   The asset detail page presents the identical controls, so there is no
+   separate Portfolio-only workflow.
+4. **Read the review screen.** Before your wallet is asked for anything, the
+   service rechecks live readiness, ownership, the listing revision, and
+   protocol state. The screen shows the asset, the amount, the service fee, the
+   network fee estimate, and the total.
+   - The service fee is **1.5% of the gross sale price, charged independently
+     to the buyer and to the seller**, calculated in integer satoshis with
+     deterministic half-up rounding.
+   - For an ARC-20 lot, the screen shows the seller service fee and the net
+     proceeds for the specific colored lot you selected.
+5. **Verify before signing.**
+   - The protocol, the exact asset identity, and the quantity.
+   - The price and every fee.
+   - The wallet network and the connected account.
+   - The inputs and outputs, **in your own wallet's prompt**. The wallet is the
+     final authorization boundary, not the review screen.
+6. **Approve in your wallet.** The listing appears only after the signed offer
+   passes ownership, outpoint, ticker, quantity, payout, and signature checks.
+
+## Expected result
+
+- **List:** an open listing on that protocol's market, visible from the card
+  and the asset detail, with its atomic price and marketplace.
+- **Edit:** the same listing at the new price, as a new revision.
+- **Delist:** the asset back to *Not listed*.
+
+## How to verify
+
+1. Reload Portfolio. The card should show the new state after its listing read
+   succeeds.
+2. Open the protocol's market and find the listing there.
+3. Check the activity feed. The event appears dated from when it happened.
+
+## Common failure states
+
+| What happens | What it means | Recovery |
+| --- | --- | --- |
+| The control is disabled with a reason below it | The protocol supports the action, but a live gate disagrees | Read the reason. Refreshing rechecks that exact route; an earlier ready result is never reused |
+| No control at all | The protocol does not support the action | The [support matrix](/docs-core/protocols/support-matrix/) gives the registry's reason |
+| The form is disabled with an unlock-and-reconnect message | The connected extension no longer exposes a signer | Unlock the wallet and reconnect. No listing transaction was prepared |
+| The action fails after signing | A required ownership, output, fee, or signature check did not match | This is fail-closed behaviour, not a downgrade to an advisory warning. Refresh market state before retrying |
+| You retry and worry about a duplicate | Retrying cannot create a second open listing for the same outpoint | Read the open listing from the market |
+
+Refresh market state after any error before trying again. Never repeat a
+transaction from stale data.
+
+## Related reference
+
+- [The support matrix](/docs-core/protocols/support-matrix/)
+- [Marketplace v1 gates](/docs-core/markets/marketplace-v1/)
+- [Transaction safety](/docs-core/wallets/transaction-safety/)
+- [Task: update or delist](/docs-core/markets/update-and-delist/)

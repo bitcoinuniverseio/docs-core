@@ -1,0 +1,65 @@
+---
+title: Fiat prices
+description: >-
+  The one figure Core does not read from its own infrastructure: where the USD
+  quote comes from, why a missing quote is omitted rather than replaced with a
+  zero, and how to see when it was measured.
+sidebar:
+  order: 5
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="market price service, header fee panel"
+  chain="bitcoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+The USD figures beside Bitcoin amounts, in portfolio totals, floor prices, fee
+costs, and the header price chip, come from one Universe-operated market price
+service that the browser reads once a minute. **No exchange API is called from
+the page.**
+
+## What happens when there is no quote
+
+- **Before the service has answered, and when it cannot answer at all, there is
+  no price.** The USD figure is left out. It is never replaced with a
+  placeholder number, a last-known guess with no age, or `$0`.
+- **The Bitcoin amount is always shown.** Fiat is a convenience on top of it,
+  so losing the quote never hides the number that matters.
+- **A quote that did answer is kept in the browser for up to a day**, so a
+  single failed refresh still shows the last measured price rather than
+  nothing.
+
+## The price says where it came from and when
+
+Open the fee panel in the header. The line under the price reads the source and
+the time it was measured, for example "Coinbase, 16:05".
+
+A quote resting on yesterday's reading shows yesterday's time. **A stale price
+is visible rather than silent**, which is the whole point: a number with no
+timestamp is indistinguishable from a fresh one, and that is exactly the
+confusion this product refuses to create.
+
+## Why this one figure is different
+
+Core reads chain data from its own infrastructure and says so. The exchange
+rate is the one figure it does not, because Bitcoin Universe does not run an
+exchange.
+
+It is read once a minute by the API and shared, so no visitor's browser
+contacts the exchange directly. Chain data is never sourced this way.
+
+## What to do with it
+
+Treat the fiat figure as a convenience for orientation. Every decision that
+matters, a price, a fee, a total, is denominated in satoshis, and that is what
+your wallet will sign.
+
+## Next
+
+- [Where each number comes from](/docs-core/data/provenance/)
+- [Reading the numbers](/docs-core/start/reading-the-numbers/)

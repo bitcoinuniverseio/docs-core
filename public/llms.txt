@@ -1,0 +1,110 @@
+# Core
+
+> Product documentation for Core, the Bitcoin Universe explorer, portfolio,
+> activity, and marketplace application at https://www.bitcoinuniverse.io.
+> Core reads Bitcoin and Dogecoin and the metaprotocol assets carried on them.
+> It is non-custodial: keys stay in the reader's own wallet.
+
+Core has no semantic version. Its release identifier is the exact commit a
+deployment was built from, returned in the `release` field of
+https://api.bitcoinuniverse.io/health and in the `X-Universe-Release` header
+on every response.
+
+The protocol registry holds 38 protocols, of which
+29 have a marketplace policy: 9
+enabled, 13 feature-gated, 7 read-only.
+19 declare buy support and none supports the
+`sell` action. Code presence is not released capability: a route existing is
+not production availability, and a parser existing is not wallet support.
+
+## Start here
+
+- [What Core is](https://bitcoinuniverseio.github.io/docs-core/start/what-core-is/): the four surfaces, and what Core deliberately does not do.
+- [Your first five minutes](https://bitcoinuniverseio.github.io/docs-core/start/first-five-minutes/): a guided walk with no wallet connected.
+- [Safety in sixty seconds](https://bitcoinuniverseio.github.io/docs-core/start/safety/): the six things to know before a first transaction.
+- [Reading the numbers](https://bitcoinuniverseio.github.io/docs-core/start/reading-the-numbers/): unknown is not zero, empty is not unavailable.
+- [Product tour](https://bitcoinuniverseio.github.io/docs-core/start/product-tour/): real captures of the running product.
+
+## Protocol support
+
+- [The support matrix](https://bitcoinuniverseio.github.io/docs-core/protocols/support-matrix/): all 29 marketplace protocols against all 13 marketplace actions, generated from the Core registry.
+- [How to read a protocol row](https://bitcoinuniverseio.github.io/docs-core/protocols/how-to-read/): what availability, execution mode, freshness, confirmation and reorg mean.
+- [Confirmation and reorg policy](https://bitcoinuniverseio.github.io/docs-core/protocols/confirmation-and-reorg/): settlement depth and reconciliation, per protocol.
+- [Indexer sources of truth](https://bitcoinuniverseio.github.io/docs-core/protocols/indexer-sources/): which index answers which question.
+- [Coverage beyond the marketplace](https://bitcoinuniverseio.github.io/docs-core/protocols/coverage/): the nine protocols with no marketplace at all.
+
+## Explorer
+
+- [Search](https://bitcoinuniverseio.github.io/docs-core/explorer/search/): what is recognised, and the exact, likely and candidate confidence levels.
+- [Blocks](https://bitcoinuniverseio.github.io/docs-core/explorer/blocks/): the verified chain tip, and why there is no block detail page.
+- [Transactions](https://bitcoinuniverseio.github.io/docs-core/explorer/transactions/): the public transaction endpoint and broadcast handling.
+- [Addresses](https://bitcoinuniverseio.github.io/docs-core/explorer/addresses/): confirmed and mempool totals kept apart.
+- [UTXOs](https://bitcoinuniverseio.github.io/docs-core/explorer/utxos/): why the outpoint is the unit that matters.
+- [Asset-bearing outputs](https://bitcoinuniverseio.github.io/docs-core/explorer/asset-bearing-outputs/): how a valid transaction destroys an asset, and what Core refuses.
+- [Protocol assets](https://bitcoinuniverseio.github.io/docs-core/explorer/protocol-assets/): identity, naming, and verified media.
+- [Protocol indexes](https://bitcoinuniverseio.github.io/docs-core/explorer/protocol-indexes/): the per-protocol catalogs.
+
+## Portfolio and markets
+
+- [Portfolio](https://bitcoinuniverseio.github.io/docs-core/portfolio/portfolio/)
+- [Activity](https://bitcoinuniverseio.github.io/docs-core/portfolio/activity/)
+- [Task: manage assets from Portfolio](https://bitcoinuniverseio.github.io/docs-core/portfolio/manage-assets/)
+- [How a market works](https://bitcoinuniverseio.github.io/docs-core/markets/how-markets-work/)
+- [Browsing a market](https://bitcoinuniverseio.github.io/docs-core/markets/browsing/)
+- [Task: buy a listing](https://bitcoinuniverseio.github.io/docs-core/markets/buy/)
+- [Task: list an asset](https://bitcoinuniverseio.github.io/docs-core/markets/list/)
+- [Task: update or delist](https://bitcoinuniverseio.github.io/docs-core/markets/update-and-delist/)
+- [Collection markets](https://bitcoinuniverseio.github.io/docs-core/markets/collection-markets/)
+- [Task: add an Ordinals collection](https://bitcoinuniverseio.github.io/docs-core/markets/collection-imports/)
+- [Ordex](https://bitcoinuniverseio.github.io/docs-core/markets/ordex/)
+- [Atomicals](https://bitcoinuniverseio.github.io/docs-core/markets/atomicals/)
+- [Marketplace v1 gates](https://bitcoinuniverseio.github.io/docs-core/markets/marketplace-v1/)
+- [Collection media](https://bitcoinuniverseio.github.io/docs-core/markets/collection-media/)
+
+## Data provenance
+
+- [Where each number comes from](https://bitcoinuniverseio.github.io/docs-core/data/provenance/)
+- [Indexer freshness](https://bitcoinuniverseio.github.io/docs-core/data/indexer-freshness/)
+- [Bitcoin and Dogecoin data](https://bitcoinuniverseio.github.io/docs-core/data/chain-data/)
+- [The public reader boundary](https://bitcoinuniverseio.github.io/docs-core/data/reader-boundary/)
+- [Fiat prices](https://bitcoinuniverseio.github.io/docs-core/data/fiat-prices/)
+
+## Wallets and signing
+
+- [Connecting a wallet](https://bitcoinuniverseio.github.io/docs-core/wallets/connecting/)
+- [Transaction safety](https://bitcoinuniverseio.github.io/docs-core/wallets/transaction-safety/)
+- [Market safety](https://bitcoinuniverseio.github.io/docs-core/wallets/market-safety/)
+- [Private chat verification](https://bitcoinuniverseio.github.io/docs-core/wallets/chat-verification/)
+
+## Public API
+
+- [What is public](https://bitcoinuniverseio.github.io/docs-core/api/overview/): the 13 verified unauthenticated read endpoints.
+- [Health and readiness](https://bitcoinuniverseio.github.io/docs-core/api/health/): why a 200 is not readiness.
+- [OpenAPI reference](https://bitcoinuniverseio.github.io/docs-core/api/reference/)
+- [Public integrations](https://bitcoinuniverseio.github.io/docs-core/api/integrations/)
+- OpenAPI document: https://bitcoinuniverseio.github.io/docs-core/openapi/core-public-read.json
+
+## Interface quality
+
+- [Design and accessibility](https://bitcoinuniverseio.github.io/docs-core/quality/design-and-accessibility/)
+- [Responsive behaviour](https://bitcoinuniverseio.github.io/docs-core/quality/responsive/)
+- [Performance](https://bitcoinuniverseio.github.io/docs-core/quality/performance/)
+- [Release evidence](https://bitcoinuniverseio.github.io/docs-core/quality/release-evidence/)
+
+## Troubleshooting and reference
+
+- [Troubleshooting](https://bitcoinuniverseio.github.io/docs-core/troubleshooting/)
+- [Market and reader states](https://bitcoinuniverseio.github.io/docs-core/troubleshooting/states/)
+- [Wallet and signing problems](https://bitcoinuniverseio.github.io/docs-core/troubleshooting/wallet/)
+- [Glossary](https://bitcoinuniverseio.github.io/docs-core/reference/glossary/)
+- [Changelog](https://bitcoinuniverseio.github.io/docs-core/reference/changelog/)
+- [Moved pages](https://bitcoinuniverseio.github.io/docs-core/reference/moved-pages/)
+- [Support](https://bitcoinuniverseio.github.io/docs-core/reference/support/)
+
+## Optional
+
+- Live health: https://api.bitcoinuniverse.io/health
+- Live per-protocol freshness: https://api.bitcoinuniverse.io/indexer-health
+- The application: https://www.bitcoinuniverse.io (the bare domain redirects elsewhere)
+- Repository: https://github.com/bitcoinuniverseio/docs-core
+- Bitcoin Universe portal: https://docs.bitcoinuniverse.io

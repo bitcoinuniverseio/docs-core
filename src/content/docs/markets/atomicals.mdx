@@ -1,0 +1,113 @@
+---
+title: Atomicals
+description: >-
+  The four Atomicals markets in Core, what each trades, the authoritative
+  identity each requires, and why an unreadable Atomicals index never shows as
+  a zero balance.
+sidebar:
+  order: 9
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="backend/packages/ecosystem-contracts/lib/protocols.js, Atomicals execution service"
+  chain="bitcoin"
+  network="mainnet"
+  lifecycle="enabled"
+  verified="2026-09-01"
+/>
+
+Atomicals is the largest enabled family in Core: four of the nine `enabled`
+marketplace protocols are Atomicals markets, and all four declare 12 of the 13
+marketplace actions.
+
+## Four markets
+
+| Market | Trades | Identity required |
+| --- | --- | --- |
+| [ARC-20](/docs-core/protocols/detail/arc20/) | Fungible colored-sat tokens | The authoritative ticker winner. A trade moves the complete colored value |
+| [Atomicals NFTs](/docs-core/protocols/detail/atomicals-nft/) | Collectibles | One authoritative compact Atomical id, quantity one |
+| [Realms](/docs-core/protocols/detail/realms/) | Top-level Realm names | The verified authoritative name winner |
+| [Subrealms](/docs-core/protocols/detail/subrealms/) | Names below a parent Realm | The verified authoritative subrealm winner |
+
+All four run on one isolated Atomicals execution service with separate protocol
+routes and durable state.
+
+A browse result does not by itself mean an asset is listed for sale.
+
+## What every mutation rechecks
+
+Each mutation rechecks the exact Bitcoin output, the owner script, the spent
+state, the single-Atomical inventory, the colored value, and a stable Bitcoin
+and Atomicals checkpoint.
+
+Mutations **fail closed** on mixed collateral, the wrong NFT subtype, a spent
+outpoint, checkpoint drift, a burn, or an ownership mismatch. A generic NFT
+listing cannot contain a Realm, Subrealm, fungible token, container, or item
+subtype. Realm and Subrealm markets additionally require the resolver to return
+the verified winner at the exact live owner outpoint.
+
+Prepared transactions must assign the selected Atomical to one **unburned**
+output, preserve the reviewed seller payout and fees, and pass Bitcoin Core
+preflight.
+
+Settlement requires at least one confirmation by default, and operators may
+configure 1 to 100. Listing revisions, funded offers, reservations, broadcast
+lineage, confirmation, dropped and replaced transactions, and reorg
+reconciliation are durable and protocol-scoped.
+
+## Listing an ARC-20 lot
+
+An ARC-20 balance is held in complete colored-sat outputs.
+
+1. Open the token from Portfolio or its ARC-20 market.
+2. Select one **available lot**.
+3. Enter the sale price.
+4. Review the 1.5% seller service fee and the net proceeds.
+5. Approve the PSBT in the connected wallet.
+
+Core never splits the selected colored lot and never uses it as ordinary
+Bitcoin change.
+
+The listing appears only after the signed offer passes ownership, outpoint,
+ticker, quantity, payout, and signature checks. Refreshing or reconnecting
+reads the open listing from the market; retrying cannot create a second open
+listing for the same ARC-20 outpoint. Buying independently applies the buyer
+service fee and preserves every colored satoshi in the buyer output.
+
+## NFT artwork
+
+Atomicals NFT cards show authoritative inline artwork when the unified index
+publishes a safe media field and a SHA-256 digest. The browser loads that field
+from Core, not from an indexer or a third-party media origin. Core caps the
+response at 16 MiB, accepts only a narrow set of image, audio, video, JSON, and
+plain-text media types, and checks the complete body against its digest before
+returning it. Invalid or tampered media falls back to the asset name and
+identifier and is never treated as ownership, listing, or settlement evidence.
+
+An Atomicals digital object may hold several payload files, or none. Where
+several images are present the card always shows the same one, so a thumbnail
+does not change between refreshes. Where the index confirms an object carries
+no image payload, its card shows a neutral placeholder, which keeps a genuinely
+image-free object visually distinct from artwork that failed to load. Artwork
+that was briefly unavailable is retried rather than left as a placeholder for
+the rest of the visit.
+
+Selecting anywhere on an NFT card, including its artwork, opens that asset's own
+page, which has its own address and can be linked, opened in a new tab,
+reloaded, and reached again with Back and Forward.
+
+## When the index cannot answer
+
+The ARC-20 market, token pages, holder rankings, and ARC-20 portfolio balances
+all report the data as unavailable and offer a retry. They never substitute
+sample rows and never show an unreadable balance as zero, so an outage stays
+distinguishable from a genuinely empty market or wallet.
+
+## Next
+
+- [ARC-20 in the registry](/docs-core/protocols/detail/arc20/)
+- [Portfolio](/docs-core/portfolio/portfolio/)
+- [Task: list an asset](/docs-core/markets/list/)

@@ -1,0 +1,100 @@
+---
+title: Collection markets
+description: >-
+  An Ordinals collection page starts from authoritative inventory, with
+  listings as an overlay. How membership, media, filters, and trading
+  availability work, and what a provider can and cannot create.
+sidebar:
+  order: 6
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="frontend/src/components/Marketplace/collection/CollectionMarketView.js"
+  chain="bitcoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+A collection page starts from the collection's authoritative inventory.
+Listings and sales are **overlays** on that inventory, so an item does not
+disappear merely because it is not currently listed.
+
+That ordering matters: a collection is a set of assets that exists whether or
+not anyone is selling, and a market view built the other way round would make a
+quiet collection look incomplete.
+
+## What a provider can and cannot do
+
+The browse catalog is the set of active, published collections with confirmed
+local inventory and a validated, server-cached logo.
+
+- A market-data provider **may enrich** a known local collection.
+- A provider **cannot** create a collection, a route, or an inventory row.
+
+Each row links with its stable collection id, so two collections with the same
+display name remain distinct and a collection id stays stable even when an
+enrichment provider is offline.
+
+Listings overlay inventory and never create membership.
+
+## Finding an item
+
+Search, price, listing status, sorting, and traits work together. Trait choices
+are OR within a category and AND across categories.
+[Browsing a market](/docs-core/markets/browsing/) covers the mechanics,
+including the phone filter sheet and how the address bar holds your view.
+
+Facet counts show distinct inscriptions and update without counting a
+multi-valued trait twice.
+
+## Media
+
+- A collection **logo is identity media**. It is downloaded, decoded, bounded,
+  and served from Core's cache. Featured artwork and item thumbnails are
+  separate fields and do not replace it.
+- Item thumbnails are served from the cache on the browsing path, so changing a
+  warmed filter does not contact an artwork host.
+- A published collection stays browsable while its logo is unavailable.
+- Ordinals, DMT, and UNAT item artwork comes from the shared Universe media
+  system. The web client accepts those internal routes and does not contact a
+  public artwork host when a thumbnail is missing. Until a derivative is ready,
+  a tile shows a loading surface or its explicit text identity.
+
+[Collection media](/docs-core/markets/collection-media/) has the detail.
+
+## Opening an item
+
+Opening an item loads the authoritative cached inscription details: its number,
+asset identity, metadata status, traits, and collection metadata. Market data
+from a collection provider may enrich a known local collection, but it cannot
+create a collection or route by itself.
+
+## Trading availability
+
+Action controls appear only where the selected protocol's live ownership,
+listing, settlement, and broadcast readiness permits that action. A read-only
+market stays browsable and does not present a buy, list, edit, cancel, or offer
+control as if it could execute.
+
+Before buying, review the inscription, the seller, the price, the fees, the
+network, and the wallet request. Core is non-custodial and never needs a seed
+phrase or a private key.
+
+## States
+
+If an upstream reader is unavailable or the data is incomplete, the page
+reports that state rather than presenting it as a confirmed empty market. A
+successful catalog response with no published inventory shows an explicit empty
+state, and a verified zero-result filter is distinguished from an unavailable
+response.
+
+Refresh after an error before signing or retrying.
+
+## Next
+
+- [Task: add an Ordinals collection](/docs-core/markets/collection-imports/)
+- [Collection media](/docs-core/markets/collection-media/)
+- [Task: buy a listing](/docs-core/markets/buy/)

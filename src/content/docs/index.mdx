@@ -1,0 +1,135 @@
+---
+title: Core
+description: >-
+  Product documentation for Core, the Bitcoin Universe explorer, portfolio,
+  activity, and marketplace application. What every screen reads, where each
+  number comes from, and which of the 29 marketplace protocols can actually be
+  traded today.
+template: splash
+hero:
+  tagline: >-
+    One explorer, portfolio, and market for the Bitcoin and Dogecoin
+    metaprotocols. Every figure on screen can be traced to the reader it came
+    from, and a reading that failed says so instead of showing a zero.
+  actions:
+    - text: The protocol support matrix
+      link: /docs-core/protocols/support-matrix/
+      icon: right-arrow
+      variant: primary
+    - text: Your first five minutes
+      link: /docs-core/start/first-five-minutes/
+      icon: rocket
+      variant: secondary
+    - text: Open Core
+      link: https://www.bitcoinuniverse.io
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import LiveReadout from '../../components/LiveReadout.astro';
+
+## What Core is
+
+Core is the Bitcoin Universe application at
+[www.bitcoinuniverse.io](https://www.bitcoinuniverse.io). It is four things in
+one place:
+
+- an **explorer** for Bitcoin and Dogecoin blocks, transactions, addresses,
+  and outputs, and for the metaprotocol assets carried on them;
+- a **portfolio** that groups what an address holds by chain, protocol, and
+  asset type;
+- an **activity** record of what has traded and what has moved;
+- a **marketplace** for the protocols whose execution path is complete.
+
+It is for people who read chain data: collectors checking what they own,
+buyers checking a listing before they sign, and developers checking what an
+index actually returned. It is non-custodial. Keys stay in the reader's own
+wallet, and no action moves an asset without a signature approved there.
+
+<LiveReadout />
+
+## Where to start
+
+<CardGrid>
+  <Card title="Read the support matrix" icon="list-format">
+    Twenty-nine protocols, thirteen marketplace actions, and the registry's own
+    reason for every action that is not available. This is the page to read
+    before you assume you can trade something.
+
+    [The support matrix](/docs-core/protocols/support-matrix/)
+  </Card>
+  <Card title="Learn to read the states" icon="warning">
+    Unknown is not zero. Empty is not unavailable. Core shows those four things
+    differently on purpose, and reading them wrongly is the fastest way to make
+    a bad decision.
+
+    [Reading the numbers](/docs-core/start/reading-the-numbers/)
+  </Card>
+  <Card title="Check where a number came from" icon="magnifier">
+    Every figure has a reader behind it. Some readers are Universe-operated,
+    some are external providers, and three protocols are fetched by your own
+    browser from a host Universe does not run.
+
+    [Where each number comes from](/docs-core/data/provenance/)
+  </Card>
+  <Card title="Trade safely" icon="approve-check">
+    What to check before you sign, what a fail-closed gate means, and why an
+    unavailable action is a safety decision rather than proof that a market is
+    empty.
+
+    [Market safety](/docs-core/wallets/market-safety/)
+  </Card>
+  <Card title="Call the public API" icon="seti:json">
+    An OpenAPI 3.1 document covering the public read endpoints, including the
+    health and per-protocol freshness contracts.
+
+    [Public API](/docs-core/api/overview/)
+  </Card>
+  <Card title="Fix something that looks wrong" icon="error">
+    A market that says unavailable, a wallet that will not connect, a figure
+    shown as a dash. What each one means and what to do next.
+
+    [Troubleshooting](/docs-core/troubleshooting/)
+  </Card>
+</CardGrid>
+
+## Chains and networks
+
+| Chain | Networks Core serves | Protocols in the registry |
+| --- | --- | --- |
+| Bitcoin | mainnet | 33 |
+| Dogecoin | mainnet | 3 |
+| Zcash | mainnet | 2, read and explore only |
+
+A staging deployment exists for validation. It uses its own isolated API lane
+and never falls back to production data. It is not a place to move real funds.
+
+## Lifecycle and release
+
+Core is a running production application. It does not publish a semantic
+version string: its release identifier is the exact commit the deployment was
+built from, and the public health response returns it in the `release` field.
+That is the only release number this documentation will quote, because it is
+the only one the product actually states.
+
+This documentation site is versioned with the product it describes and is
+marked `experimental` in its
+[manifest](https://github.com/bitcoinuniverseio/docs-core/blob/main/docs.manifest.json)
+for exactly that reason: there is no tagged Core release to point a
+`releaseVersion` at, and inventing one would be worse than admitting it.
+
+## The rest of Bitcoin Universe
+
+Core is one product in a wider set. The portal at
+[docs.bitcoinuniverse.io](https://docs.bitcoinuniverse.io) is the entry point
+for all of them, including Wallet, Inscribe, and StampDEX, which appear in the
+protocol registry as sibling surfaces alongside Core.
+
+## Repository, status, and reporting
+
+- Source for these pages: [bitcoinuniverseio/docs-core](https://github.com/bitcoinuniverseio/docs-core)
+- Live status: [api.bitcoinuniverse.io/health](https://api.bitcoinuniverse.io/health) and [api.bitcoinuniverse.io/indexer-health](https://api.bitcoinuniverse.io/indexer-health)
+- What changed here: [changelog](/docs-core/reference/changelog/)
+- Getting help: [support](/docs-core/reference/support/)
+- Security: [report a vulnerability privately](https://github.com/bitcoinuniverseio/docs-core/security/advisories/new). Never open a public issue for one.

@@ -1,0 +1,92 @@
+---
+title: Collection media
+description: >-
+  The shared media system: exact originals kept apart from derivatives,
+  content-addressed deduplication, why the browser never contacts a public
+  artwork host, and what a missing thumbnail means.
+sidebar:
+  order: 11
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="shared Universe media system"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+Core mirrors supported artwork, metadata, thumbnails, renders, audio, and video
+into one shared media system, covering Ordinals, DMT, UNAT, Doginals,
+Atomicals, Bitcoin Stamps, and other supported families.
+
+## Originals and derivatives are different things
+
+The exact bytes discovered from a chain or an authoritative Universe index are
+retained as the **original**. A thumbnail, compressed SVG, responsive image,
+poster, waveform, or deterministic render is a **derivative**.
+
+A derivative never replaces the original. That distinction is what lets Core
+serve a small image to a card without ever losing the bytes that were actually
+inscribed.
+
+## Content addressing
+
+Objects are identified by their SHA-256 content hash. Identical bytes used by
+different assets or projects share one stored object. Display variants use
+modern formats and useful sizes, so a card does not download a full-resolution
+original unnecessarily.
+
+Hashed media is cached immutably. A stable asset identity resolves to the
+current verified object, so a link to an identity keeps working while a link to
+a hash always returns the same bytes.
+
+## The browser never leaves Core for artwork
+
+Collection and marketplace pages use Core media routes rather than contacting
+public artwork hosts from your browser. Visible cards receive useful display
+sizes first; off-screen cards load as they approach the viewport.
+
+Where the shared media system is enabled, collection cards and market rows use
+only verified shared-media routes. A missing shared logo, original, or
+thumbnail stays **visibly unavailable**: Core does not silently substitute an
+older collection-cache URL.
+
+A missing derivative may temporarily show an explicit text or loading fallback,
+but it never authorizes a browser request to an untrusted media origin.
+
+## Recursive and deterministic artwork
+
+Recursive and deterministic artwork is archived with its dependencies and
+render state. An unchanged asset can reuse its verified render instead of
+fetching or rendering the same content again.
+
+## Availability
+
+Ingestion, verification, and derivative generation continue in the background.
+
+Missing, corrupt, or unverified media is reported as **unavailable** rather
+than presented as a successful empty response. This is the same rule the rest
+of the product follows: a read that did not happen is never rendered as a read
+that found nothing.
+
+## Coverage
+
+Every discovered inscription, UNAT, DMT, stamp, and Atomicals asset is
+classified as visual, nonvisual, unsupported with a stated reason, or a
+recorded source failure. Visual assets get right-sized WebP and AVIF
+derivatives, posters, or waveforms, and cards receive immutable object URLs
+directly, so a grid paints from one response.
+
+Inscription images and previews are immutable, so they are served with a
+long-lived immutable cache header and a content fingerprint. A browser that
+already holds a copy revalidates it without downloading it again, which keeps a
+gallery of many tiles from competing with ordinary chain reads.
+
+## Next
+
+- [Collection markets](/docs-core/markets/collection-markets/)
+- [Protocol assets](/docs-core/explorer/protocol-assets/)
+- [Performance](/docs-core/quality/performance/)

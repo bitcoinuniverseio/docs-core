@@ -1,0 +1,5 @@
+# Core documentation, bitcoinuniverseio/docs-core
+User-agent: *
+Allow: /
+
+Sitemap: https://bitcoinuniverseio.github.io/docs-core/sitemap-index.xml

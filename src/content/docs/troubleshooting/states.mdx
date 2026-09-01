@@ -1,0 +1,84 @@
+---
+title: Market and reader states
+description: >-
+  Every state a Core market or panel can be in, what each one licences you to
+  conclude, whether retrying helps, and what to do next.
+sidebar:
+  order: 2
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="frontend market state components, Ordex authority"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+## Every state, in one table
+
+| State | Conclude | Retry? | Next |
+| --- | --- | --- | --- |
+| **Loading** | Nothing yet. A placeholder never contains a figure | Wait | |
+| **Nothing listed** | The reader answered. The market is genuinely empty | No, it will say the same thing | |
+| **Market unavailable** | Nothing. The count is unknown and is never shown as zero | Yes | Check [`/indexer-health`](/docs-core/api/health/) for that protocol |
+| **Partial book** | What you see is real and incomplete | Yes, for the rest | A missing row is not evidence of absence |
+| **Degraded** (Ordex) | Ordex is running; a Bitcoin Core or ordinals reader is unavailable. Existing orders stay listed, new listings cannot be verified | Yes, later | Do not treat an unverifiable new listing as verified |
+| **Switched off by an operator** (Ordex) | Deliberately paused. The market and desk stay in place and say so | No | Nothing you press creates a transaction |
+| **Retired** | Listings and history stay viewable. Buying and listing are permanently closed | No | OP-20 and OP Names today |
+| **A dash in a cell** | That figure was not read. Not a zero | Refresh | Do not rank by a column of dashes |
+| **A column that is absent** | The source cannot answer that question at all | No | Not the same as a column of zeroes |
+| **A disabled control with a reason** | The protocol supports the action; a live gate disagrees | Yes, refreshing rechecks that exact route | An earlier ready result is never reused |
+| **No control at all** | The protocol does not support the action | No | The [support matrix](/docs-core/protocols/support-matrix/) gives the reason |
+
+## The distinction that matters most
+
+**Unavailable is a fact about the read. Empty is a fact about the market.**
+
+If a market says its reader is unavailable, do not assume that no tokens,
+listings, or activity exist. Retry later, or use the protocol's independent
+explorer. Do not create or repeat a transaction from stale market data.
+
+## Diagnosing an unavailable market
+
+```bash
+curl -s https://api.bitcoinuniverse.io/indexer-health \
+  | jq '.data[] | select(.protocolId=="<protocol>")
+        | {indexerIdentity, tip, nodeTip, lag, lastSuccess,
+           status, reasonCode, reasons,
+           stale: .freshness.stale, disagreeing: .freshness.disagreeing}'
+```
+
+| What you find | What it means |
+| --- | --- |
+| `lastSuccess: null` | This index has never been read successfully in the current process. `tip: 0` beside it is unread, not height zero |
+| `freshness.stale: true` | The observation is older than the freshness limit. It may resolve on the next refresh |
+| `freshness.disagreeing: true` | Two authorities disagree. This will not resolve on a refresh |
+| `capabilities: []` with a long `declaredCapabilities` | The protocol declares actions this authority cannot currently execute. Gate 1 passed, gate 3 did not |
+| `reasonCode` | The dominant reason, as a stable code |
+
+## What you should never see
+
+A status code or a raw response payload on a market page. A failed read is
+reported in plain language. If you see either,
+[report it](https://github.com/bitcoinuniverseio/docs-core/issues): that is a
+defect.
+
+## The rule for acting
+
+Before signing anything after an error:
+
+1. Refresh market state.
+2. Confirm the state is now **ready**, not **degraded** or **partial**.
+3. Confirm the wallet network and account.
+4. Read the wallet's own inputs and outputs.
+
+Never repeat a transaction from stale data.
+
+## Next
+
+- [Reading the numbers](/docs-core/start/reading-the-numbers/)
+- [Indexer freshness](/docs-core/data/indexer-freshness/)
+- [Market safety](/docs-core/wallets/market-safety/)

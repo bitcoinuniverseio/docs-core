@@ -1,0 +1,144 @@
+---
+/*
+ * Two whole-registry tables that would be unreadable as prose: the
+ * confirmation and reorg policy for all 29 protocols, and the indexer and
+ * source-of-truth for all 29. Both read the snapshot at build time.
+ */
+import { marketplaceProtocols, slugFor } from '../data/registry.mjs';
+
+interface Props {
+  /** "policy" for confirmation and reorg, "indexer" for sources of truth. */
+  kind: 'policy' | 'indexer';
+}
+
+const { kind } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const label =
+  kind === 'policy'
+    ? 'Confirmation, freshness and reorg policy for every marketplace protocol, scrollable table'
+    : 'Indexer and source of truth for every marketplace protocol, scrollable table';
+---
+
+<div class="table-scroll wide" tabindex="0" role="region" aria-label={label}>
+  <table>
+    <thead>
+      {kind === 'policy' ? (
+        <tr>
+          <th scope="col">Protocol</th>
+          <th scope="col">Freshness enforced</th>
+          <th scope="col">Settlement confirmations</th>
+          <th scope="col">Automatic reorg reconciliation</th>
+          <th scope="col">Stated policy</th>
+        </tr>
+      ) : (
+        <tr>
+          <th scope="col">Protocol</th>
+          <th scope="col">Primary index</th>
+          <th scope="col">Fallbacks</th>
+          <th scope="col">Order book</th>
+          <th scope="col">Ownership proof</th>
+        </tr>
+      )}
+    </thead>
+    <tbody>
+      {marketplaceProtocols.map((p) => (
+        <tr>
+          <th scope="row">
+            <a href={`${base}/protocols/detail/${slugFor(p.id)}/`}>{p.displayName}</a>
+          </th>
+          {kind === 'policy' ? (
+            <>
+              <td>
+                <span class={`chip ${p.freshness.enforced ? 'chip-live' : 'chip-off'}`}>
+                  {p.freshness.enforced ? 'Yes' : 'No'}
+                </span>
+              </td>
+              <td class="num">{p.confirmation.settlementMinConfirmations ?? 'none'}</td>
+              <td>
+                <span class={`chip ${p.reorg.automaticReconciliation ? 'chip-live' : 'chip-off'}`}>
+                  {p.reorg.automaticReconciliation ? 'Yes' : 'No'}
+                </span>
+              </td>
+              <td class="prose-cell">{p.reorg.policy}</td>
+            </>
+          ) : (
+            <>
+              <td class="prose-cell">{p.indexer.primary}</td>
+              <td class="prose-cell">
+                {p.indexer.fallbacks.length ? p.indexer.fallbacks.join('; ') : 'None'}
+              </td>
+              <td class="prose-cell">{p.sourceOfTruth.orderBook}</td>
+              <td class="prose-cell">{p.sourceOfTruth.ownership}</td>
+            </>
+          )}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .wide {
+    margin-inline: calc(-1 * var(--sl-content-pad-x, 1rem));
+    max-width: calc(100% + 2 * var(--sl-content-pad-x, 1rem));
+  }
+
+  table {
+    width: max-content;
+    min-width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  th,
+  td {
+    padding: 0.35rem 0.55rem;
+    border-bottom: 1px solid var(--bu-grid);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--bu-surface-raised);
+    border-bottom: 2px solid var(--bu-grid-strong);
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--bu-muted);
+    white-space: nowrap;
+    vertical-align: bottom;
+  }
+
+  tbody th {
+    position: sticky;
+    left: 0;
+    background: var(--bu-surface-raised);
+    border-right: 1px solid var(--bu-grid-strong);
+    white-space: nowrap;
+    font-weight: 600;
+  }
+
+  td.num {
+    font-family: var(--bu-font-mono);
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  td.prose-cell {
+    min-width: 15rem;
+    max-width: 26rem;
+  }
+
+  @media (max-width: 50rem) {
+    .wide {
+      margin-inline: 0;
+      max-width: 100%;
+    }
+  }
+</style>

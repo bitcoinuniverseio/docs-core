@@ -1,0 +1,82 @@
+---
+title: Support
+description: >-
+  Where to ask a question, how to report a documentation defect, how to report a
+  security issue privately, and what nobody will ever ask you for.
+sidebar:
+  order: 4
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/docs-core"
+  source="SUPPORT.md, SECURITY.md"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+## Before asking
+
+Most questions are answered by four pages:
+
+1. [Reading the numbers](/docs-core/start/reading-the-numbers/), for anything
+   that looks like a wrong figure.
+2. [The support matrix](/docs-core/protocols/support-matrix/), for anything
+   that looks like a missing feature.
+3. [Troubleshooting](/docs-core/troubleshooting/), for a symptom.
+4. [`/health`](https://api.bitcoinuniverse.io/health), for whether the
+   deployment is open for trading right now.
+
+## Where to go
+
+| What | Where |
+| --- | --- |
+| A question about using Core | [Open an issue](https://github.com/bitcoinuniverseio/docs-core/issues) |
+| A page here that does not match the product | [Open an issue](https://github.com/bitcoinuniverseio/docs-core/issues), naming the page and the screen. That mismatch is a defect in this repository |
+| A broken link or a rendering problem | [Open an issue](https://github.com/bitcoinuniverseio/docs-core/issues) |
+| A suspected security issue | [Report privately](https://github.com/bitcoinuniverseio/docs-core/security/advisories/new). **Do not open a public issue** |
+| Other Bitcoin Universe products | [docs.bitcoinuniverse.io](https://docs.bitcoinuniverse.io) |
+
+## What to include
+
+- The page or route, and the width you saw it at.
+- What you observed, and what you expected instead.
+- The smallest set of steps that reproduces it.
+- `X-Request-Id`, if an API call was involved.
+- `X-Universe-Release`, so the report is pinned to a build.
+- Screenshots or response bodies with personal data removed.
+
+**Never include** a seed phrase, a private key, an unbroadcast signed
+transaction, a session token, or anyone else's address. None of those are
+needed to reproduce a defect, and they cannot be un-sent.
+
+## Security scope
+
+In scope:
+
+- The Core application at `https://www.bitcoinuniverse.io`.
+- Its public API responses, including the health and readiness contracts.
+- These documentation pages.
+
+Reports about a third party's wallet extension, node, or explorer belong with
+that project. If the issue is that Core handles their response unsafely, that
+is in scope here.
+
+Please do not run load tests, automated scanners, or denial-of-service attempts
+against production; do not access, modify, or retain another person's data; and
+do not use a real transaction to demonstrate a defect when a description or a
+testnet reproduction would show the same thing.
+
+## What nobody will ever ask you for
+
+Nobody working on Bitcoin Universe will ever ask for your seed phrase, your
+private key, or a signature outside a transaction you started yourself. There
+is no support process that needs any of them. **Treat any such request as an
+attack, whoever it appears to come from.**
+
+## Next
+
+- [Troubleshooting](/docs-core/troubleshooting/)
+- [Market safety](/docs-core/wallets/market-safety/)

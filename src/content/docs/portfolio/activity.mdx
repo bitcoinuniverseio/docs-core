@@ -1,0 +1,79 @@
+---
+title: Activity
+description: >-
+  What the activity feed records, why rows are dated from the event rather than
+  the write, why one Bitcoin transaction can produce several rows, and what
+  activity is not.
+sidebar:
+  order: 2
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="frontend/src/pages/Portfolio/, Marketplace v1 activity contract"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+Activity is the append-only record of what happened: an order created,
+cancelled, filled, expired, or found spent, and inscription movement in a
+wallet.
+
+## Dated from the event
+
+Activity rows are dated from **when the event was created**, not from a later
+reconciliation write.
+
+This matters more than it sounds. Maintenance passes re-check historical
+trades constantly. If a row took its date from the last write, every
+maintenance pass would resurface old trades as current activity and a quiet
+market would look busy. Core's passes never move a row's date forward.
+
+Read the date before treating a row as a signal. A quiet market shows older
+dates rather than hiding them.
+
+## One transaction, several rows
+
+A batch settlement can put several purchases into one Bitcoin transaction. Each
+trade keeps its own row. Rows are keyed on the full outpoint, so several
+outputs created by one transaction stay distinct and keep their own entered
+prices.
+
+## Current state is not history
+
+The market does not turn a listing's current state into a made-up historical
+event. If an order is currently listed, that is a state, not an event. The
+activity feed carries the event that put it there.
+
+Offers are the live bid side of an order book, which is again a state rather
+than history. Activity and offers are different surfaces on purpose.
+
+## What activity is not
+
+- **Not a price feed.** It is a record of past trades.
+- **Not a measure of current liquidity.** A trade last week says nothing about
+  whether you can trade today.
+- **Not a prediction.**
+- **Not proof of value or identity.** An on-chain transaction does not by
+  itself prove the identity of a counterparty, the value of an asset, or the
+  accuracy of an off-chain description.
+
+## Attribution
+
+Where buyer and seller attribution genuinely cannot be resolved from the
+authoritative identity, it is reported as **unresolved** rather than guessed.
+Bitmap activity does this explicitly.
+
+## When the feed cannot be read
+
+The feed reports unavailable and offers a retry. An empty feed and an
+unreadable feed are shown differently, and neither is presented as the other.
+
+## Next
+
+- [Portfolio](/docs-core/portfolio/portfolio/)
+- [How a market works](/docs-core/markets/how-markets-work/)
+- [Reading the numbers](/docs-core/start/reading-the-numbers/)

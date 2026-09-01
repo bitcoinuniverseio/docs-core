@@ -1,0 +1,43 @@
+---
+/*
+ * The source line that sits under the H1 of every material page.
+ *
+ * A documentation page about a live product is a claim about that product at
+ * a moment in time. This strip says which repository and file the claim was
+ * read from, which chain and network it applies to, what its lifecycle state
+ * is, and when a maintainer last checked it. A reader who does not trust the
+ * page can go and look.
+ */
+interface Props {
+  /** Owning repository the facts were read from. */
+  repo?: string;
+  /** Repository-relative path, or a short description of where in it. */
+  source?: string;
+  /** Chain the page applies to. */
+  chain?: string;
+  /** Network the page applies to. */
+  network?: string;
+  /** Lifecycle of the thing described, not of this page. */
+  lifecycle?: string;
+  /** ISO date a maintainer last checked this page against the product. */
+  verified: string;
+}
+
+const {
+  repo = 'bitcoinuniverseio/core (private)',
+  source,
+  chain = 'bitcoin, dogecoin',
+  network = 'mainnet',
+  lifecycle,
+  verified,
+} = Astro.props;
+---
+
+<div class="provenance">
+  <div><b>Source</b> <span>{repo}</span></div>
+  {source && <div><b>Path</b> <span>{source}</span></div>}
+  <div><b>Chain</b> <span>{chain}</span></div>
+  <div><b>Network</b> <span>{network}</span></div>
+  {lifecycle && <div><b>Lifecycle</b> <span>{lifecycle}</span></div>}
+  <div><b>Verified</b> <span>{verified}</span></div>
+</div>

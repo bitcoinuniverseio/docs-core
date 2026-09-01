@@ -1,0 +1,98 @@
+---
+title: Connecting a wallet
+description: >-
+  The five wallets Core supports, which ones can complete a connection from a
+  phone and which cannot, what the three wallet states mean, and what Core will
+  never ask you for.
+sidebar:
+  order: 1
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="frontend/src/util/wallet.js, frontend/src/components/wallet/WalletModal.js"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+Core is non-custodial. Connecting a wallet grants read access to your addresses
+and the ability to *propose* transactions you then approve yourself. It never
+grants Core the ability to move anything.
+
+You do not need a wallet to search, explore an address, browse an index, or
+browse a market. Connect only when you want to act.
+
+## The five wallets
+
+| Wallet | What it is | On a phone |
+| --- | --- | --- |
+| **Universe** | Self-custody wallet for Bitcoin metaprotocols | Browser extension, desktop only |
+| **UniSat** | Bitcoin Ordinals wallet | Not supported from a mobile browser. Open Core inside the UniSat app browser |
+| **Wizz Wallet** | Bitcoin, Ordinals, Atomicals, and Runes wallet | Supported. Open Core inside Wizz Discovery and connect from there |
+| **Xverse** | Bitcoin and Stacks wallet | Supported. It is the only wallet that completes a connection from an ordinary mobile browser, by handing off to the Xverse app and returning the addresses |
+| **OKX Wallet** | Multi-chain wallet | Not supported from a mobile browser. Open Core inside the OKX app browser |
+
+On a phone, Core does not offer to install a desktop extension, because there
+is no extension to install. Each wallet carries a mobile-specific hint and a
+mobile-specific destination instead.
+
+Wizz is shown as **Wizz**, never as UniSat.
+
+## Three states
+
+| State | What it means | What to do |
+| --- | --- | --- |
+| **Missing** | The wallet is not installed, or its provider is not exposed to the page | Install from the wallet's own release channel, or open Core inside its app browser |
+| **Locked** | Installed, but locked | Unlock it and reconnect |
+| **Ready** | Available and unlocked | Connect |
+
+If a connected extension stops exposing a signer, a listing form is disabled
+with an unlock-and-reconnect explanation **before** any transaction is
+prepared. Nothing was built and nothing was signed.
+
+## Before you connect
+
+1. **Confirm the domain.** Core is at `www.bitcoinuniverse.io`. The bare
+   `bitcoinuniverse.io` address redirects to a different application.
+2. **Install only from the wallet's own trusted release channel.**
+3. **Select the correct account and network.** Core rejects unsupported
+   networks.
+4. **Treat experimental protocols and assets as high risk.**
+
+## What Core will never ask for
+
+Nobody working on Bitcoin Universe will ever ask for your seed phrase, your
+private key, or a signature outside a transaction you started yourself. There
+is no support process that needs any of them. Treat any such request as an
+attack, whoever it appears to come from.
+
+Core never asks for a wallet signature merely because you opened Chat, searched
+an address, selected a contact, or read public content. The one signature that
+is not a transaction is the private-chat verification, and you have to press a
+button to start it. See
+[private chat verification](/docs-core/wallets/chat-verification/).
+
+## PSBT handling
+
+Where Wizz signs a prepared Bitcoin transaction, Core converts its internal
+PSBT encoding to the hexadecimal PSBT string the wallet requires, and validates
+the signed result before it is submitted. Exact transaction review remains fail
+closed: a required ownership, output, fee, or signature mismatch blocks the
+action rather than being downgraded to an advisory confirmation.
+
+## Dogecoin
+
+Dogecoin actions use a native Dogecoin wallet boundary. Listing-authority
+messages use standard Dogecoin signed messages, and transaction actions require
+a signature envelope for every owned input. The backend recovers the signing
+key and verifies that it matches the claimed Dogecoin address. Mismatched,
+partial, reordered, or structurally changed results fail closed.
+
+## Next
+
+- [Transaction safety](/docs-core/wallets/transaction-safety/)
+- [Market safety](/docs-core/wallets/market-safety/)
+- [Wallet and signing problems](/docs-core/troubleshooting/wallet/)

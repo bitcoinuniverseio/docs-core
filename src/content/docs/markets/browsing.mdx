@@ -1,0 +1,94 @@
+---
+title: Browsing a market
+description: >-
+  Filters, traits, sorting, and pagination that stay correct while a market
+  changes underneath you, and how a view survives Back, Forward, reload, and
+  sharing.
+sidebar:
+  order: 2
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="frontend/src/components/Marketplace/, frontend/src/hooks/useRouteStateRestore.js"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+## Filters and traits
+
+Search, price, listing status, sorting, and traits work together.
+
+Trait choices are **OR within one category and AND across categories**.
+Selecting Blue and Red under Background plus Gold under Crown finds items with
+a blue *or* red background that *also* have a gold crown.
+
+Large trait dictionaries load in bounded pages. Use **Show more** or the trait
+value search rather than expecting every value to render at once. A selected
+value stays visible even when it falls outside the current page. Facet counts
+show distinct inscriptions and update without counting a multi-valued trait
+twice.
+
+## The filter sheet on a phone
+
+On a small screen the filter sheet is a **draft**.
+
+- **Apply filters** commits every change together.
+- Close, the backdrop, and <kbd>Esc</kbd> discard the draft.
+- **Reset** is itself a draft until it is applied.
+
+Cart contents are separate from discovery filters and are not affected by
+either.
+
+## The address bar holds the view
+
+Applied discovery state is recorded in the address. Refresh, sharing the URL,
+and browser Back or Forward all restore the same filters.
+
+Ordex is explicit about this: a family or subprotocol selection is part of the
+address, for example `/ordex?group=ordinals&protocol=brc20`, and search, token,
+source, state, safety, side, and sort selections travel with it.
+
+## Paging a book that changes underneath you
+
+Ordex pages by the selected sort value and the order id that breaks ties. The
+next-page marker resumes after the last order you saw rather than counting rows
+from the start again.
+
+The consequence is the one that matters: a listing added, sold, or withdrawn
+between reads does not shift the page boundary, so an older row is neither
+skipped nor repeated. An invalid or mismatched marker is rejected rather than
+silently reopening page one.
+
+Family and subprotocol filters are applied **before** the market is paginated,
+so the result stays correct across more than one page of inventory.
+
+## Coming back to where you were
+
+Open a collection, scroll, open an asset, then press Back: the grid is on
+screen in the first frame, at the same scroll position, with the same view
+mode, selection, cart, and the rows you had already paged in. It refreshes its
+rows quietly behind you rather than showing a skeleton. The same applies to
+Forward and to the Ordinals hub.
+
+A quiet refresh, a purchase, or a new page of results never collapses a grid
+you scrolled through. The list keeps its length and the scrollbar stays honest,
+because off-screen tiles reserve their real height.
+
+## What loads first
+
+On collection pages the listing tiles paint before the chart and the activity
+feed. Those tools follow as soon as the main thread is idle, into boxes that
+were reserved from the first frame, so nothing jumps.
+
+Each market hub downloads only its own code. Neighbouring markets load when you
+reach for them.
+
+## Next
+
+- [Collection markets](/docs-core/markets/collection-markets/)
+- [Task: buy a listing](/docs-core/markets/buy/)
+- [Performance](/docs-core/quality/performance/)

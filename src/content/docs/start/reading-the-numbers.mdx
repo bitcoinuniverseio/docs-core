@@ -1,0 +1,147 @@
+---
+title: Reading the numbers
+description: >-
+  Unknown is not zero, and empty is not unavailable. The four states Core uses
+  for every figure and every table, how to tell them apart on screen, and what
+  each one licences you to conclude.
+sidebar:
+  order: 4
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="frontend/src/components/common/DataState.js, frontend/src/util/dataStatus.js"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+Most mistakes people make with chain data come from one confusion: treating a
+figure that was not measured as a figure that was measured and came back zero.
+Core separates those on every screen. Learning the four states takes two
+minutes and it is the single most useful thing on this site.
+
+## The four states
+
+<figure class="diagram">
+  <svg viewBox="0 0 720 260" role="img" aria-labelledby="states-title states-desc" xmlns="http://www.w3.org/2000/svg">
+    <title id="states-title">The four states a Core data surface can be in</title>
+    <desc id="states-desc">
+      A request starts in Loading. If the reader answers, the surface becomes
+      Ready with results, or Empty with a confirmed zero result. If the reader
+      does not answer, the surface becomes Unavailable, which is a fact about
+      the read and not about the market. A fifth state, Degraded, means the
+      surface answered from a partial set of readers, so what is shown is real
+      but incomplete. Empty and Unavailable never look the same on screen.
+    </desc>
+    <style>
+      {`
+        .s-box { fill: var(--bu-surface-raised); stroke: var(--bu-grid-strong); stroke-width: 1; }
+        .s-good { stroke: var(--bu-signal); }
+        .s-bad { stroke: var(--bu-stale); }
+        .s-t { fill: var(--sl-color-white); font-family: var(--bu-font-mono); font-size: 12px; font-weight: 700; }
+        .s-d { fill: var(--bu-muted); font-family: var(--bu-font-ui); font-size: 10.5px; }
+        .s-line { stroke: var(--bu-grid-strong); stroke-width: 1.4; fill: none; }
+        .s-lab { fill: var(--bu-muted); font-family: var(--bu-font-mono); font-size: 10px; }
+      `}
+    </style>
+    <rect class="s-box" x="8" y="100" width="122" height="52" rx="3" />
+    <text class="s-t" x="20" y="124">LOADING</text>
+    <text class="s-d" x="20" y="140">Never holds a number</text>
+
+    <rect class="s-box s-good" x="250" y="18" width="200" height="52" rx="3" />
+    <text class="s-t" x="262" y="42">READY</text>
+    <text class="s-d" x="262" y="58">The reader answered, with results</text>
+
+    <rect class="s-box s-good" x="250" y="104" width="200" height="52" rx="3" />
+    <text class="s-t" x="262" y="128">EMPTY</text>
+    <text class="s-d" x="262" y="144">It answered. There is nothing there.</text>
+
+    <rect class="s-box s-bad" x="250" y="190" width="200" height="52" rx="3" />
+    <text class="s-t" x="262" y="214">UNAVAILABLE</text>
+    <text class="s-d" x="262" y="230">It did not answer. Nothing is known.</text>
+
+    <rect class="s-box s-bad" x="520" y="104" width="192" height="52" rx="3" />
+    <text class="s-t" x="532" y="128">DEGRADED</text>
+    <text class="s-d" x="532" y="144">Real, but incomplete</text>
+
+    <path class="s-line" d="M130 126 L190 126 L190 44 L248 44" />
+    <path class="s-line" d="M190 126 L248 126" />
+    <path class="s-line" d="M190 126 L190 216 L248 216" />
+    <path class="s-line" d="M450 130 L518 130" />
+
+    <text class="s-lab" x="196" y="38">answered</text>
+    <text class="s-lab" x="196" y="252">no answer</text>
+  </svg>
+  <figcaption>
+    Loading never contains a figure. Ready and Empty are facts about the world.
+    Unavailable and Degraded are facts about the read.
+  </figcaption>
+</figure>
+
+| State | What Core shows | What you may conclude |
+| --- | --- | --- |
+| **Loading** | A placeholder shaped like the content that will replace it. Never a number. | Nothing yet. Wait. |
+| **Ready** | Results, with the period each figure covers. | What is shown was measured. |
+| **Empty** | An explicit sentence such as "no tokens found", naming what was checked. | The reader answered and there is genuinely nothing. This is a fact about the market. |
+| **Unavailable** | The market or panel named, a plain-language statement that the read failed, and a retry. | Nothing. The quantity is unknown. Do not read it as zero. |
+| **Degraded** | Results plus a notice that only part of the picture loaded. | What you see is real and incomplete. A missing row is not evidence of absence. |
+
+## A dash is not a zero
+
+A single figure that Core could not measure is shown as a dash. Floor prices,
+volumes, holder counts, listing counts, and any score derived from them all
+follow this rule.
+
+- **A dash means the figure was not read.**
+- **A number means it was.**
+
+Core never fills a gap with a sample row, a last-known value with no age, or a
+figure written into the application. A market can legitimately show a name and
+a dash in every column, and that state is honest about what is known. Do not
+read a ranking into a table whose sorted column is entirely dashes.
+
+## Where the distinction is enforced
+
+This is not a style guideline. It is implemented in the interface layer and
+tested.
+
+- A data surface carries one of the five states above, and the empty state and
+  the error state are different components with different text.
+- A component that is handed a state it does not understand fails to the
+  unavailable state rather than to an empty one. Failing closed means an
+  outage cannot be silently rendered as "nothing here".
+- The one exception is deliberate: a read that succeeds and returns nothing is
+  the empty state, always, even where a caller would have preferred a retry
+  prompt.
+
+## The same rule at the API
+
+The public health contract applies the identical distinction to itself. In
+`/indexer-health`, each protocol carries:
+
+- `tip` and `nodeTip`, so a lag of zero is distinguishable from two tips that
+  were never read;
+- `lastSuccess`, which is `null` when there has never been a successful read;
+- `freshness.stale` and `freshness.disagreeing` as separate booleans, because
+  an observation being old and two authorities disagreeing are different
+  problems;
+- `status` and a `reasonCode`, so an error names its cause.
+
+A protocol reporting `tip: 0` with `lastSuccess: null` has not been read. It is
+not a chain at height zero.
+
+## What this costs you, and why it is worth it
+
+Sometimes a page will tell you it does not know something rather than showing a
+plausible number. That is the intended outcome. A plausible number you cannot
+distinguish from a measured one is worse than no number, because you will act
+on it.
+
+## Next
+
+- [Where each number comes from](/docs-core/data/provenance/), for which reader answered.
+- [Indexer freshness](/docs-core/data/indexer-freshness/), for how far behind that reader was.
+- [Market and reader states](/docs-core/troubleshooting/states/), for what to do about each one.

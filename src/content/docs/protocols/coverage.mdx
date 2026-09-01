@@ -1,0 +1,96 @@
+---
+title: Coverage beyond the marketplace
+description: >-
+  What "covered" means and does not mean, the nine protocols Core reads that
+  have no marketplace at all, and how the in-app coverage page differs from the
+  support matrix.
+sidebar:
+  order: 5
+---
+
+import CoverageTable from '../../../components/CoverageTable.astro';
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="backend/packages/ecosystem-contracts/lib/protocols.js"
+  chain="bitcoin, dogecoin, zcash"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+The registry holds 38 protocols. Twenty-nine have a marketplace policy and
+appear in the [support matrix](/docs-core/protocols/support-matrix/). The other
+nine have none at all, and this page is where they live.
+
+## Two pages that answer different questions
+
+| | The in-app `/coverage` page | The support matrix here |
+| --- | --- | --- |
+| Answers | What does this build **read and serve**? | What can Core **do** with it? |
+| Generated from | The routing registry the running application uses | The marketplace registry the backend enforces |
+| Rows | Every protocol with an index or a market route | The 29 with a marketplace policy |
+| Good for | Finding a protocol's index or market page | Deciding whether you can trade |
+
+Read them together. Coverage tells you a page exists. The matrix tells you what
+the page will let you do when you get there.
+
+## What "covered" means
+
+Covered means Core reads the protocol and serves it here.
+
+It does **not** mean:
+
+- that Universe operates the index behind that row. A row naming a read source
+  is fetched by your browser straight from that host, and a read that does go
+  through Core may itself come from an external provider;
+- that a market has listings right now;
+- that a market has depth or liquidity;
+- that every action is available for that protocol.
+
+A market with nothing listed says so. A market whose reader failed says that
+instead, and offers a retry. The two are never presented the same way, so an
+empty table is never a way of hiding an outage.
+
+## The nine with no marketplace
+
+These are read, explored, or inscribed. None of them can be listed, bought, or
+sold in Core, and there is no gate to open that would change that: the registry
+records no marketplace policy for them at all.
+
+<CoverageTable />
+
+Three of those deserve a note.
+
+- **Atomicals** appears here as the umbrella protocol, while its four tradable
+  members (ARC-20, Atomicals NFTs, Realms, Subrealms) each have their own
+  marketplace row in the matrix.
+- **Zerdinals and ZRunes** settle on Zcash and are recorded with `read` and
+  `explore` only. Their own documentation is at
+  [docs-zerdinals-and-zrunes](https://bitcoinuniverseio.github.io/docs-zerdinals-and-zrunes).
+- **CAT-721** has no recorded inscribe or marketplace actions, in contrast with
+  CAT-20 which has a testnet-gated trade preview.
+
+## Rows that name a read source
+
+TAP, DMT, and UNAT carry a read source on the in-app coverage list, and the
+same sentence appears again on their index pages beside the numbers it applies
+to. Their deployment, mint progress, and holder figures are read by your
+browser from a host Universe does not operate, so their availability and
+freshness are that host's rather than Core's.
+
+Every other row is read through the Core API. That API may in turn read an
+external provider for a given protocol, which is what
+[`/indexer-health`](/docs-core/api/health/) reports per protocol.
+
+## Finding the coverage page
+
+- The home screen links to it from the first paragraph.
+- The footer links to it from every page.
+- Its address is `https://www.bitcoinuniverse.io/coverage`.
+
+## Next
+
+- [The support matrix](/docs-core/protocols/support-matrix/)
+- [Where each number comes from](/docs-core/data/provenance/)
+- [Protocol indexes](/docs-core/explorer/protocol-indexes/)

@@ -1,0 +1,109 @@
+---
+title: Addresses
+description: >-
+  The address view: what it reads with no wallet connected, how confirmed and
+  mempool totals are kept apart, why a failed UTXO read is never shown as an
+  empty wallet, and the two address roles Core distinguishes.
+sidebar:
+  order: 4
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="frontend/src/pages/Explorer/Explorer.js, backend mempool facade"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+The address view is the surface Core builds itself, and the one most people
+arrive at first. It answers: **what does this address hold, across every
+protocol Core reads?**
+
+It needs no wallet. Pasting an address into search opens the same view in
+explore mode, with nothing connected and nothing to sign.
+
+## What it shows
+
+- Bitcoin or Dogecoin holdings, grouped by protocol.
+- Per protocol, what that protocol's index says the address holds.
+- A per-protocol state, so a protocol that could not be read says so
+  individually rather than being silently left out of the list.
+
+A bulk input accepts several addresses for a watchlist view.
+
+## Confirmed and unconfirmed are kept apart
+
+The address statistics endpoint reports chain totals and mempool totals as two
+separate objects, so an unconfirmed change is never folded into a confirmed
+balance:
+
+```bash
+curl -s https://api.bitcoinuniverse.io/mempool/api/address/<address>
+```
+
+```json
+{
+  "address": "bc1q…",
+  "chain_stats":   { "funded_txo_count": 1, "funded_txo_sum": 13001007903066,
+                     "spent_txo_count": 0, "spent_txo_sum": 0, "tx_count": 339 },
+  "mempool_stats": { "funded_txo_count": 0, "funded_txo_sum": 0,
+                     "spent_txo_count": 0, "spent_txo_sum": 0, "tx_count": 0 }
+}
+```
+
+A balance is `funded_txo_sum` minus `spent_txo_sum`, in satoshis, computed
+within one of those objects. Mixing the two produces a figure that is true of
+nothing.
+
+## A failed read is never an empty wallet
+
+This is the rule that matters most on this screen.
+
+> Address UTXO failure is reported as unavailable. It is never presented as a
+> confirmed empty wallet.
+
+An empty array from the UTXO endpoint means the address was read and holds
+nothing. An unavailable state means the read failed and the holdings are
+unknown. The interface shows those two differently, and so does the API: the
+unavailable case is an explicit failure response, not an empty array.
+
+Where the Portfolio index does not include a Bitcoin balance, the dashboard
+attempts an address-statistics fallback. If neither source returns valid
+evidence, the balance is shown as unavailable rather than as zero.
+
+## Two address roles
+
+The protocol registry records which role each protocol's assets live under:
+
+- **`payment`**: an ordinary spending address.
+- **`ordinals`**: an address holding inscription-bearing outputs.
+
+Most protocols record both; some record only one. A wallet typically exposes a
+different address for each role, which is why an asset can be missing from the
+view you are looking at while being perfectly safe in the other one. Each
+protocol page lists its address roles.
+
+## Dogecoin addresses
+
+A Dogecoin address opens the same view scoped to the Dogecoin protocols. Note
+that all three Dogecoin marketplaces sit behind a single feature gate, so
+holdings are readable while trading may be closed. The
+[support matrix](/docs-core/protocols/support-matrix/) has the current state.
+
+## Common failure states
+
+| What you see | What it means | What to do |
+| --- | --- | --- |
+| A protocol row reading unavailable | That protocol's index did not answer | Check [`/indexer-health`](/docs-core/api/health/) for that protocol. Do not read it as a zero balance |
+| An empty result for a protocol | It answered and holds nothing | This is a fact about the address |
+| A Bitcoin balance shown as unavailable | Neither the portfolio index nor the address-statistics fallback returned valid evidence | Retry. Do not conclude the address is empty |
+| An asset you expect is missing | It may be held under the other address role | Check the other address your wallet exposes |
+
+## Next
+
+- [UTXOs](/docs-core/explorer/utxos/)
+- [Protocol assets](/docs-core/explorer/protocol-assets/)
+- [Portfolio](/docs-core/portfolio/portfolio/)

@@ -1,0 +1,129 @@
+---
+title: Performance
+description: >-
+  The per-route JavaScript budgets Core is held to, the rule that budgets only
+  move down, what the two performance passes changed, and how performance is
+  kept rather than achieved once.
+sidebar:
+  order: 3
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="frontend/scripts/perf/route-budgets.json, docs/performance.md"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+Core's performance work is enforced by budgets rather than described by
+adjectives. A route that becomes slower does not ship.
+
+## The budgets
+
+Each figure is the gzipped size of that route's own chunk groups. **Startup
+JavaScript is excluded and budgeted separately.** The rule attached to the file
+is short: *budgets only move down*.
+
+| Route | Path | Route budget |
+| --- | --- | --- |
+| Startup (every visitor) | | **300 KB** |
+| Coverage | `/coverage` | 10 KB |
+| Protocol index | `/index/:protocol` | 30 KB |
+| ARC-20 market | `/trade/arc20` | 45 KB |
+| Home | `/` | 70 KB |
+| Discover | `/discover` | 70 KB |
+| Ordinals market | `/trade/ordinals` | 80 KB |
+| BRC-20 market | `/trade/brc20` | 100 KB |
+| Asset detail | `/trade/ordinals/inscription/:inscriptionId` | 110 KB |
+| DMT market | `/trade/dmt` | 120 KB |
+| Collection | `/trade/ordinals/:collectionId` | 210 KB |
+| Portfolio | `/portfolio` | 215 KB |
+| Explorer | `/explorer` | 225 KB |
+| Bitmap market | `/trade/bitmap` | 250 KB |
+
+The shape of that table is the design: the pages a visitor is most likely to
+land on first are the cheapest, and the expensive routes are the ones you
+deliberately navigate into.
+
+Market hubs are budgeted separately from routes, so a route that opens one hub
+does not silently pull in the other eleven.
+
+## What the two passes changed
+
+**UI 3.0** (August 2026) cut the startup JavaScript shipped to every visitor by
+more than half, from 446 KB to 250 KB compressed. Scripts, styles, and images
+moved to long-lived immutable caching, API responses were compressed, and
+collection and token logos became right-sized WebP derivatives rather than
+original uploads. A typical screen transfers about a third of the bytes it used
+to.
+
+Fewer requests followed: token tables stopped probing one URL per logo, listing
+grids fetch traits in a single batch, activity feeds are shared between the
+panels that display them, and fiat prices come from the Core API rather than
+from a third-party exchange API in your browser.
+
+A later pass in the same release moved Core behind an HTTP/2, keep-alive,
+Brotli-capable edge. A page that used to open 50 to 130 TLS connections opens a
+handful, and API round trips from a warm connection take a third of the time.
+
+**UI 4.0** (22 August 2026) made routes lighter still. Every index page loads
+only the protocol you opened, the major routes stopped downloading a legacy
+component theme, and the explorer stopped downloading a 500 KB utility library
+for one function. Typical route JavaScript dropped by 25 to 60 KB compressed on
+every major route. In a lab measurement on a mid-range phone profile, a
+collection page reached its largest paint in less than half the time it used to
+(7.2 s to 3.2 s), the Ordinals index shipped a third fewer bytes and showed
+useful content 1.8 s sooner, and opening the market picker cost a third of the
+main-thread time.
+
+The startup budget stayed at 300 KB, measured at 251 KB at the time of that
+release.
+
+## Layout stability
+
+Loading placeholders have the same shape as the content that replaces them, the
+footer stays below the first screen, and the collections table reserves its
+rows. Collection and inscription pages reserve their final layout before the
+data arrives: header, stat chips, toolbar, chart, and price panel keep their
+place.
+
+Fonts never move the page. On a first visit over a slow connection the page
+paints in a system typeface whose letter spacing matches the one that follows.
+Measured on a mid-range phone profile with a slow connection and no cache, the
+home, market, portfolio, and explorer screens record no layout shift at all,
+and collection pages measured 0.000 on phones.
+
+## Performance mode
+
+On Save-Data, a slow network, or a low-power device, Core automatically reduces
+blur, animation, and off-screen media work.
+
+## How it is kept
+
+- Real-user vitals (LCP, INP, CLS, FCP, TTFB, and route transitions) are
+  sampled from production and reviewed per screen.
+- Every API response carries timing headers, so a slow request can be
+  attributed to database, upstream indexer, or application time. You can see
+  this yourself in `Server-Timing`.
+- A startup bundle budget and a repeatable route and API benchmark run with
+  every release.
+
+The anonymous performance beacon carries no wallet, asset, account, or
+transaction identifier.
+
+## This documentation site
+
+The same discipline applies here. This site ships no third-party script, no
+font download, no tracker, and no analytics. Ordinary content pages work with
+JavaScript disabled; JavaScript enhances only search and the theme toggle.
+Screenshots are WebP, and continuous integration fails a build where any image
+exceeds 200 KB.
+
+## Next
+
+- [Responsive behaviour](/docs-core/quality/responsive/)
+- [Design and accessibility](/docs-core/quality/design-and-accessibility/)
+- [Release evidence](/docs-core/quality/release-evidence/)

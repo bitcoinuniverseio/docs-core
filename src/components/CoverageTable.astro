@@ -1,0 +1,69 @@
+---
+/*
+ * The nine protocols the registry knows about that have no marketplace policy
+ * at all. They are the easiest thing on this site to get wrong, because their
+ * absence from the support matrix could be read as an oversight rather than
+ * as the answer.
+ */
+import { readOnlySurfaceProtocols } from '../data/registry.mjs';
+---
+
+<div class="table-scroll" tabindex="0" role="region" aria-label="Protocols with no marketplace policy, scrollable table">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Protocol</th>
+        <th scope="col">Chain</th>
+        <th scope="col">In Core</th>
+        <th scope="col">In sibling surfaces</th>
+      </tr>
+    </thead>
+    <tbody>
+      {readOnlySurfaceProtocols.map((p) => {
+        const main = p.surfaces.main?.actions ?? [];
+        const others = Object.entries(p.surfaces)
+          .filter(([k, s]) => k !== 'main' && s.actions.length > 0)
+          .map(([, s]) => `${s.label}: ${s.actions.join(', ')}`);
+        return (
+          <tr>
+            <th scope="row">
+              {p.displayName}
+              <code class="pid">{p.id}</code>
+            </th>
+            <td class="mono">{p.chain}</td>
+            <td>{main.length ? main.map((a) => <code>{a}</code>) : 'Nothing recorded.'}</td>
+            <td>{others.length ? others.join(' · ') : 'None.'}</td>
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  table {
+    font-size: 0.8rem;
+  }
+
+  .pid {
+    display: block;
+    font-family: var(--bu-font-mono);
+    font-size: 0.66rem;
+    color: var(--bu-muted);
+    background: none;
+    border: 0;
+    padding: 0;
+    font-weight: 400;
+  }
+
+  .mono {
+    font-family: var(--bu-font-mono);
+    font-size: 0.74rem;
+    color: var(--bu-muted);
+  }
+
+  td code {
+    margin-right: 0.25rem;
+    font-size: 0.72rem;
+  }
+</style>

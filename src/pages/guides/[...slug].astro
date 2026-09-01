@@ -1,0 +1,99 @@
+---
+/*
+ * The seventeen paths this repository published before 1 September 2026, when
+ * it was a README and a guides/ folder.
+ *
+ * Astro's built-in `redirects` option emits a fragment with no <html> element,
+ * which is not a document a screen reader or a crawler can do much with. These
+ * are complete pages instead: they redirect immediately, and if the redirect
+ * does not fire, they say what happened and offer the link.
+ *
+ * The same map is declared in docs.manifest.json, so the documentation portal
+ * serves the same redirects for its own copy of this content.
+ */
+export const REDIRECTS = {
+  'market-safety': ['/wallets/market-safety/', 'Market safety'],
+  'protocol-coverage': ['/protocols/coverage/', 'Coverage beyond the marketplace'],
+  'bitcoin-data-reliability': ['/data/chain-data/', 'Bitcoin and Dogecoin data'],
+  'secure-blockchain-data-access': ['/data/reader-boundary/', 'The public reader boundary'],
+  'marketplace-v1': ['/markets/marketplace-v1/', 'Marketplace v1 gates'],
+  'ordex-market': ['/markets/ordex/', 'Ordex'],
+  'ordinals-collection-market': ['/markets/collection-markets/', 'Collection markets'],
+  'ordinals-collection-imports': ['/markets/collection-imports/', 'Add an Ordinals collection'],
+  'atomicals-and-portfolio': ['/markets/atomicals/', 'Atomicals'],
+  'portfolio-market-actions': ['/portfolio/manage-assets/', 'Manage assets from Portfolio'],
+  'shared-collection-media': ['/markets/collection-media/', 'Collection media'],
+  'private-chat-verification': ['/wallets/chat-verification/', 'Private chat verification'],
+  'design-and-accessibility': ['/quality/design-and-accessibility/', 'Design and accessibility'],
+  'performance-and-ui-3': ['/quality/performance/', 'Performance'],
+  'performance-and-ui-4': ['/quality/performance/', 'Performance'],
+  'release-validation': ['/quality/release-evidence/', 'Release evidence'],
+  'backend-operations-console': ['/reference/moved-pages/', 'Moved pages'],
+};
+
+export function getStaticPaths() {
+  return Object.entries(REDIRECTS).map(([slug, [to, label]]) => ({
+    params: { slug },
+    props: { to, label },
+  }));
+}
+
+const { to, label } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const target = `${base}${to}`;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <meta name="robots" content="noindex, follow" />
+    <link rel="canonical" href={target} />
+    <title>Moved to {label}</title>
+    <style>
+      body {
+        font-family: ui-sans-serif, system-ui, 'Segoe UI', Roboto, sans-serif;
+        line-height: 1.6;
+        margin: 0 auto;
+        max-width: 34rem;
+        padding: 3rem 1.25rem;
+        background: #131c22;
+        color: #dde5e9;
+      }
+      a {
+        color: #7fe3d9;
+      }
+      h1 {
+        font-size: 1.35rem;
+        margin: 0 0 0.75rem;
+      }
+      p {
+        margin: 0 0 0.9rem;
+      }
+      @media (prefers-color-scheme: light) {
+        body {
+          background: #f6f9fb;
+          color: #1c262c;
+        }
+        a {
+          color: #0b5a54;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>This page moved</h1>
+      <p>
+        You should arrive at <a href={target}>{label}</a> immediately. If nothing
+        happens, follow that link.
+      </p>
+      <p>
+        This repository was restructured on 1 September 2026. Every previous
+        guide is listed at
+        <a href={`${base}/reference/moved-pages/`}>moved pages</a>.
+      </p>
+    </main>
+  </body>
+</html>

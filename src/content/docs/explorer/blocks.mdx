@@ -1,0 +1,123 @@
+---
+title: Blocks
+description: >-
+  What Core does with blocks: the chain tip it verifies, the mempool and fee
+  view it builds, block-scoped protocol views, and the deliberate absence of a
+  block detail page.
+sidebar:
+  order: 2
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="frontend/src/util/explorer-origins.js, frontend/src/util/block-search.js, backend mempool facade"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+:::note[Read this first]
+Core is not a general block explorer. It has no block list and no block detail
+page. A block hash or height in search opens an **external** block explorer,
+because Core has no route of its own for that entity. This page is about what
+Core *does* do with blocks, and it is more than the absence suggests.
+:::
+
+## The chain tip Core verifies
+
+Core reads a verified Bitcoin mainnet head through its own provider registry,
+from Universe-operated infrastructure. There is no public-provider fallback.
+
+That tip is load-bearing in three places:
+
+1. **Application readiness.** An unavailable or invalid chain tip makes read
+   readiness fail closed. It does not degrade to zero.
+2. **Index lag.** Every protocol's freshness is measured as the distance
+   between the node tip and that index's own tip. Both figures are published
+   per protocol.
+3. **Mutation gates.** Several protocols recheck the Bitcoin checkpoint on
+   every mutation and refuse to proceed if it has moved or cannot be read.
+
+A failed protocol index stays visible in the health diagnostics and never
+replaces the authoritative chain head with a zero.
+
+You can read the tip yourself:
+
+```bash
+curl -s https://api.bitcoinuniverse.io/mempool/api/blocks/tip/height
+curl -s https://api.bitcoinuniverse.io/mempool/api/blocks/tip/hash
+```
+
+## Recent blocks and the mempool
+
+The public facade serves a compact summary of recent blocks, and a mempool
+summary:
+
+```bash
+curl -s https://api.bitcoinuniverse.io/mempool/api/blocks
+# [{ "id": "...", "height": 964970, "timestamp": 1788228695,
+#    "tx_count": 3944, "medianFee": 1 }]
+
+curl -s https://api.bitcoinuniverse.io/mempool/api/mempool
+# { "count": 31272, "vsize": 8813263 }
+```
+
+Both are documented in the [OpenAPI reference](/docs-core/api/reference/).
+
+## Fee rates
+
+Fee estimates come from the same Universe-operated services, with no public
+fallback. Short-lived validated cache entries may smooth a momentary
+interruption; a genuine outage produces an explicit unavailable answer rather
+than a stale rate.
+
+```bash
+curl -s https://api.bitcoinuniverse.io/mempool/api/v1/fees/recommended
+# { "fastestFee": 2, "halfHourFee": 2, "hourFee": 1,
+#   "economyFee": 1, "minimumFee": 1 }
+```
+
+In the interface, the fee panel in the header carries the current rates
+alongside the fiat quote, and names the source and the time that quote was
+measured.
+
+## Blocks as protocol identity
+
+Two protocols use a block number as an asset identity rather than as chain
+metadata, and Core treats them accordingly.
+
+- **Bitmap.** A bitmap district *is* a block. Its identity comes from the
+  indexed block number, not from an inscription's mined block height and not
+  from a display field. Search recognises both `792435` and `792435.bitmap`.
+  Every Bitmap surface consolidates records by block height, because provider
+  listing ids, inscription ids, and historical activity ids are all
+  observations of the same district rather than separate assets.
+- **DMT.** Mint availability is scoped by block. On the Blockdrop mint surface,
+  a block search returns how many elements that block holds in total, how many
+  are already minted, and therefore how many remain available, along with a
+  completion percentage and the element, phase mint price, and limit per mint.
+  A total of zero produces zero pages and zero percent rather than a division
+  by zero or a fabricated figure.
+
+## Why there is no block detail page
+
+Core's job is metaprotocol assets, ownership, and markets. A block detail page
+that only restated what a block explorer already shows would be a second-rate
+copy of a solved problem, and keeping one accurate is a standing cost.
+
+What Core does instead is verify the chain tip itself and publish, per
+protocol, how far behind each index is. That is the block-level fact a
+metaprotocol reader actually needs and that a general block explorer cannot
+give them.
+
+Where an outbound link is needed, its origin is a deployment setting, so a
+deployment can point those links at a Universe explorer rather than a public
+one.
+
+## Next
+
+- [Transactions](/docs-core/explorer/transactions/)
+- [Indexer freshness](/docs-core/data/indexer-freshness/)
+- [OpenAPI reference](/docs-core/api/reference/)

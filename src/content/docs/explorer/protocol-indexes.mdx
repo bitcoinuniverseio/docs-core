@@ -1,0 +1,83 @@
+---
+title: Protocol indexes
+description: >-
+  The per-protocol index pages at /index, what a Pending column means and why
+  some protocols do not have one, and the three protocols your own browser
+  reads directly.
+sidebar:
+  order: 8
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="frontend/src/pages/Indexer.js, frontend/src/configs/indexer-navigation.js"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+An index page is the catalog for one protocol: the tokens, names, or
+collections that exist under it, with whatever figures that protocol publishes.
+Its address is `/index/<protocol>`.
+
+Not every protocol has one. The in-app coverage page marks the rows that do, and
+a row with no index shows only a market link.
+
+## What an index shows
+
+- The protocol's assets, in a sortable, searchable table.
+- Supply, holder counts, and mint progress **where the protocol publishes
+  them**. Where it does not, the column is absent rather than filled with
+  zeroes.
+- A read source, on the protocols whose data your browser fetches directly.
+
+Each index page loads only the protocol you opened. The others load when you
+switch, so opening one index does not download the code for all of them.
+
+## The Pending column
+
+Where a protocol's index also reads the mempool, its table carries a **Pending**
+column with the number of unconfirmed mints per token. Alkanes has one today.
+
+A protocol whose source cannot answer that question shows **no Pending column
+at all**, rather than a column of zeroes. This is the unmeasured-figures rule
+applied to a whole column: an absent column means the question was not
+answerable, and a zero in a present column means the answer was zero.
+
+## Three protocols your browser reads directly
+
+TAP, DMT, and UNAT are a step further out than everything else. Their
+deployments, mint progress, and holder counts are fetched **by your own
+browser** from a host Universe does not operate. They do not pass through a
+Universe index at all, so their availability and freshness are that host's.
+
+Those three rows name their read source on the coverage page, and the same
+sentence appears again on `/index/tap`, `/index/dmt`, and `/index/unat` beside
+the numbers it applies to.
+
+Everything else is read through the Core API, which may in turn read an
+external provider for a given protocol.
+[`/indexer-health`](/docs-core/api/health/) names the source it used for each
+one.
+
+## Supply figures and duplicate rows
+
+An index does not trust a first page to be a complete count. Bitmap supply, for
+example, comes from the authoritative index status unless a complete first page
+proves an exact unique total, so duplicate history rows cannot inflate a
+collection grid or its count.
+
+## When an index cannot be read
+
+The market, token pages, holder rankings, and portfolio balances for that
+protocol all report the data as unavailable and offer a retry. They never
+substitute sample rows and never show an unreadable balance as zero, so an
+outage stays distinguishable from a genuinely empty market or wallet.
+
+## Next
+
+- [Coverage beyond the marketplace](/docs-core/protocols/coverage/)
+- [Indexer freshness](/docs-core/data/indexer-freshness/)
+- [Where each number comes from](/docs-core/data/provenance/)
