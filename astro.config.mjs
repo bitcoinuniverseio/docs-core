@@ -5,6 +5,7 @@
 // bundled by Starlight: it runs locally in the reader's browser and contacts
 // no external service. Nothing on this site loads from a third-party origin.
 import { defineConfig } from 'astro/config';
+import { unified } from '@astrojs/markdown-remark';
 import starlight from '@astrojs/starlight';
 import starlightLinksValidator from 'starlight-links-validator';
 import rehypeTableScroll from './scripts/rehype-table-scroll.mjs';
@@ -15,7 +16,7 @@ export default defineConfig({
   base: '/docs-core',
   trailingSlash: 'ignore',
   markdown: {
-    rehypePlugins: [rehypeTableScroll],
+    processor: unified({ rehypePlugins: [rehypeTableScroll] }),
   },
   integrations: [
     starlight({
@@ -89,7 +90,7 @@ export default defineConfig({
             {
               label: 'Every protocol',
               collapsed: true,
-              autogenerate: { directory: 'protocols/detail' },
+              items: [{ autogenerate: { directory: 'protocols/detail' } }],
             },
           ],
         },
