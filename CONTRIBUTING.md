@@ -75,6 +75,21 @@ node scripts/generate-protocol-pages.mjs
 `npm run check:registry` fails if the committed pages and the snapshot
 disagree.
 
+## The manifest's protocol ids
+
+`docs.manifest.json` lists protocol ids, and the documentation portal keys its
+protocol pages on the **registry** id, verbatim. `/protocols/op_return/`
+resolves; `/protocols/op-return/` does not.
+
+The manifest schema's pattern for those ids allows no underscore, and eight
+registry ids contain one: `atomicals_nft`, `op_drop`, `op_inscriptions`,
+`op_names`, `op_return`, `rare_sats`, `runes_native`, and `tap_doge`. They
+cannot be declared in the manifest at all.
+
+Do not add a hyphenated variant to make the list look complete. It would look
+right and associate with nothing. `npm run check:manifest` fails on any id that
+is not a registry id, and names the one you probably meant.
+
 ## Diagrams
 
 Inline SVG only. Every diagram carries a `<title>` and a `<desc>` that
