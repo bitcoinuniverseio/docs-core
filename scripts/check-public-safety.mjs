@@ -32,8 +32,9 @@ const ALLOWED_HOSTS = [
   'chromewebstore.google.com',
   'mempool.space',
   'localhost',
-  // The SVG namespace is markup, not a network request.
+  // XML namespaces are markup, not network requests.
   'w3.org',
+  'sitemaps.org',
 ];
 
 const RULES = [
