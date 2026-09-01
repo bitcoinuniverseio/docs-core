@@ -1,0 +1,82 @@
+---
+title: Moved pages
+description: >-
+  Where each guide from the previous flat-Markdown structure now lives, and the
+  redirects this site serves for them.
+sidebar:
+  order: 3
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/docs-core"
+  source="src/pages/guides/, docs.manifest.json redirects"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+Before 1 September 2026 this repository was a `README.md` and seventeen guides
+in a `guides/` folder. Every one of those paths is served as a redirect on this
+site and is declared in
+[`docs.manifest.json`](https://github.com/bitcoinuniverseio/docs-core/blob/main/docs.manifest.json)
+so the documentation portal serves the same redirect.
+
+Nothing was discarded. Each guide's content was preserved and, in most cases,
+split across pages that answer one question each.
+
+| Old path | Now |
+| --- | --- |
+| `/guides/market-safety` | [Market safety](/docs-core/wallets/market-safety/) |
+| `/guides/protocol-coverage` | [Coverage beyond the marketplace](/docs-core/protocols/coverage/) |
+| `/guides/bitcoin-data-reliability` | [Bitcoin and Dogecoin data](/docs-core/data/chain-data/) and [fiat prices](/docs-core/data/fiat-prices/) |
+| `/guides/secure-blockchain-data-access` | [The public reader boundary](/docs-core/data/reader-boundary/) |
+| `/guides/marketplace-v1` | [Marketplace v1 gates](/docs-core/markets/marketplace-v1/) |
+| `/guides/ordex-market` | [Ordex](/docs-core/markets/ordex/) |
+| `/guides/ordinals-collection-market` | [Collection markets](/docs-core/markets/collection-markets/) |
+| `/guides/ordinals-collection-imports` | [Task: add an Ordinals collection](/docs-core/markets/collection-imports/) |
+| `/guides/atomicals-and-portfolio` | [Atomicals](/docs-core/markets/atomicals/) and [Portfolio](/docs-core/portfolio/portfolio/) |
+| `/guides/portfolio-market-actions` | [Task: manage assets from Portfolio](/docs-core/portfolio/manage-assets/) |
+| `/guides/shared-collection-media` | [Collection media](/docs-core/markets/collection-media/) |
+| `/guides/private-chat-verification` | [Private chat verification](/docs-core/wallets/chat-verification/) |
+| `/guides/design-and-accessibility` | [Design and accessibility](/docs-core/quality/design-and-accessibility/) |
+| `/guides/performance-and-ui-3` | [Performance](/docs-core/quality/performance/) |
+| `/guides/performance-and-ui-4` | [Performance](/docs-core/quality/performance/) |
+| `/guides/release-validation` | [Release evidence](/docs-core/quality/release-evidence/) |
+| `/guides/backend-operations-console` | Not republished. See below |
+
+## The one page that was not republished
+
+`guides/backend-operations-console.md` described an authenticated operations
+console for platform operators. It is not part of the public product surface,
+and this repository's own contributing rules exclude operator procedures.
+
+Removing it is not a loss of accuracy: everything in it that a public reader
+can act on is available in the public health contract, which is documented in
+full at [health and readiness](/docs-core/api/health/). Operators have their
+own documentation.
+
+## What else changed shape
+
+Three pages were merged rather than moved one to one.
+
+- **The two performance guides** described consecutive releases of the same
+  work. They are one [performance](/docs-core/quality/performance/) page with
+  the budgets that are actually enforced, and a dated record of what each pass
+  changed.
+- **Bitcoin data reliability** carried two separate contracts, one for chain
+  data and one for the fiat quote. They are now
+  [chain data](/docs-core/data/chain-data/) and
+  [fiat prices](/docs-core/data/fiat-prices/), because they fail differently
+  and a reader usually cares about one of them.
+- **The old protocol coverage guide** described the in-app coverage page. That
+  is still [coverage](/docs-core/protocols/coverage/), but the question most
+  readers were bringing to it, "can I trade this", is now answered by the
+  [support matrix](/docs-core/protocols/support-matrix/), which did not exist
+  before.
+
+## Next
+
+- [Changelog](/docs-core/reference/changelog/)
+- [The support matrix](/docs-core/protocols/support-matrix/)

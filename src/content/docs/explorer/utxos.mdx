@@ -1,0 +1,92 @@
+---
+title: UTXOs
+description: >-
+  Why the unspent output is the unit that matters in Core, how to read the UTXO
+  endpoint, and what an empty array does and does not prove.
+sidebar:
+  order: 5
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="backend mempool facade, backend/packages/ecosystem-contracts (utxo contract)"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+On Bitcoin metaprotocols the unspent output is the unit that matters. An
+address is a convenience; an asset lives at an **outpoint**, `txid:vout`, and
+spending that outpoint is what moves it.
+
+## Reading the outputs
+
+```bash
+curl -s https://api.bitcoinuniverse.io/mempool/api/address/<address>/utxo
+```
+
+```json
+[
+  { "txid": "7910fdb3…", "vout": 1, "value": 13001007836500,
+    "status": { "confirmed": true, "block_height": 899592 } },
+  { "txid": "0c3a384d…", "vout": 0, "value": 546,
+    "status": { "confirmed": true, "block_height": 902138 } }
+]
+```
+
+`value` is in satoshis. A run of 546-satoshi outputs in a wallet is a strong
+hint that something is being carried, because that is the usual postage for an
+inscription-bearing output. It is a hint, not evidence.
+
+## What an empty array means, and does not
+
+An empty array means the address was read and holds no unspent outputs. That is
+a fact about the address.
+
+A read that fails answers with an explicit unavailable response instead. It
+never answers with an empty array. Treat the two as completely different
+results, because they license opposite conclusions.
+
+## What this response does not tell you
+
+The UTXO response says nothing about whether an output carries an inscription,
+a rune balance, an ARC-20 colored value, or any other protocol asset. That
+question is answered by a protocol index, not by the base chain.
+
+This is why Core keeps a complete output inventory as a mutation gate for
+several protocols: before a transaction is prepared, every output it would
+spend is checked against the full protocol inventory, and an output the index
+has not examined is treated as **unknown** rather than as empty.
+
+[Asset-bearing outputs](/docs-core/explorer/asset-bearing-outputs/) explains
+what that protection actually prevents.
+
+## Ownership models
+
+The registry records an ownership model per protocol, and it determines what
+"holding" even means.
+
+| Model | What holds the asset | Protocols |
+| --- | --- | --- |
+| `utxo` | A specific unspent output. Spend it and the asset moves. | Ordinals, Bitmap, Names, Realms, Subrealms, Atomicals NFTs, and others |
+| `balance` | An indexed balance attached to an address rather than an output. | SRC-20 |
+| `hybrid` | An indexed balance whose evidence is anchored to outputs. | Runes, BRC-20, TAP, ARC-20, Alkanes, and others |
+
+A `utxo` asset can be destroyed by an ordinary spend. A `hybrid` asset can be
+destroyed by a malformed marker even in a transaction Bitcoin considers
+perfectly valid. Both cases are covered in
+[asset-bearing outputs](/docs-core/explorer/asset-bearing-outputs/).
+
+## Splitting and combining
+
+Splitting and combining outputs are recorded in the registry as **Wallet**
+surface actions, not Core actions. Core reads outputs and builds marketplace
+transactions around them. Reshaping a wallet's outputs is the wallet's job.
+
+## Next
+
+- [Asset-bearing outputs](/docs-core/explorer/asset-bearing-outputs/)
+- [Addresses](/docs-core/explorer/addresses/)
+- [Transaction safety](/docs-core/wallets/transaction-safety/)

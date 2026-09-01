@@ -1,0 +1,37 @@
+---
+title: OpenAPI reference
+description: >-
+  The complete OpenAPI 3.1 description of the Core public read API: thirteen GET
+  operations, their parameters, responses, and schemas, rendered from the
+  document this repository publishes.
+sidebar:
+  order: 3
+---
+
+import OpenApiReference from '../../../components/OpenApiReference.astro';
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/docs-core"
+  source="public/openapi/core-public-read.json"
+  chain="bitcoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+Everything below is rendered at build time from the OpenAPI document this
+repository publishes. Continuous integration validates that the document parses
+as OpenAPI 3.1 and that it contains no operation other than `GET`, because a
+mutation route appearing in a public read document would be a mistake with
+consequences.
+
+The document is served from this site and can be fed straight to a client
+generator.
+
+<OpenApiReference />
+
+## Next
+
+- [What is public](/docs-core/api/overview/)
+- [Health and readiness](/docs-core/api/health/)
+- [The public reader boundary](/docs-core/data/reader-boundary/)

@@ -14,20 +14,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # This repository is public and `route.yml` lives in the private
-  # `.github-private`. A public repository cannot resolve a reusable workflow
-  # from a private one, so every run since the router landed ended as a
-  # 0-second failure with no jobs created, on `develop`, on `main` and on pull
-  # requests. The documentation gate has not run at all in that window.
-  #
-  # `universe-ci-actions` below is fine to keep: that repository is public, so
-  # a public caller can reach it.
-  #
-  # Nothing about the routing layer is wrong for the private repositories it
-  # was built for. Restore it here only if `route.yml` is published somewhere a
-  # public caller can reach.
   check:
-    name: Check published pages
+    name: Gates
+    # This repository is public, so `route.yml` in the private `.github-private`
+    # is unreachable from here: a public repository cannot resolve a reusable
+    # workflow from a private one. `universe-ci-actions` below is public and is
+    # fine to call.
     runs-on: [self-hosted, linux-ultra]
     steps:
       - name: Check out exact source
@@ -35,12 +27,52 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: bitcoinuniverseio/universe-ci-actions/universe-node-env@8e24bc760556caa5ec8c7c497baaad2e9adcc912 # v1 # v1
+      - uses: bitcoinuniverseio/universe-ci-actions/universe-node-env@main
+
+      - name: Install
+        run: npm ci
+
       # One command per step. A shell reports only the exit code of the last
       # command in a chained run block, so a chained first command fails in
       # silence and the gate stops being a gate.
-      - name: Test the documentation checker
-        run: node --test scripts/check-docs.test.cjs
+      - name: Copy rules (no em dash, no banned word, no unsupported claim)
+        run: npm run check:copy
 
-      - name: Check published pages
-        run: node scripts/check-docs.cjs
+      - name: Public-safety scan (private hosts, IPs, credential shapes)
+        run: npm run check:public-safety
+
+      - name: Documentation manifest validates against the platform schema
+        run: npm run check:manifest
+
+      - name: OpenAPI document parses, and describes read operations only
+        run: npm run check:openapi
+
+      - name: Protocol pages match the pinned registry snapshot
+        run: npm run check:registry
+
+      - name: No image over 200 KB, and no orphan screenshot
+        run: npm run check:assets
+
+      - name: Markdown lint
+        run: npm run check:markdown
+
+      - name: Build (validates every internal link and anchor)
+        run: npm run build
+
+      - name: Search index exists
+        run: test -f dist/pagefind/pagefind.js
+
+      - name: Sitemap exists
+        run: test -f dist/sitemap-index.xml
+
+      - name: Machine-readable files exist
+        run: test -f dist/llms.txt && test -f dist/robots.txt && test -f dist/openapi/core-public-read.json
+
+      - name: Install a browser for the accessibility audit
+        run: npx playwright install --with-deps chromium
+
+      - name: Serve the built site
+        run: npx astro preview --port 4323 &
+
+      - name: Accessibility and horizontal overflow, every page, both themes
+        run: npx wait-on http://localhost:4323/docs-core/ && npm run check:a11y

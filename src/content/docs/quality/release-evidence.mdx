@@ -1,0 +1,117 @@
+---
+title: Release evidence
+description: >-
+  What a Core release has to pass before it is published, what a passing result
+  does and does not claim, and how to check for yourself which release a
+  deployment is running.
+sidebar:
+  order: 4
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="release validation pipeline, GET /health"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+## Which release is running
+
+The public health response names the exact commit the deployment was built
+from, and every response carries it as a header:
+
+```bash
+curl -sI https://api.bitcoinuniverse.io/health | grep -i x-universe-release
+```
+
+That commit is Core's release identifier. There is no semantic version string,
+and this documentation will not invent one.
+
+## What a release has to pass
+
+Changes are validated before publication by automated checks that build the
+application and exercise its safety-sensitive paths.
+
+- **Build and test on a managed private fleet.** Portable validation is
+  eligible across a set of certified Linux services on several independent
+  hosts, so an idle compatible runner can accept work immediately and failover
+  survives one service or host being unavailable. A short infrastructure
+  interruption may earn one automatic retry on an eligible first attempt. **A
+  retry is never used to hide a reported validation failure.**
+- **Browser and accessibility gates**, run at a desktop width and a phone
+  width.
+- **Screenshot comparison against the exact artifact that passed those
+  gates**, rather than a second compilation, so a candidate is compared pixel
+  for pixel with what was actually tested.
+- **Database rehearsal on both MySQL 8 and MariaDB 10.11**, comparing semantic
+  column types, constraints, checks, triggers, idempotent reruns, and guarded
+  rollback, so a harmless display difference cannot weaken or wrongly block the
+  same safety contract.
+- **Production freshness checks** using a repository-scoped pinned deploy
+  identity with bounded timeouts and retries. Exhausting those retries fails
+  closed before release links change; it never permits a cached candidate to
+  bypass exact verification against the main branch.
+
+## The deployment health gate
+
+The deployment health check respects the selected marketplace profile.
+
+- A **read-only** release requires healthy database-backed application reads
+  *and* a validated private Bitcoin chain-tip read, and keeps transaction
+  traffic explicitly closed.
+- A **mutation-ready** release is accepted only after **three complete healthy
+  refresh cycles across every protocol authority**.
+
+This is what prevents a generic healthy response from being mistaken for
+permission to list, buy, or make offers.
+[Health and readiness](/docs-core/api/health/) shows how that gate is reported.
+
+## After activation
+
+A recurring check runs against the live public surfaces every ten minutes. It
+confirms the published release marker, the fee response, anonymous collection
+activity, and that the live event stream stays open for a full observation
+window and keeps sending keepalives that do not advance a reader's position.
+
+Deeper sweeps that place real load on Universe-operated services are reserved
+for release rehearsal and are not part of the recurring check.
+
+## What a passing result claims
+
+**A passing validation result is release evidence. It is not a claim that a
+change has already reached production**, and it is not a claim that every
+production gate is enabled.
+
+The Marketplace code is a validated release candidate. Protocol authorities,
+protected configuration, live readiness checks, and funded canaries must pass
+before production execution is declared available.
+
+Some platform-specific compatibility probes require a dedicated environment and
+run only when that environment is explicitly available. They do not weaken the
+safety or availability checks for the supported release paths.
+
+## This documentation site
+
+Its own gates run on every change:
+
+| Check | What it enforces |
+| --- | --- |
+| Copy rules | No em dash, no banned word, no unsupported superlative, no placeholder |
+| Public safety | No private hostname, IP address, port, or credential-shaped string |
+| Manifest | `docs.manifest.json` validates against the platform schema |
+| OpenAPI | The document parses as OpenAPI 3.1 and contains no non-GET operation |
+| Protocol matrix | Every protocol page regenerates identically from the pinned snapshot |
+| Assets | No image over 200 KB |
+| Markdown lint | Structure and formatting |
+| Build | Every internal link and anchor resolves |
+| Accessibility | Automated audit of every built page, in both themes |
+| Search and sitemap | The search index and sitemap exist in the build output |
+
+## Next
+
+- [Health and readiness](/docs-core/api/health/)
+- [Marketplace v1 gates](/docs-core/markets/marketplace-v1/)
+- [Changelog](/docs-core/reference/changelog/)

@@ -1,0 +1,109 @@
+---
+title: 'Task: list an asset'
+description: >-
+  Listing an asset for sale: the 20 protocols that support it, what a listing
+  actually is for each execution mode, the steps, and what the authority checks
+  before your listing goes live.
+sidebar:
+  order: 4
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="Marketplace v1 action flow, backend/packages/ecosystem-contracts"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+**Intended reader:** someone who holds an asset and wants an open listing.
+**Goal:** a live listing on that protocol's market.
+**Chain and network:** Bitcoin or Dogecoin mainnet.
+
+Twenty of the 29 marketplace protocols declare `list`. The
+[support matrix](/docs-core/protocols/support-matrix/) is the list, and each
+protocol page gives the reason where it is not supported.
+
+## What a listing is
+
+Not the same thing in every market, and the difference decides what can go
+wrong.
+
+| Execution mode | A listing is | Cancelling means |
+| --- | --- | --- |
+| `in-app-execution` | A seller-signed PSBT plus a durable order row in Core's own journal, bound to an exact outpoint | Core's authority marks the order withdrawn |
+| `external-execution` | An order created through the external provider's workflow | The provider's cancellation path |
+| `psbt-routing-only` (Ordex) | A signed PSBT indexed as a public ask | Withdrawal is an operator action. There is no public seller cancellation authorization |
+
+Ordex is the one to read carefully: it declares `unlist` unsupported, because
+no public seller cancellation authorization is implemented. It also declares
+`update-listing` unsupported, because it does not mutate signed PSBT terms.
+Publish a new signed order instead.
+
+## Prerequisites
+
+1. A supported wallet holding the asset, on the correct network and account.
+2. `list` supported for the protocol, and its live authority ready.
+3. Ordinary spendable Bitcoin, held separately from the asset, for the network
+   fee.
+4. For ARC-20, one available colored lot. A balance is held in complete
+   colored-sat outputs and Core never splits the selected lot or uses it as
+   ordinary change.
+
+## Steps
+
+1. Open the asset, from Portfolio or from its market.
+2. Select **List**.
+3. Enter the sale price.
+4. Read the review screen: the asset identity, the quantity, the price, the
+   1.5% seller service fee, and the net proceeds. For Ordex, the ask is built
+   from the live asset output after Core and the ordinals index have been
+   checked for the same block height and hash, and the inscription satpoint,
+   unspent output, owner script, and value have been verified.
+5. Approve the prepared transaction in your wallet. Your wallet signs only the
+   reviewed input.
+6. The listing appears **only after** the signed offer passes its checks.
+
+## What the authority checks before the listing goes live
+
+The exact set is per protocol and is on each protocol's page under **What a
+mutation must prove**. The recurring elements:
+
+- The exact seller outpoint, unspent and confirmed.
+- The owner script matching the connected account.
+- The protocol identity, ticker, and amount matching what was reviewed.
+- A stable index checkpoint, rechecked at the moment of the mutation.
+- A complete output inventory across protocols, where the protocol requires it.
+- Post-sign validation: a changed template, owner, outpoint, price, or
+  signature is rejected before the order is journaled.
+
+Finalisation is fail closed. A mismatch blocks the listing rather than being
+downgraded to an advisory confirmation.
+
+## Expected result
+
+An open listing, visible from the asset card, the asset detail, and the
+protocol's market, with its atomic price and marketplace named.
+
+## How to verify
+
+1. Reload Portfolio and confirm the card shows the listing.
+2. Open the protocol's market and find it there.
+3. Check the activity feed for the creation event.
+
+## Common failure states
+
+| What happens | What it means | Recovery |
+| --- | --- | --- |
+| The form is disabled with an unlock-and-reconnect message | The extension no longer exposes a signer | Unlock and reconnect. No transaction was prepared |
+| The listing does not appear after signing | A check did not match | Refresh and read the reason. Retrying cannot create a second open listing for the same outpoint |
+| Ordex refuses to verify a new listing | Ordex is degraded: a Bitcoin Core or ordinals reader is unavailable | Existing orders stay listed. Wait for the reader |
+| The control is disabled with a live reason | The authority is not ready | Refreshing rechecks that exact route |
+
+## Related reference
+
+- [Task: update or delist](/docs-core/markets/update-and-delist/)
+- [Task: manage assets from Portfolio](/docs-core/portfolio/manage-assets/)
+- [Marketplace v1 gates](/docs-core/markets/marketplace-v1/)

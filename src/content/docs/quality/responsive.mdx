@@ -1,0 +1,95 @@
+---
+title: Responsive behaviour
+description: >-
+  How Core behaves on a phone: four fixed destinations in thumb reach, tables
+  that become cards, the right keyboard for each field, safe-area handling, and
+  what happens when the connection drops.
+sidebar:
+  order: 2
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="frontend/src/configs/mobile-route-meta.js, frontend layout components"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+Core is laid out for the device in your hand, not shrunk from a desktop screen.
+The last full mobile pass was 29 August 2026.
+
+## On a phone
+
+- **Four fixed destinations** (Home, Trade, Portfolio, More) stay within thumb
+  reach at the bottom of the screen. Everything else lives one tap away in the
+  More menu.
+- **Data tables become cards or lists** at phone widths. Nothing asks you to
+  scroll a page sideways.
+- **Address and amount fields open the matching keyboard.** Address fields turn
+  off auto-capitalisation and autocorrect, so a pasted or typed address arrives
+  exactly as entered. This is a correctness feature, not a convenience: an
+  autocorrected address is a lost payment.
+- **The fixed bottom controls step aside while you type** rather than floating
+  over the field.
+- **A dropped connection shows a notice** and pauses live data. It resumes on
+  its own when you are back online.
+- **Screens with a notch or rounded corners keep content inside the safe
+  area**, in portrait and landscape.
+
+## Filter sheets are drafts
+
+On a small screen the filter sheet is a draft rather than a live filter.
+**Apply filters** commits every change together; close, the backdrop, and
+<kbd>Esc</kbd> discard it; **Reset** is itself a draft until applied.
+
+This is the right behaviour on a phone specifically: a live filter on a small
+screen re-renders the list under your thumb between each tap.
+
+## Transitions
+
+Hub to collection, market to market, and Back use a short cross-fade of 150 ms
+where the browser supports it. If you prefer reduced motion, or the device is
+in performance mode, the new screen simply appears.
+
+## Coming back
+
+Press Back after opening an asset and the grid you came from is on screen in
+the first frame, at the same scroll position, with the same view mode,
+selection, cart, and the rows you had already paged in. It refreshes quietly
+behind you rather than showing a skeleton.
+
+A quiet refresh, a purchase, or a new page of results never collapses a grid
+you scrolled through: off-screen tiles reserve their real height, so the list
+keeps its length and the scrollbar stays honest.
+
+## Performance mode
+
+On Save-Data, a slow network, or a low-power device, Core automatically reduces
+blur, animation, and off-screen media work.
+
+## Wallets on a phone
+
+Only two of the five supported wallets can complete a connection from a phone,
+and they do it differently. See
+[connecting a wallet](/docs-core/wallets/connecting/). Core does not offer to
+install a desktop extension on a touch device, because there is nothing there
+to install.
+
+## This documentation site
+
+- Reflows to 320 pixels with no horizontal page overflow.
+- Wide tables and code blocks scroll inside their own container rather than
+  pushing the page sideways. The support matrix is 16 columns wide by design
+  and gets its own scroll region with a sticky protocol column and a sticky
+  header.
+- Remains usable at 200% zoom.
+- Uses relative units throughout, so the browser's own text-size setting works.
+
+## Next
+
+- [Design and accessibility](/docs-core/quality/design-and-accessibility/)
+- [Performance](/docs-core/quality/performance/)
+- [Browsing a market](/docs-core/markets/browsing/)

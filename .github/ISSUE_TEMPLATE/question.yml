@@ -1,0 +1,34 @@
+name: Question about using Core
+description: Something is unclear, or you cannot find it.
+labels: [question]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Four pages answer most questions. Please skim them first:
+
+        - Reading the numbers: https://bitcoinuniverseio.github.io/docs-core/start/reading-the-numbers/
+        - The support matrix: https://bitcoinuniverseio.github.io/docs-core/protocols/support-matrix/
+        - Troubleshooting: https://bitcoinuniverseio.github.io/docs-core/troubleshooting/
+        - Live status: https://api.bitcoinuniverse.io/health
+
+        **Do not report a security issue here.** Use the private advisory form
+        instead: https://github.com/bitcoinuniverseio/docs-core/security/advisories/new
+  - type: textarea
+    id: question
+    attributes:
+      label: What are you trying to do
+    validations:
+      required: true
+  - type: textarea
+    id: looked
+    attributes:
+      label: Where you looked
+      description: Which pages you read, so we know where the answer should have been.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Confirm
+      options:
+        - label: This question contains no seed phrase, private key, session token, or anyone else's address.
+          required: true

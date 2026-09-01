@@ -1,0 +1,158 @@
+---
+title: Where each number comes from
+description: >-
+  The three paths a figure can take to your screen, which protocols leave your
+  browser for a host Universe does not operate, and how to find the reader
+  behind any number in one request.
+sidebar:
+  order: 1
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="backend provider registry, backend/packages/ecosystem-contracts/lib/protocols.js"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+Every figure on a Core screen came from somewhere. This page names the paths,
+and the one request that answers the question for any protocol.
+
+## The three paths
+
+<figure class="diagram">
+  <svg viewBox="0 0 720 260" role="img" aria-labelledby="prov-title prov-desc" xmlns="http://www.w3.org/2000/svg">
+    <title id="prov-title">The three paths a figure takes to a Core screen</title>
+    <desc id="prov-desc">
+      Path one: your browser asks the Core API, which reads Universe-operated
+      Bitcoin and Dogecoin services. Path two: your browser asks the Core API,
+      which reads an external provider for that protocol family. Path three,
+      the dotted one: for TAP, DMT and UNAT deployment, mint progress and
+      holder figures, your own browser fetches directly from a host Universe
+      does not operate, bypassing the Core API entirely. The indexer-health
+      endpoint reports which reader answered for every protocol.
+    </desc>
+    <style>
+      {`
+        .p-box { fill: var(--bu-surface-raised); stroke: var(--bu-grid-strong); stroke-width: 1; }
+        .p-ext { stroke: var(--bu-stale); }
+        .p-t { fill: var(--sl-color-white); font-family: var(--bu-font-ui); font-size: 12px; font-weight: 600; }
+        .p-d { fill: var(--bu-muted); font-family: var(--bu-font-ui); font-size: 10px; }
+        .p-l { stroke: var(--bu-signal); stroke-width: 1.5; fill: none; }
+        .p-dash { stroke: var(--bu-stale); stroke-width: 1.5; fill: none; stroke-dasharray: 5 4; }
+        .p-n { fill: var(--bu-signal); font-family: var(--bu-font-mono); font-size: 10px; font-weight: 700; }
+        .p-n2 { fill: var(--bu-stale-text); font-family: var(--bu-font-mono); font-size: 10px; font-weight: 700; }
+      `}
+    </style>
+    <rect class="p-box" x="8" y="98" width="118" height="48" rx="3" />
+    <text class="p-t" x="20" y="120">Your browser</text>
+    <text class="p-d" x="20" y="136">Core in a tab</text>
+
+    <rect class="p-box" x="212" y="98" width="130" height="48" rx="3" />
+    <text class="p-t" x="224" y="120">Core API</text>
+    <text class="p-d" x="224" y="136">api origin, port 443</text>
+
+    <rect class="p-box" x="430" y="30" width="270" height="48" rx="3" />
+    <text class="p-n" x="442" y="49">01</text>
+    <text class="p-t" x="470" y="49">Universe-operated services</text>
+    <text class="p-d" x="442" y="66">Chain, fees, blocks, addresses, ordinals</text>
+
+    <rect class="p-box p-ext" x="430" y="98" width="270" height="48" rx="3" />
+    <text class="p-n2" x="442" y="117">02</text>
+    <text class="p-t" x="470" y="117">External provider</text>
+    <text class="p-d" x="442" y="134">For some protocol families</text>
+
+    <rect class="p-box p-ext" x="430" y="180" width="270" height="52" rx="3" />
+    <text class="p-n2" x="442" y="199">03</text>
+    <text class="p-t" x="470" y="199">A host Universe does not operate</text>
+    <text class="p-d" x="442" y="216">TAP, DMT, UNAT deployment and mint figures</text>
+
+    <path class="p-l" d="M126 122 L210 122" />
+    <path class="p-l" d="M342 122 L390 122 L390 54 L428 54" />
+    <path class="p-l" d="M342 122 L428 122" />
+    <path class="p-dash" d="M67 146 L67 206 L428 206" />
+  </svg>
+  <figcaption>
+    Path 3 is the only case where a request leaves your own browser to a host
+    Universe does not operate. The pages that show that data name it.
+  </figcaption>
+</figure>
+
+## Path 1: Universe-operated
+
+Chain height, blocks, transactions, address activity, address UTXOs, and fee
+estimates come from Universe-operated Mempool and Ordinals services. Internal
+protocol indexers use the same operator-owned block routes to verify chain
+continuity.
+
+**There is no public-provider fallback.** If that source is unavailable, the
+API answers with an explicit unavailable response rather than a zero or a stale
+value.
+
+## Path 2: an external provider, through Core
+
+Some protocol families are read through an external provider rather than a
+Universe-operated index. That is stated on the coverage page rather than
+hidden, and each protocol's page names the provider.
+
+The clearest examples: BRC-20 reads the UniSat Open API, and the registry adds
+that order freshness and inventory reconciliation are delegated there. Stamps
+and SRC-20 read StampDEX. Mezcal reads the mezcal.sh API. Alkanes reads an
+external Alkanes API set.
+
+Core validates the exact proxy route and body it allows, but it does not
+compare an external provider's tip with the Bitcoin tip. Several registry
+entries say so in those words.
+
+## Path 3: your own browser, directly
+
+TAP, DMT, and UNAT are a further step removed. Their deployments, mint
+progress, and holder counts are fetched **by your own browser** from a host
+Universe does not operate. They do not pass through a Universe index at all, so
+their availability and freshness are that host's rather than Core's.
+
+Those three rows name their read source on the coverage page, and the same
+sentence appears on `/index/tap`, `/index/dmt`, and `/index/unat` beside the
+numbers it applies to.
+
+## Fiat prices are a fourth case
+
+The USD figures next to Bitcoin amounts come from one Universe-operated market
+price service, read by the browser once a minute. No exchange API is called
+from the page. [Fiat prices](/docs-core/data/fiat-prices/) covers what happens
+when it cannot answer.
+
+## Finding the reader for any protocol
+
+One request answers it for all 29 at once:
+
+```bash
+curl -s https://api.bitcoinuniverse.io/indexer-health \
+  | jq -r '.data[] | [.protocolId, .indexerIdentity, .source,
+                      .lag, (.lastSuccess // "never")] | @tsv'
+```
+
+| Field | What it tells you |
+| --- | --- |
+| `configuredIndexers.primary` | What the registry declared |
+| `indexerIdentity`, `source` | What actually answered. Believe this pair |
+| `lag`, `tip`, `nodeTip` | How far behind it was |
+| `lastSuccess` | `null` means it has never been read successfully |
+| `status`, `reasonCode`, `reasons` | Why it is in the state it is in |
+
+## Provenance on this site
+
+Every material page here carries a source strip under its heading naming the
+owning repository, the path the facts were read from, the chain and network it
+applies to, and the date a maintainer last checked it against the product. The
+protocol pages go further: they are generated from a snapshot whose own
+provenance block names the exact Core commit it was taken from.
+
+## Next
+
+- [Indexer freshness](/docs-core/data/indexer-freshness/)
+- [Bitcoin and Dogecoin data](/docs-core/data/chain-data/)
+- [Indexer sources of truth](/docs-core/protocols/indexer-sources/)

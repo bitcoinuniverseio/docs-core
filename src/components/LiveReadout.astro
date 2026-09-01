@@ -1,0 +1,80 @@
+---
+/*
+ * The headline figures, computed from the registry snapshot rather than
+ * written into prose. If the registry changes and this site is rebuilt, these
+ * numbers change with it.
+ *
+ * The one figure that is not computed is the marketplace profile, because it
+ * is a property of the running deployment rather than of the registry. It is
+ * quoted with the date it was read and a link to the endpoint that answers
+ * it now.
+ */
+import {
+  counts,
+  marketplaceProtocols,
+  availabilityCounts,
+  actionSupportCount,
+} from '../data/registry.mjs';
+
+const tally = availabilityCounts();
+const tradable = marketplaceProtocols.filter((p) =>
+  p.marketplace.actions.supported.some((a) => a.action === 'buy'),
+).length;
+---
+
+<dl class="readout">
+  <div>
+    <dt>Protocols in the registry</dt>
+    <dd>{counts.protocols}</dd>
+    <span class="readout-note">Across Bitcoin, Dogecoin, and Zcash.</span>
+  </div>
+  <div>
+    <dt>With a marketplace policy</dt>
+    <dd>{counts.marketplaceProtocols}</dd>
+    <span class="readout-note">The rest are read and explored, never traded.</span>
+  </div>
+  <div>
+    <dt>Enabled in the build</dt>
+    <dd>{tally.enabled ?? 0}</dd>
+    <span class="readout-note">
+      {tally['feature-gated'] ?? 0} feature-gated, {tally['read-only'] ?? 0} read-only,
+      {' '}{tally['feature-gated-testnet-only'] ?? 0} gated to testnet.
+    </span>
+  </div>
+  <div>
+    <dt>Declare buy support</dt>
+    <dd>{tradable}</dd>
+    <span class="readout-note">
+      Declared in the registry. A live authority gate still has to agree before
+      a purchase can run.
+    </span>
+  </div>
+  <div>
+    <dt>Support listing</dt>
+    <dd>{actionSupportCount('list')}</dd>
+    <span class="readout-note">Delist: {actionSupportCount('unlist')}. Update a listing: {actionSupportCount('update-listing')}.</span>
+  </div>
+  <div>
+    <dt>Marketplace profile</dt>
+    <dd class="profile"><span class="chip chip-stale">read-only</span></dd>
+    <span class="readout-note">
+      Read on 1 September 2026 from
+      <a href="https://api.bitcoinuniverse.io/health">the public health response</a>.
+      Mutation traffic was closed. Check it yourself rather than trusting this line.
+    </span>
+  </div>
+</dl>
+
+<style>
+  dl.readout dt {
+    font-family: var(--bu-font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--bu-muted);
+  }
+
+  dl.readout dd.profile {
+    font-size: 1rem;
+  }
+</style>

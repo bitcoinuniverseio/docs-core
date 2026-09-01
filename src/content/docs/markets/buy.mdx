@@ -1,0 +1,119 @@
+---
+title: 'Task: buy a listing'
+description: >-
+  Buying an asset in Core: which protocols support it, the exact steps, what
+  the review screen must show you, what to verify in your own wallet, and how
+  to recover when a purchase is refused.
+sidebar:
+  order: 3
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="Marketplace v1 action flow, Ordex authority, backend/packages/ecosystem-contracts"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+**Intended reader:** someone who has found an asset they want.
+**Goal:** own the asset, in an output you control.
+**Chain and network:** Bitcoin or Dogecoin mainnet.
+
+## Prerequisites
+
+1. **The protocol supports `buy`.** Nineteen of the 29 declare it. Check the
+   [support matrix](/docs-core/protocols/support-matrix/) first.
+   :::caution[Ordex is the exception worth knowing]
+   Ordex declares `buy` as **not supported**, because Ordex validates and
+   routes PSBTs but does not fund, sign, or broadcast settlement. Buying an
+   Ordex listing still works: it happens in your own wallet, in four named
+   steps. See [Ordex](/docs-core/markets/ordex/).
+   :::
+2. **A supported wallet**, installed from its own trusted release channel, on
+   the correct network and account.
+3. **Ordinary spendable Bitcoin**, held separately from any asset-bearing
+   output, for the price, the fees, and the network fee.
+4. **For an Ordex purchase, two small outputs** you own. Ordex needs them to
+   place ahead of the offered output. They come back to you in the first output
+   of the same transaction, so they are not a cost. A wallet holding none is
+   told so plainly rather than handed a purchase built from the wrong ones.
+
+## Safety considerations
+
+- An on-chain transaction does not prove the identity of a counterparty, the
+  value of an asset, or the accuracy of an off-chain description. Verify those
+  independently.
+- A broadcast transaction cannot be recalled.
+- A public ask is **first-claimer-wins**. Nothing is reserved for you.
+- Never approve a request because someone is pressuring you to act.
+
+## Steps
+
+1. **Open the listing** from a market, a collection, or an asset page.
+2. **Start the purchase.** Core rechecks the listing against fresh data.
+   Checkout always re-validates before you sign.
+3. **Read the review screen.** It must show, before any wallet prompt:
+   - the asset identity and quantity;
+   - the price;
+   - the service fee (1.5% of the gross sale price, charged to the buyer);
+   - the network fee estimate and the rate it was priced at;
+   - the total you pay;
+   - the exact address the asset arrives at.
+
+   For an Ordex purchase it also shows the seller's proceeds, the Ordex fee,
+   the creator royalty, and the change coming back to you. Nothing is signed at
+   this point.
+4. **Check the listing's proof scope.** Ordex states, per listing, how far its
+   verification goes:
+
+   | Scope | Families | What is proved |
+   | --- | --- | --- |
+   | Inscription position | Ordinals, Bitmap, Names, OP Inscriptions, OP Names, Taproot OP_DROP | Where the inscription sits right now, read from the ordinals index |
+   | Inscription position only | BRC-20, TAP, DMT, UNAT, OP-20, Mezcal, DUST20 | Where the inscription sits. Token balances and transfer state are **not** read |
+   | Output is unspent | Bitcoin PSBT, ARC-20, Runes, Alkanes | That the exact output is unspent and the ask is built around it. Balances carried by the output are **not** read |
+
+   A scope that stops short of the protocol balance is stated on the listing.
+   Read those balances in a wallet you trust before you sign.
+5. **Approve in your wallet.** Your wallet signs your own inputs only. A
+   seller's half arrived already signed and is never touched.
+6. **Let the node check it.** For an Ordex purchase the signed transaction goes
+   back, is bound to the order again, the asset movement is proved, a rune-burn
+   check runs, and Bitcoin Core is asked whether it would accept the
+   transaction. Nothing has been sent yet.
+7. **Send.** Only this step reaches the network, and only the exact bytes the
+   node checked are sent.
+
+## Expected result
+
+The asset arrives in an output you own. The purchase appears in the market
+activity feed once it is on chain, dated from when it happened.
+
+## How to verify
+
+1. Check the destination address shown in step 3 against an address you
+   control.
+2. After confirmation, open the asset from Portfolio or from the address view.
+3. Do not treat one confirmation as final for an amount you would mind losing.
+   [Confirmation and reorg policy](/docs-core/protocols/confirmation-and-reorg/)
+   gives the per-protocol rule.
+
+## Common failure states
+
+| What happens | What it means | Recovery |
+| --- | --- | --- |
+| The purchase is refused over runes | The transaction would burn a rune balance, or an output has not been examined by the rune index | Do not route around this. It is preventing a loss no validity check could catch |
+| "A wallet holding no small outputs" | You have no suitable outputs for an Ordex purchase | Create a couple of small ordinary outputs first |
+| The buy control is disabled with a reason | A live gate disagrees | Read the reason and refresh. An earlier ready result is never reused |
+| The market says **unavailable** | The reader did not answer | Retry later, or use the protocol's independent explorer. Do not act on stale data |
+| Someone else bought it first | Public asks are first-claimer-wins | Nothing was reserved. Refresh the book |
+| A required check failed after signing | Fail-closed behaviour on an ownership, output, fee, or signature mismatch | Refresh market state before retrying |
+
+## Related reference
+
+- [Ordex](/docs-core/markets/ordex/)
+- [Asset-bearing outputs](/docs-core/explorer/asset-bearing-outputs/)
+- [Transaction safety](/docs-core/wallets/transaction-safety/)
+- [Market safety](/docs-core/wallets/market-safety/)

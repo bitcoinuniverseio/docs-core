@@ -1,0 +1,154 @@
+---
+title: Search
+description: >-
+  What Core's search recognises, how it labels a result exact, likely, or
+  candidate, why a bare number returns three readings instead of one, and what
+  happens when nothing matches.
+sidebar:
+  order: 1
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="frontend/src/util/advanced-search.js, frontend/src/util/smart-route-resolver.js"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+Search is the fastest way into Core, and it is built on one rule: **it never
+asserts that an asset exists.** A result is either an entity whose shape
+identifies it outright, or a lookup a protocol's own naming rules permit. A
+query no protocol can name returns no protocol rows at all, rather than one
+speculative row per registered protocol.
+
+Press <kbd>Ctrl</kbd>+<kbd>K</kbd> (or <kbd>Cmd</kbd>+<kbd>K</kbd>) to focus it
+from anywhere.
+
+## The three confidence levels
+
+Every row is labelled. The label is the most useful part of the result.
+
+| Level | Meaning |
+| --- | --- |
+| **Exact** | The query *is* that entity. Nothing else has this shape. |
+| **Likely** | The shape identifies the entity, but another reading exists. |
+| **Candidate** | A lookup the protocol's naming rules permit. It is not a claim that the asset exists. Only that protocol's index can settle that. |
+
+Results are sorted by confidence, so exact matches come first and candidates
+last. At most 18 results are shown, and at most 6 protocol candidates, so a
+short generic word does not fan out across the whole registry.
+
+## What is recognised outright
+
+| Input shape | Read as | Confidence |
+| --- | --- | --- |
+| `<64 hex>:<vout>` | An outpoint, that is output *n* of a transaction | Exact |
+| `<64 hex>i<n>` | An inscription id | Exact |
+| `bc1…`, `tb1…`, `bcrt1…`, `1…`, `3…` | A Bitcoin address | Exact |
+| `D…`, `A…`, `9…` | A Dogecoin address | Exact |
+| 64 hex characters | Both a transaction and a block hash | Likely and candidate, ordered |
+| A bare integer | A block height, an inscription number, or a sat number | Likely and candidate |
+
+### Why 64 hex characters give two answers
+
+A block hash and a transaction id are both 64 hexadecimal characters. Nothing
+in the string says which one you meant. Core uses the one real signal available:
+proof of work forces a block hash to begin with a long run of zeros, and a
+transaction id has no such constraint.
+
+- Eight or more leading zeros: **block** is offered first as *likely*, and
+  transaction second as *candidate*.
+- Otherwise: **transaction** first as *likely*, block second as *candidate*.
+
+Both readings are always offered. Core orders them; it does not choose for you.
+
+### Why a bare number gives three answers
+
+`792435` is a plausible block height, a plausible inscription number, and (for
+larger values) a plausible sat number. Core offers each reading that is still in
+range, labelled, rather than silently picking one.
+
+| Reading | Offered when | Confidence |
+| --- | --- | --- |
+| Block height | Up to 10,000,000 | Likely |
+| Inscription number | Up to 500,000,000 | Candidate |
+| Sat number | Above the inscription ceiling, up to 2,100,000,000,000,000 | Candidate |
+
+The sat ceiling is 21 million bitcoin times 100 million satoshis, which is the
+real bound rather than an arbitrary one.
+
+## Ticker and name lookups
+
+For a word rather than an identifier, Core checks each protocol's actual naming
+rules and offers only the protocols that admit the query. Those rules are the
+protocols' own, not approximations:
+
+| Protocol | Rule Core applies |
+| --- | --- |
+| BRC-20 | 4 to 5 **UTF-8 bytes**, measured in bytes so a four-emoji tick measures the way an indexer measures it |
+| DRC-20, DUST-20, LRC-20 | The same tick rule |
+| SRC-20 | At most 5 UTF-8 bytes |
+| Runes, Mezcal | Letters only, at most 28 once `•` and `.` spacers are removed. Whitespace is not a spacer, so a letters-only sentence cannot read as a rune name |
+| Bitmap | Digits, with or without a `.bitmap` suffix |
+| ARC-20 | Lowercase alphanumeric with dashes |
+| Stamps | A number, or a Counterparty asset id beginning with `A` |
+| Names, SRC-101 | A name, optionally with a dot suffix |
+
+Rules that are tighter carry more signal, so a fixed-length tick rule is
+offered before a catch-all label rule when several protocols admit the same
+query.
+
+## Where each result takes you
+
+| Result | Destination |
+| --- | --- |
+| Bitcoin or Dogecoin address | The address view, in explore mode, with nothing connected |
+| Inscription id or number | The Core inscription view |
+| Sat number | The Rare Sats surface |
+| Transaction, block hash, or block height | An external block explorer, because Core has no route of its own for those entities |
+| A ticker | That protocol's market or index page |
+
+The external explorer origin is a deployment setting. Chain **data** always
+comes from Universe-operated infrastructure through the Core API; the external
+origin is used only to build the outbound link for entities Core does not have
+its own page for. [Blocks](/docs-core/explorer/blocks/) and
+[transactions](/docs-core/explorer/transactions/) explain that boundary.
+
+## Quick-jump commands
+
+Beside entity search, the field accepts short commands.
+
+| Type | Goes to |
+| --- | --- |
+| A protocol name, for example `runes`, `bitmap`, `arc20`, `stamps` | That market |
+| A protocol name plus a ticker, for example `brc20 ordi` | That asset |
+| `trade`, `portfolio`, `explorer`, `index`, `chat`, `mint`, `inscribe` | That section |
+| A path beginning with `/` | That route |
+| A full Core URL | The path inside it |
+
+## When nothing matches
+
+Core does not invent a match. A query that resolves to nothing offers a set of
+labelled rescue destinations, matched on the words you typed, so a
+half-remembered term still lands somewhere useful rather than on an empty page.
+
+A collection name offers a search of the Ordinals market rather than claiming a
+match it has not made.
+
+## Common failure states
+
+| What you see | What it means | What to do |
+| --- | --- | --- |
+| Several results for one input | The input genuinely has several readings | Read the confidence labels and pick |
+| Only candidate rows | No shape matched; these are permitted lookups | Follow one. The protocol's index settles whether it exists |
+| No protocol rows at all | No protocol's naming rules admit the query | Check the spelling, or search the market directly |
+| An entity page that says unavailable | The index behind it did not answer | Not a fact about the asset. See [reading the numbers](/docs-core/start/reading-the-numbers/) |
+
+## Next
+
+- [Addresses](/docs-core/explorer/addresses/)
+- [Protocol assets](/docs-core/explorer/protocol-assets/)
+- [Blocks](/docs-core/explorer/blocks/)

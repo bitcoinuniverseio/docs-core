@@ -1,0 +1,27 @@
+---
+title: OP_DROP
+description: >-
+  OP_DROP on bitcoin in Core: feature-gated, 12 of the 13 marketplace actions are supported. The registry's source of truth, indexer, freshness, confirmation, and reorg policy, and its stated reason for every action that is unavailable.
+sidebar:
+  order: 20
+---
+
+import ProtocolDetail from '../../../../components/ProtocolDetail.astro';
+import Provenance from '../../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="backend/packages/ecosystem-contracts/lib/protocols.js"
+  chain="bitcoin"
+  network="mainnet"
+  lifecycle="feature-gated"
+  verified="2026-09-01"
+/>
+
+<ProtocolDetail id="op_drop" />
+
+## Read this alongside
+
+- [The support matrix](/docs-core/protocols/support-matrix/), for how OP_DROP compares with the other 28 marketplace protocols.
+- [How to read a protocol row](/docs-core/protocols/how-to-read/), for what each value on this page means.
+- [Market safety](/docs-core/wallets/market-safety/), before acting on anything here.

@@ -1,0 +1,110 @@
+---
+title: How a market works
+description: >-
+  The anatomy every Core market shares, who owns the order book for each
+  protocol, what the service fee is, and the difference between a market that
+  is empty, unavailable, retired, or switched off.
+sidebar:
+  order: 1
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="backend/packages/ecosystem-contracts/lib/protocols.js, Marketplace v1"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+Every Core market has the same anatomy: a family picker, the period the figures
+cover, a searchable table, and an activity feed. What differs beneath that is
+who owns the order book and how far Core's own responsibility extends.
+
+## Three kinds of market
+
+| Kind | Registry mode | Who owns the book | Protocols |
+| --- | --- | --- | --- |
+| **Core executes** | `in-app-execution` | Core, in a durable order journal | 11, including Ordinals, the four Atomicals markets, TAP, DMT, UNAT, Bitmap, Names |
+| **Core routes** | `external-execution` | An external marketplace or provider | 8, including BRC-20 (UniSat), Stamps and SRC-20 (StampDEX), the three Dogecoin protocols, DROPS, OP_DROP |
+| **Core reads only** | `read-only`, `live-read-only`, `trade-preview-only`, `psbt-routing-only` | Nobody deployed | 10, including Runes, Alkanes, Mezcal, OP-20, Rare Sats, CAT-20, Ordex |
+
+Knowing which kind you are in tells you what a failure means. In a
+Core-executed market, an order that disappears is reconciled by Core's own
+journal. In a routed market, order freshness and inventory reconciliation are
+delegated, and the registry says so per protocol.
+
+## The service fee
+
+Core applies the same calculation across supported settlement paths:
+
+> **1.5% of the gross sale price, charged independently to the buyer and to the
+> seller.**
+
+Amounts are calculated in integer satoshis with deterministic half-up rounding
+and are displayed for review before signing. There is no protocol-specific
+minimum, though Bitcoin outputs must still satisfy the network and script dust
+rules needed to construct a valid settlement.
+
+Ordex prices its own fee and a creator royalty separately, both shown in the
+purchase review.
+
+## Four states that look similar and are not
+
+| State | Meaning | Retry? |
+| --- | --- | --- |
+| **Nothing listed** | The reader answered and the market is genuinely empty. A fact about the market. | No. Retrying will not change the answer |
+| **Market unavailable** | The reader did not answer. The number of listings is unknown, and it is never shown as zero. | Yes |
+| **Partial book** | Only some listings could be loaded. What you see is real but incomplete. | Yes, for the rest |
+| **Retired** | Listings and history stay viewable; buying and listing are closed permanently. A notice says so and the controls read as closed. | No. Retrying does not reopen it, and pressing a closed control creates no transaction |
+
+OP-20 and OP Names are retired today: their legacy mutation path fails closed
+and the backend answers with HTTP 410.
+
+Ordex adds two more: **switched off by an operator**, where the market and the
+orders desk stay in place and say so, and **degraded**, where Ordex is running
+but a Bitcoin Core or ordinals reader is unavailable, so existing orders stay
+listed and new listings cannot be verified.
+
+A failed read is always reported in plain language. You should never see a
+status code or a raw response payload on a market page; if you do, report it.
+
+## Unmeasured figures
+
+A figure Core cannot currently measure is shown as a dash, never as a number.
+Floor, volume, holder counts, listing counts, and any score derived from them
+all follow this rule.
+
+Core never fills a gap with a sample row or a figure written into the
+application. A market can legitimately show a name and a dash in every column.
+Do not read a ranking into a table whose sorted column is entirely dashes.
+
+## Why an action may be unavailable
+
+A marketplace action stays blocked unless every required gate agrees. Depending
+on the asset that includes the feature gate, indexer readiness, a fresh chain
+checkpoint, a complete asset inventory, a wallet and network match, clean
+funding proof, and protocol-specific settlement evidence.
+
+**An unavailable action is a safety decision. It is not proof that an asset or
+a market does not exist.**
+
+Browse and asset-detail pages do not show controls for mutations the protocol
+does not support. Where the protocol supports the action but its live authority
+is not ready, the control is disabled and the current reason is shown below it.
+Refreshing, or opening another protocol, checks that exact route again: an
+earlier ready result is never reused for a new action.
+
+## Market navigation
+
+The primary market navigation is deliberately limited to **Ordinals, Runes,
+Alkanes, Stamps, Atomicals, and More markets**. Opening `/trade` selects the
+Bitmap market. Historical Native Runes links resolve to the authoritative Runes
+market.
+
+## Next
+
+- [Browsing a market](/docs-core/markets/browsing/)
+- [Task: buy a listing](/docs-core/markets/buy/)
+- [Marketplace v1 gates](/docs-core/markets/marketplace-v1/)

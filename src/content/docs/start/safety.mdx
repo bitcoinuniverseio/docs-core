@@ -1,0 +1,84 @@
+---
+title: Safety in sixty seconds
+description: >-
+  The short version: keys stay in your wallet, unavailable is not empty, an
+  unavailable action is a safety decision, and an asset can live on a single
+  satoshi.
+sidebar:
+  order: 3
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="Marketplace v1 action flow, frontend market state components"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+Six things. Read them before your first transaction; the linked pages have the
+detail.
+
+## 1. Your keys stay in your wallet
+
+Core is non-custodial. It never holds your keys and never moves an asset
+without a signature you approve in your own wallet.
+
+**Nobody working on Bitcoin Universe will ever ask for your seed phrase or
+private key.** There is no support process that needs either. Treat any such
+request as an attack, whoever it appears to come from.
+
+## 2. Confirm the address before connecting
+
+Core is at `www.bitcoinuniverse.io`. The bare `bitcoinuniverse.io` redirects to
+a different application.
+
+## 3. Unavailable is not empty
+
+A market that says its reader is unavailable is telling you the read failed,
+not that the market is empty. A figure shown as a dash was not measured; it is
+not a zero.
+
+Do not create or repeat a transaction from stale market data.
+[Reading the numbers](/docs-core/start/reading-the-numbers/).
+
+## 4. An unavailable action is a safety decision
+
+An action Core will not perform is not proof that an asset or market does not
+exist. Ten of the 29 marketplace protocols cannot be traded at all, twelve more
+sit behind a feature gate, and any protocol's live authority can close at any
+time. The [support matrix](/docs-core/protocols/support-matrix/) says which,
+and why.
+
+Core's checks fail closed: a required mismatch **blocks** an action rather than
+downgrading to a warning you can click past.
+
+## 5. An asset can live on a single satoshi
+
+An output holding an inscription looks exactly like ordinary change. Spend it
+as change or use it as fee padding and the asset is gone, in a transaction
+Bitcoin considers perfectly valid.
+
+Worse, a malformed rune marker destroys every rune balance a transaction spent,
+and no validity check can see it. Core reads that marker and refuses.
+[Asset-bearing outputs](/docs-core/explorer/asset-bearing-outputs/).
+
+## 6. Read the wallet, not just the screen
+
+Core's review shows the asset, the amount, the service fee, the network fee
+estimate, and the total before your wallet asks you to sign. That is a summary
+of what Core intends.
+
+**Your wallet shows the transaction's own inputs and outputs. Read them
+there.** The wallet is the final authorization boundary.
+
+A broadcast transaction cannot be recalled.
+
+## Next
+
+- [Market safety](/docs-core/wallets/market-safety/), the full version.
+- [Transaction safety](/docs-core/wallets/transaction-safety/), before your
+  first signature.
+- [Reading the numbers](/docs-core/start/reading-the-numbers/).

@@ -1,0 +1,93 @@
+---
+title: Troubleshooting
+description: >-
+  Start here: the four questions that resolve most Core problems, and where to
+  go for each symptom.
+sidebar:
+  order: 1
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/docs-core"
+  source="src/content/docs/troubleshooting/"
+  chain="bitcoin, dogecoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+## Four questions, in order
+
+**1. Are you on the right address?**
+Core is at `www.bitcoinuniverse.io`. The bare `bitcoinuniverse.io` redirects to
+a different Bitcoin Universe application, so a link missing the `www` will not
+show the pages described here.
+
+**2. Is it unavailable, or is it empty?**
+These look similar and mean opposite things. A dash is not a zero. An empty
+table is not a failed read.
+[Reading the numbers](/docs-core/start/reading-the-numbers/) takes two minutes
+and resolves a large share of reported problems.
+
+**3. Does the protocol support what you are trying to do?**
+Ten of the 29 marketplace protocols cannot be traded at all, and twelve more
+sit behind a feature gate. The
+[support matrix](/docs-core/protocols/support-matrix/) says which, and each
+protocol page gives the registry's stated reason.
+
+**4. Is the deployment open for trading right now?**
+
+```bash
+curl -s https://api.bitcoinuniverse.io/health \
+  | jq '{marketplaceProfile, mutate: .mutationTraffic.ready}'
+```
+
+A `read-only` profile means every trading action is closed, whatever the matrix
+says. That is gate 3, and it is a property of the running deployment rather
+than of the protocol.
+
+## By symptom
+
+| Symptom | Go to |
+| --- | --- |
+| A market says unavailable | [Market and reader states](/docs-core/troubleshooting/states/) |
+| A figure shows as a dash | [Reading the numbers](/docs-core/start/reading-the-numbers/) |
+| A column I expected is missing | [Protocol indexes](/docs-core/explorer/protocol-indexes/) |
+| A wallet will not connect | [Wallet and signing problems](/docs-core/troubleshooting/wallet/) |
+| A control is disabled with a reason | [Market and reader states](/docs-core/troubleshooting/states/) |
+| A control is not there at all | [The support matrix](/docs-core/protocols/support-matrix/) |
+| A balance shows as unavailable | [Addresses](/docs-core/explorer/addresses/) |
+| An asset is missing from Portfolio | [Portfolio](/docs-core/portfolio/portfolio/) |
+| A purchase was refused over runes | [Asset-bearing outputs](/docs-core/explorer/asset-bearing-outputs/) |
+| A settlement is still pending after a block | [Confirmation and reorg policy](/docs-core/protocols/confirmation-and-reorg/) |
+| A search returned several results | [Search](/docs-core/explorer/search/) |
+| No USD price is shown | [Fiat prices](/docs-core/data/fiat-prices/) |
+| A `429` from the API | [What is public](/docs-core/api/overview/) |
+| A `404` on an API path | [The public reader boundary](/docs-core/data/reader-boundary/) |
+
+## Information worth including in a report
+
+- The page or route, and the width you saw it at.
+- What you observed, and what you expected instead.
+- The `X-Request-Id` header, if the problem involved an API call.
+- The `X-Universe-Release` value, so the report is pinned to a build.
+- Screenshots with any personal data removed.
+
+**Never include** a seed phrase, a private key, an unbroadcast signed
+transaction, a session token, or anyone else's address. None of those are
+needed to reproduce a defect, and they cannot be un-sent.
+
+## Where to send it
+
+- A documentation error, a broken link, or a page that does not match the
+  product: [open an issue](https://github.com/bitcoinuniverseio/docs-core/issues).
+- A suspected security issue:
+  [report it privately](https://github.com/bitcoinuniverseio/docs-core/security/advisories/new).
+  Do not open a public issue for it.
+
+## Next
+
+- [Market and reader states](/docs-core/troubleshooting/states/)
+- [Wallet and signing problems](/docs-core/troubleshooting/wallet/)
+- [Support](/docs-core/reference/support/)

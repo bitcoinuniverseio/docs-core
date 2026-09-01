@@ -14,6 +14,8 @@ gives us.
 - What you were doing, on which page or route.
 - What you observed, and what you expected instead.
 - The smallest set of steps that reproduces it.
+- The `X-Request-Id` and `X-Universe-Release` headers, if an API call was
+  involved.
 - Screenshots, request and response bodies, or a short recording, with any
   personal data removed.
 
@@ -23,21 +25,21 @@ needed to reproduce a defect, and they cannot be un-sent.
 
 ## What is in scope
 
-- The Bitcoin Universe application at `https://www.bitcoinuniverse.io`.
+- The Core application at `https://www.bitcoinuniverse.io`.
 - Its public API responses, including the health and readiness contracts.
-- These public documentation pages.
+- These public documentation pages, and anything this repository publishes.
 
 Reports about a third party's wallet extension, node, or explorer belong with
-that project. If the issue is that Bitcoin Universe handles their response
-unsafely, that is in scope here.
+that project. If the issue is that Core handles their response unsafely, that
+is in scope here.
 
 ## What we ask you not to do
 
 - Do not run load tests, automated scanners, or denial of service attempts
   against production.
 - Do not access, modify, or retain another person's data.
-- Do not use a real transaction to demonstrate a defect when a description or
-  a testnet reproduction would show the same thing.
+- Do not use a real transaction to demonstrate a defect when a description or a
+  testnet reproduction would show the same thing.
 
 ## What Bitcoin Universe will never ask you for
 
@@ -49,6 +51,6 @@ attack, whoever it appears to come from.
 ## After you report
 
 You will get an acknowledgement in the private advisory thread. Fixes are
-released through the same process as any other change, and the
-[release validation note](guides/release-validation.md) describes the checks a
-release passes before it is published.
+released through the same process as any other change, and
+[release evidence](https://bitcoinuniverseio.github.io/docs-core/quality/release-evidence/)
+describes the checks a release passes before it is published.

@@ -1,0 +1,296 @@
+---
+/*
+ * Everything the registry records about one marketplace protocol, on one
+ * page: what it is, whether it can be traded, which actions work, the stated
+ * reason for every action that does not, which index is the source of truth,
+ * and the freshness, confirmation, and reorg policy that applies to it.
+ *
+ * The unsupported-reason table is the most useful thing on the page. It is
+ * the registry's own sentence, unedited.
+ */
+import { byId, ACTIONS, ACTION_LABELS, AVAILABILITY, MODE, supportedActions, unsupportedReasons } from '../data/registry.mjs';
+
+interface Props {
+  id: string;
+}
+
+const { id } = Astro.props;
+const p = byId(id);
+const m = p.marketplace;
+const availability = AVAILABILITY[m.availability];
+const supported = supportedActions(p);
+const unsupported = unsupportedReasons(p);
+const surfaces = Object.entries(p.surfaces ?? {});
+
+// De-duplicate the reason text: most protocols give one reason for many
+// actions, and printing it ten times is noise. Group instead.
+const reasonGroups = [];
+for (const [action, reason] of unsupported) {
+  const existing = reasonGroups.find((g) => g.reason === reason);
+  if (existing) existing.actions.push(action);
+  else reasonGroups.push({ reason, actions: [action] });
+}
+
+const canTrade = supported.has('buy') || supported.has('list');
+---
+
+<div class="readout">
+  <div>
+    <span class="readout-label">Availability</span>
+    <span class="readout-value">
+      <span class={`chip chip-${availability.tone === 'live' ? 'live' : 'stale'}`}>{availability.label}</span>
+    </span>
+    <span class="readout-note">{availability.meaning}</span>
+  </div>
+  <div>
+    <span class="readout-label">Chain</span>
+    <span class="readout-value">{p.chain}</span>
+    <span class="readout-note">Ownership model: {p.ownershipModel}. Decimals: {p.decimals}.</span>
+  </div>
+  <div>
+    <span class="readout-label">Actions supported</span>
+    <span class="readout-value">{supported.size} / {ACTIONS.length}</span>
+    <span class="readout-note">
+      {canTrade
+        ? 'Trading actions are declared supported for this protocol.'
+        : 'No trading action is declared supported for this protocol.'}
+    </span>
+  </div>
+  <div>
+    <span class="readout-label">Feature gate</span>
+    <span class="readout-value">{m.featureGate ?? 'None'}</span>
+    <span class="readout-note">
+      {m.featureGate
+        ? 'Every action below stays closed until an operator enables this gate.'
+        : 'No gate stands between the shipped build and the actions below.'}
+    </span>
+  </div>
+</div>
+
+<h2 id="execution-model">Execution model</h2>
+
+<p>{MODE[m.mode] ?? m.mode}</p>
+
+<div class="panel">
+  <div class="panel-title">Registry values</div>
+  <dl class="kv">
+    <dt>Execution mode</dt><dd><code>{m.mode}</code></dd>
+    <dt>Owning surface</dt><dd><code>{m.owner}</code></dd>
+    <dt>Availability</dt><dd><code>{m.availability}</code></dd>
+    <dt>Feature gate</dt><dd><code>{m.featureGate ?? 'null'}</code></dd>
+    <dt>Aliases accepted</dt>
+    <dd>{p.aliases.length ? p.aliases.map((a) => <code>{a}</code>) : <span>none</span>}</dd>
+    <dt>Address roles</dt>
+    <dd>{p.addressRoles.map((r) => <code>{r}</code>)}</dd>
+  </dl>
+</div>
+
+<h2 id="actions">Actions</h2>
+
+<div class="table-scroll" tabindex="0" role="region" aria-label={`${p.displayName} action support, scrollable table`}>
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Action</th>
+        <th scope="col">Supported</th>
+        <th scope="col">Mode, or the reason it is not</th>
+      </tr>
+    </thead>
+    <tbody>
+      {ACTIONS.map((a) => (
+        <tr>
+          <th scope="row"><code>{ACTION_LABELS[a]}</code></th>
+          <td>
+            {supported.has(a) ? (
+              <span class="chip chip-live">Yes</span>
+            ) : (
+              <span class="chip chip-off">No</span>
+            )}
+          </td>
+          <td>{supported.has(a) ? MODE[supported.get(a)] ?? supported.get(a) : (unsupported.get(a) ?? 'The registry records no capability for this action.')}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+{reasonGroups.length > 0 && (
+  <>
+    <h3 id="why-not">Why the rest are unavailable</h3>
+    <ul class="reasons">
+      {reasonGroups.map((g) => (
+        <li>
+          <p class="reason-actions">
+            {g.actions.map((a) => <code>{ACTION_LABELS[a]}</code>)}
+          </p>
+          <p class="reason-text">{g.reason}</p>
+        </li>
+      ))}
+    </ul>
+  </>
+)}
+
+<h2 id="source-of-truth">Source of truth</h2>
+
+<div class="table-scroll" tabindex="0" role="region" aria-label={`${p.displayName} sources of truth, scrollable table`}>
+  <table>
+    <thead>
+      <tr><th scope="col">Question</th><th scope="col">What answers it</th></tr>
+    </thead>
+    <tbody>
+      <tr><th scope="row">Which orders exist</th><td>{p.sourceOfTruth.orderBook}</td></tr>
+      <tr><th scope="row">Who owns the asset</th><td>{p.sourceOfTruth.ownership}</td></tr>
+      <tr><th scope="row">Whether a trade settled</th><td>{p.sourceOfTruth.settlement}</td></tr>
+      <tr><th scope="row">What the protocol state is</th><td>{p.sourceOfTruth.protocolState}</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h2 id="indexer">Indexer</h2>
+
+<div class="panel">
+  <div class="panel-title">Primary index</div>
+  <p>{p.indexer.primary}</p>
+  <div class="panel-title" style="margin-top:0.9rem">Fallbacks</div>
+  {p.indexer.fallbacks.length ? (
+    <ul>{p.indexer.fallbacks.map((f) => <li>{f}</li>)}</ul>
+  ) : (
+    <p>None. If the primary index cannot be read, this protocol has nothing to fall back to and the page says the read failed.</p>
+  )}
+  <div class="panel-title" style="margin-top:0.9rem">What a mutation must prove</div>
+  <p>{p.indexer.mutationGate}</p>
+</div>
+
+<h2 id="policy">Freshness, confirmation, and reorg policy</h2>
+
+<div class="table-scroll" tabindex="0" role="region" aria-label={`${p.displayName} freshness, confirmation and reorg policy, scrollable table`}>
+  <table>
+    <thead>
+      <tr><th scope="col">Policy</th><th scope="col">Value</th><th scope="col">What the registry states</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">Freshness enforced</th>
+        <td><span class={`chip ${p.freshness.enforced ? 'chip-live' : 'chip-stale'}`}>{p.freshness.enforced ? 'Yes' : 'No'}</span></td>
+        <td>{p.freshness.policy}</td>
+      </tr>
+      <tr>
+        <th scope="row">Maximum index lag</th>
+        <td><code>{p.freshness.maxLagBlocks ?? 'not set'}</code></td>
+        <td>{p.freshness.maxLagBlocks === null ? 'No numeric block-lag ceiling is configured for this protocol.' : `${p.freshness.maxLagBlocks} blocks.`}</td>
+      </tr>
+      <tr>
+        <th scope="row">Maximum observation age</th>
+        <td><code>{p.freshness.maxObservationAgeMs === null ? 'not set' : `${p.freshness.maxObservationAgeMs} ms`}</code></td>
+        <td>{p.freshness.maxObservationAgeMs === null ? 'No maximum age is configured for an observation used by a mutation.' : 'An observation older than this is refused.'}</td>
+      </tr>
+      <tr>
+        <th scope="row">Listing confirmations</th>
+        <td><code>{p.confirmation.listingMinConfirmations ?? 'not set'}</code></td>
+        <td>{p.confirmation.policy}</td>
+      </tr>
+      <tr>
+        <th scope="row">Settlement confirmations</th>
+        <td><code>{p.confirmation.settlementMinConfirmations ?? 'not set'}</code></td>
+        <td>{p.confirmation.settlementMinConfirmations === null ? 'No settlement depth applies, because no supported action reaches settlement.' : `A trade is recorded as settled after ${p.confirmation.settlementMinConfirmations} confirmation${p.confirmation.settlementMinConfirmations === 1 ? '' : 's'}.`}</td>
+      </tr>
+      <tr>
+        <th scope="row">Automatic reorg reconciliation</th>
+        <td><span class={`chip ${p.reorg.automaticReconciliation ? 'chip-live' : 'chip-stale'}`}>{p.reorg.automaticReconciliation ? 'Yes' : 'No'}</span></td>
+        <td>{p.reorg.policy}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h2 id="surfaces">Where else this protocol appears</h2>
+
+<p>
+  The Bitcoin Universe registry records actions per product surface. Core is
+  the <code>main</code> surface. The others are named here because a reader
+  who cannot do something in Core may be able to do it in a sibling product.
+</p>
+
+<div class="table-scroll" tabindex="0" role="region" aria-label={`${p.displayName} actions per product surface, scrollable table`}>
+  <table>
+    <thead>
+      <tr><th scope="col">Surface</th><th scope="col">Actions recorded</th></tr>
+    </thead>
+    <tbody>
+      {surfaces.map(([key, surface]) => (
+        <tr>
+          <th scope="row">{surface.label}<code class="pid">{key}</code></th>
+          <td>{surface.actions.length ? surface.actions.map((a) => <code>{a}</code>) : <span>None recorded.</span>}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  dl.kv {
+    display: grid;
+    grid-template-columns: minmax(8rem, max-content) 1fr;
+    gap: 0.3rem 1rem;
+    margin: 0;
+    font-size: 0.85rem;
+  }
+
+  dl.kv dt {
+    font-family: var(--bu-font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--bu-muted);
+    align-self: center;
+  }
+
+  dl.kv dd {
+    margin: 0;
+  }
+
+  dl.kv code,
+  td code {
+    margin-right: 0.3rem;
+  }
+
+  ul.reasons {
+    list-style: none;
+    padding: 0;
+    margin-block: 1.25rem;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  ul.reasons li {
+    border: 1px solid var(--bu-grid);
+    border-left: 3px solid var(--bu-stale);
+    border-radius: var(--bu-radius);
+    background: var(--bu-surface);
+    padding: 0.75rem 0.9rem;
+  }
+
+  p.reason-actions {
+    margin: 0 0 0.4rem;
+  }
+
+  p.reason-actions code {
+    font-size: 0.72rem;
+  }
+
+  p.reason-text {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .pid {
+    display: block;
+    font-family: var(--bu-font-mono);
+    font-size: 0.66rem;
+    color: var(--bu-muted);
+    background: none;
+    border: 0;
+    padding: 0;
+    font-weight: 400;
+  }
+</style>

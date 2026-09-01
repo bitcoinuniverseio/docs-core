@@ -1,0 +1,54 @@
+---
+title: Private chat verification
+description: >-
+  The one wallet signature in Core that is not a transaction: what it says, what
+  it cannot authorize, and why an unrequested version of it is an attack.
+sidebar:
+  order: 4
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="private chat verification flow"
+  chain="bitcoin"
+  network="mainnet"
+  verified="2026-09-01"
+/>
+
+Private chat uses a wallet signature only to verify that the connected Bitcoin
+address controls the chat identity.
+
+It never asks for a signature just because you open Chat, search an address,
+select a contact, or read public chat content.
+
+## The flow
+
+Press **Verify wallet**. Your wallet shows a short-lived request for
+`chat:firebase-token`.
+
+Read the request before signing. It identifies:
+
+- the address;
+- a one-time nonce;
+- an expiry time;
+- a statement that it is for private-chat sign-in only.
+
+**This signature cannot authorize a payment or a Bitcoin transaction.**
+
+## If it appears without you pressing the button
+
+Reject it.
+
+A signature request you did not start is the single clearest signal that
+something else is driving your wallet. Do not sign messages you do not
+understand.
+
+Never share a seed phrase, private key, wallet backup, or recovery code in
+Chat, or anywhere else. There is no support process that needs any of them.
+
+## Next
+
+- [Transaction safety](/docs-core/wallets/transaction-safety/)
+- [Connecting a wallet](/docs-core/wallets/connecting/)
