@@ -16,6 +16,12 @@
       "networks": [
         "mainnet"
       ]
+    },
+    {
+      "chain": "dogecoin",
+      "networks": [
+        "mainnet"
+      ]
     }
   ],
   "audiences": [
