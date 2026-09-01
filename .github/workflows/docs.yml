@@ -1,8 +1,14 @@
 name: Docs
 
+# Pull requests only, plus a manual trigger.
+#
+# This job ends with a full axe audit of every built page in both themes at two
+# widths, which takes roughly forty minutes on the shared fleet. Running it
+# again on the push that merges the same commit doubled that cost for no extra
+# signal, and the Pages workflow already re-runs every gate on the exact commit
+# it deploys. Branch protection evaluates the pull request head, which this
+# still covers.
 on:
-  push:
-    branches: [main, develop]
   pull_request:
   workflow_dispatch:
 
@@ -61,8 +67,8 @@ jobs:
       - name: Search index exists
         run: test -f dist/pagefind/pagefind.js
 
-      - name: Sitemap exists
-        run: test -f dist/sitemap-index.xml
+      - name: Sitemap index, shards and /sitemap.xml are all present and absolute
+        run: npm run check:sitemap
 
       - name: Machine-readable files exist
         run: test -f dist/llms.txt && test -f dist/robots.txt && test -f dist/openapi/core-public-read.json

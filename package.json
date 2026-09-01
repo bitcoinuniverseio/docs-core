@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/check-sitemap.mjs",
     "preview": "astro preview",
     "check:copy": "node scripts/check-copy-rules.mjs",
     "check:public-safety": "node scripts/check-public-safety.mjs",
@@ -19,7 +19,8 @@
     "check:assets": "node scripts/check-assets.mjs",
     "check:markdown": "markdownlint-cli2 \"src/content/**/*.{md,mdx}\" \"*.md\"",
     "check:a11y": "node scripts/check-accessibility.mjs",
-    "test": "npm run check:copy && npm run check:public-safety && npm run check:manifest && npm run check:openapi && npm run check:registry && npm run check:assets && npm run check:markdown"
+    "test": "npm run check:copy && npm run check:public-safety && npm run check:manifest && npm run check:openapi && npm run check:registry && npm run check:assets && npm run check:markdown",
+    "check:sitemap": "node scripts/check-sitemap.mjs"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.36.0",
