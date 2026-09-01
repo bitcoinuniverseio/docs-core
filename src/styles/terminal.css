@@ -135,6 +135,13 @@ body {
 }
 
 /* ----------------------------------------------------------------- tables */
+/* Starlight gives every table `overflow: auto` of its own. Combined with the
+ * scroll region this site wraps each table in, that produced two nested
+ * scrollers, and axe correctly reported the inner one as a scrollable region
+ * with no keyboard access. The wrapper is the scroller; the table is not. */
+.sl-markdown-content table:not(:where(.not-content *)) {
+  overflow: visible;
+}
 /* The centrepiece. Sticky header, hairline grid, zebra-free (density does
  * the work instead), and every cell aligned to the top so a wrapped reason
  * does not push its row's short cells to the middle. */

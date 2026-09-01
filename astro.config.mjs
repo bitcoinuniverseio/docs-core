@@ -8,6 +8,7 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightLinksValidator from 'starlight-links-validator';
 import rehypeTableScroll from './scripts/rehype-table-scroll.mjs';
+import { codeBlockAccessibility } from './scripts/ec-code-block-a11y.mjs';
 
 export default defineConfig({
   site: 'https://bitcoinuniverseio.github.io',
@@ -18,6 +19,11 @@ export default defineConfig({
   },
   integrations: [
     starlight({
+      // Expressive Code makes an overflowing code block focusable at runtime and
+      // gives it no accessible name. This plugin names it at build time, and
+      // marks it a group rather than a region so a page's landmark list stays
+      // navigation and content rather than one entry per code sample.
+      expressiveCode: { plugins: [codeBlockAccessibility()] },
       title: 'Core docs',
       description:
         'Product documentation for Core, the Bitcoin Universe explorer, portfolio, activity, and marketplace application: what every screen reads, where each number comes from, and which of the 29 marketplace protocols can actually be traded.',

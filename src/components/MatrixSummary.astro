@@ -22,59 +22,68 @@ const sellSupport = actionSupportCount('sell');
 <dl class="readout">
   <div>
     <dt>Enabled</dt>
-    <dd>{tally.enabled ?? 0}</dd>
-    <span class="readout-note">Switched on in the shipped build.</span>
+    <dd>{tally.enabled ?? 0}
+      <span class="readout-note">Switched on in the shipped build.</span>
+    </dd>
   </div>
   <div>
     <dt>Feature-gated</dt>
-    <dd>{(tally['feature-gated'] ?? 0) + (tally['feature-gated-testnet-only'] ?? 0)}</dd>
-    <span class="readout-note">
+    <dd>{(tally['feature-gated'] ?? 0) + (tally['feature-gated-testnet-only'] ?? 0)}
+      <span class="readout-note">
       Implemented, switched off unless an operator enables the gate. One of
       those is confined to testnet.
     </span>
+    </dd>
   </div>
   <div>
     <dt>Read-only</dt>
-    <dd>{tally['read-only'] ?? 0}</dd>
-    <span class="readout-note">You can see them. You cannot trade them.</span>
+    <dd>{tally['read-only'] ?? 0}
+      <span class="readout-note">You can see them. You cannot trade them.</span>
+    </dd>
   </div>
   <div>
     <dt>Support buy</dt>
-    <dd>{actionSupportCount('buy')}<span class="of">/{marketplaceProtocols.length}</span></dd>
-    <span class="readout-note">List: {actionSupportCount('list')}. Delist: {actionSupportCount('unlist')}.</span>
+    <dd>{actionSupportCount('buy')}<span class="of">/{marketplaceProtocols.length}</span>
+      <span class="readout-note">List: {actionSupportCount('list')}. Delist: {actionSupportCount('unlist')}.</span>
+    </dd>
   </div>
   <div>
     <dt>Support sell</dt>
-    <dd>{sellSupport}<span class="of">/{marketplaceProtocols.length}</span></dd>
-    <span class="readout-note">
+    <dd>{sellSupport}<span class="of">/{marketplaceProtocols.length}</span>
+      <span class="readout-note">
       Not one. `sell` means an executable offer workflow, and none is deployed.
     </span>
+    </dd>
   </div>
   <div>
     <dt>Enforce freshness</dt>
-    <dd>{enforcedFreshness.length}<span class="of">/{marketplaceProtocols.length}</span></dd>
-    <span class="readout-note">
+    <dd>{enforcedFreshness.length}<span class="of">/{marketplaceProtocols.length}</span>
+      <span class="readout-note">
       {enforcedFreshness.map((p) => p.displayName).join(' and ')}, and neither can trade.
       Freshness elsewhere is checked per mutation rather than against a numeric ceiling.
     </span>
+    </dd>
   </div>
   <div>
     <dt>Reconcile after a reorg</dt>
-    <dd>{autoReorg}<span class="of">/{marketplaceProtocols.length}</span></dd>
-    <span class="readout-note">The other {marketplaceProtocols.length - autoReorg} have no local order state to roll back.</span>
+    <dd>{autoReorg}<span class="of">/{marketplaceProtocols.length}</span>
+      <span class="readout-note">The other {marketplaceProtocols.length - autoReorg} have no local order state to roll back.</span>
+    </dd>
   </div>
   <div>
     <dt>Settle at 1 confirmation</dt>
-    <dd>{settleAtOne}<span class="of">/{marketplaceProtocols.length}</span></dd>
-    <span class="readout-note">
+    <dd>{settleAtOne}<span class="of">/{marketplaceProtocols.length}</span>
+      <span class="readout-note">
       The default. Operators may configure a deeper requirement. No protocol
       sets a minimum confirmation depth for a listing.
     </span>
+    </dd>
   </div>
   <div>
     <dt>Actions tracked</dt>
-    <dd>{ACTIONS.length}</dd>
-    <span class="readout-note">Per protocol, each either supported with a mode or unsupported with a reason.</span>
+    <dd>{ACTIONS.length}
+      <span class="readout-note">Per protocol, each either supported with a mode or unsupported with a reason.</span>
+    </dd>
   </div>
 </dl>
 

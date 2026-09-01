@@ -94,11 +94,12 @@ metadata, and Core treats them accordingly.
   Every Bitmap surface consolidates records by block height, because provider
   listing ids, inscription ids, and historical activity ids are all
   observations of the same district rather than separate assets.
-- **DMT.** Mint availability is scoped by block. The block search returns, for
-  a block, how many elements exist in total, how many are already minted, and
-  therefore how many remain available, along with a completion percentage. A
-  total of zero produces zero pages and zero percent rather than a division by
-  zero or a fabricated figure.
+- **DMT.** Mint availability is scoped by block. On the Blockdrop mint surface,
+  a block search returns how many elements that block holds in total, how many
+  are already minted, and therefore how many remain available, along with a
+  completion percentage and the element, phase mint price, and limit per mint.
+  A total of zero produces zero pages and zero percent rather than a division
+  by zero or a fabricated figure.
 
 ## Why there is no block detail page
 

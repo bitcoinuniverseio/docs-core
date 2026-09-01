@@ -25,43 +25,49 @@ const tradable = marketplaceProtocols.filter((p) =>
 <dl class="readout">
   <div>
     <dt>Protocols in the registry</dt>
-    <dd>{counts.protocols}</dd>
-    <span class="readout-note">Across Bitcoin, Dogecoin, and Zcash.</span>
+    <dd>{counts.protocols}
+      <span class="readout-note">Across Bitcoin, Dogecoin, and Zcash.</span>
+    </dd>
   </div>
   <div>
     <dt>With a marketplace policy</dt>
-    <dd>{counts.marketplaceProtocols}</dd>
-    <span class="readout-note">The rest are read and explored, never traded.</span>
+    <dd>{counts.marketplaceProtocols}
+      <span class="readout-note">The rest are read and explored, never traded.</span>
+    </dd>
   </div>
   <div>
     <dt>Enabled in the build</dt>
-    <dd>{tally.enabled ?? 0}</dd>
-    <span class="readout-note">
+    <dd>{tally.enabled ?? 0}
+      <span class="readout-note">
       {tally['feature-gated'] ?? 0} feature-gated, {tally['read-only'] ?? 0} read-only,
       {' '}{tally['feature-gated-testnet-only'] ?? 0} gated to testnet.
     </span>
+    </dd>
   </div>
   <div>
     <dt>Declare buy support</dt>
-    <dd>{tradable}</dd>
-    <span class="readout-note">
+    <dd>{tradable}
+      <span class="readout-note">
       Declared in the registry. A live authority gate still has to agree before
       a purchase can run.
     </span>
+    </dd>
   </div>
   <div>
     <dt>Support listing</dt>
-    <dd>{actionSupportCount('list')}</dd>
-    <span class="readout-note">Delist: {actionSupportCount('unlist')}. Update a listing: {actionSupportCount('update-listing')}.</span>
+    <dd>{actionSupportCount('list')}
+      <span class="readout-note">Delist: {actionSupportCount('unlist')}. Update a listing: {actionSupportCount('update-listing')}.</span>
+    </dd>
   </div>
   <div>
     <dt>Marketplace profile</dt>
-    <dd class="profile"><span class="chip chip-stale">read-only</span></dd>
-    <span class="readout-note">
+    <dd class="profile"><span class="chip chip-stale">read-only</span>
+      <span class="readout-note">
       Read on 1 September 2026 from
       <a href="https://api.bitcoinuniverse.io/health">the public health response</a>.
       Mutation traffic was closed. Check it yourself rather than trusting this line.
     </span>
+    </dd>
   </div>
 </dl>
 

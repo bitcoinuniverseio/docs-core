@@ -47,9 +47,9 @@ Do not create or repeat a transaction from stale market data.
 ## 4. An unavailable action is a safety decision
 
 An action Core will not perform is not proof that an asset or market does not
-exist. Ten of the 29 marketplace protocols cannot be traded at all, twelve more
-sit behind a feature gate, and any protocol's live authority can close at any
-time. The [support matrix](/docs-core/protocols/support-matrix/) says which,
+exist. Nine of the 29 marketplace protocols support neither buying nor
+listing, thirteen sit behind a feature gate, and any protocol's live authority
+can close at any time. The [support matrix](/docs-core/protocols/support-matrix/) says which,
 and why.
 
 Core's checks fail closed: a required mismatch **blocks** an action rather than
