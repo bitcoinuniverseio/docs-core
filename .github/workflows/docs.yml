@@ -29,9 +29,6 @@ jobs:
 
       - uses: bitcoinuniverseio/universe-ci-actions/universe-node-env@main
 
-      - name: Install
-        run: npm ci
-
       # One command per step. A shell reports only the exit code of the last
       # command in a chained run block, so a chained first command fails in
       # silence and the gate stops being a gate.
