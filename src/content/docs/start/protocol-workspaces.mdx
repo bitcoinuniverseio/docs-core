@@ -1,0 +1,100 @@
+---
+title: Protocol workspaces
+description: >-
+  How to read Core's payment, Lightning, Nostr, DLC, staking, Bitcoin L2,
+  and mining workspaces without confusing an interface with live execution.
+sidebar:
+  order: 6
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core"
+  source="frontend/src/features/ and backend/src/"
+  chain="bitcoin"
+  network="mainnet"
+  verified="2026-09-03"
+/>
+
+Core groups advanced Bitcoin tools into seven workspaces. Each workspace can
+show several kinds of state: checked input, a preview, a simulation, provider
+data, an unsigned transaction, or a completed operation. Those states are not
+interchangeable.
+
+An interface being present means the shipped source contains that interface.
+It does not by itself mean a provider is healthy, an operation is enabled, a
+wallet has approved it, or a transaction has reached the network. Core keeps
+those decisions separate and blocks an action when its required authority or
+evidence is missing.
+
+## The seven workspaces
+
+### Payments and machine commerce
+
+The payment workspace brings BOLT 12 offers, LNURL, BIP 353 names, L402 access,
+and Payjoin v2 into one place. It distinguishes encoded or resolved payment
+data from a payment that has been authorized and sent.
+
+### Lightning and Taproot Assets
+
+The Lightning console exposes node and channel operations alongside Taproot
+Assets tasks. A connected service can report balances and operation state.
+Core does not treat a displayed request or unsigned artifact as settlement.
+
+### Nostr identity and wallet connections
+
+The Nostr workspace covers events, NIP 05 identifiers, NIP 46 remote signing,
+NIP 47 wallet connections, NIP 57 zaps, and NIP 98 authentication. Permission
+and signing prompts remain explicit. Public event data never grants wallet
+authority.
+
+### DLCs and oracles
+
+The DLC studio prepares bilateral contract offers, oracle announcements, and
+attestation checks. A simulation can explain a payout path, but only verified
+oracle evidence and the required signatures can advance a real contract.
+
+### Bitcoin staking and yield risk
+
+The staking workspace compares Bitcoin staking systems and their exit,
+custody, slashing, and reward assumptions. Yield figures are provider reports,
+not promises. Check the named source, observation time, and risk details before
+acting.
+
+### Bitcoin L2s, bridges, reserves, and BitVM
+
+The L2 observatory compares settlement, custody, data availability, operator,
+reserve, and exit properties. Bridge quotes and BitVM exercises are previews or
+simulations until the interface shows the later authorization and lifecycle
+states.
+
+### Mining and blockspace
+
+The mining workspace inspects block templates, Stratum V2 frames, fee reports,
+and hashrate distribution. Template construction validates structure and
+weight. It does not prove a pool accepted the template or that a block was
+mined.
+
+## How to read an action
+
+Before treating an operation as executable, confirm all of the following in
+the interface:
+
+1. The required provider is identified and healthy.
+2. The data includes a current observation time or block checkpoint.
+3. The action is enabled for the selected network and protocol.
+4. Any preview or simulation passed its validation step.
+5. The wallet shows the exact transaction or message it is being asked to
+   sign.
+6. The lifecycle reports broadcast and confirmation separately from signing.
+
+If one of those facts is absent, treat the action as unavailable or unfinished.
+Do not infer success from a button, generated identifier, or unsigned payload.
+
+## Related reading
+
+- [Transaction safety](/docs-core/wallets/transaction-safety/)
+- [Indexer freshness](/docs-core/data/indexer-freshness/)
+- [Data provenance](/docs-core/data/provenance/)
+- [Protocol support matrix](/docs-core/protocols/support-matrix/)
