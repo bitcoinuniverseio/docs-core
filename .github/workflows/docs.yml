@@ -28,7 +28,7 @@ jobs:
     # is unreachable from here: a public repository cannot resolve a reusable
     # workflow from a private one. `universe-ci-actions` below is public and is
     # fine to call.
-    runs-on: [self-hosted, linux, x64, universe-linux]
+    runs-on: [self-hosted, linux, x64, universe-super]
     steps:
       - name: Check out exact source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
