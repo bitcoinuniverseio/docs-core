@@ -138,6 +138,42 @@ curl -s https://api.bitcoinuniverse.io/indexer-health \
 `indexerIdentity` and `source` are what served the request. When they differ,
 believe the second pair.
 
+## Reading mempool and catalog results
+
+The September 6, 2026 source repair adds complete mempool membership and block
+transaction pagination to the Universe-operated Bitcoin adapter. These route
+changes have not been deployed. A candidate HTTP read against the node traversed
+all 4,932 transactions in one mainnet block, including an observed inscription
+after transaction 100. That verifies one block and the membership observed at
+that time; it does not establish continuous collection or a complete 30-day
+history.
+
+A complete block read must reconcile unique transaction identities with the
+block's reported count. A complete mempool membership read must include the
+whole node response. Fetching only recent transactions, stopping after a fixed
+number of pages, or losing a page cannot establish that the rest is quiet.
+Failed reads remain unavailable; only a successful, verified empty result
+means no entries were observed within that read's scope.
+
+Measured transaction weight, virtual size, fees, and transferred amounts answer
+different questions. An absent fee or input value remains unknown. It must not
+be replaced with an invented zero or estimated amount. Block weight also
+includes block framing, so it is not the sum of transaction weights alone.
+The selected network, source identity, observation time, and missing coverage
+must remain attached to an aggregate and its export.
+
+The same source repair distinguishes empty catalog responses from failed reads
+and retains the source's reported update time. Fetching old data again does not
+make it fresh. A catalog response does not prove a product is enabled, and an
+HTTP 503 can indicate a dependency outage as well as an explicitly disabled
+feature. The interface must preserve those distinctions.
+
+These changes do not replace the external protocol sources listed above.
+Finding a protocol-shaped payload in a Bitcoin transaction is detection;
+protocol validity, ownership, and transferability still require their named
+authorities. Browser acceptance, deployed route verification, and complete
+historical coverage remain separate checks.
+
 ## Every protocol
 
 <PolicyTable kind="indexer" />

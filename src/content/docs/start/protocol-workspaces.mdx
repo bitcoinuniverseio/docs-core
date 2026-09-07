@@ -92,6 +92,20 @@ the interface:
 If one of those facts is absent, treat the action as unavailable or unfinished.
 Do not infer success from a button, generated identifier, or unsigned payload.
 
+## Reading source and quote status
+
+A source update time describes the data supplied by the authority. A successful
+refresh or health check does not establish that time. When no source timestamp
+is available, freshness remains unknown, including for an empty catalog.
+
+An Ecash quote describes a mint's payment request, amount, network and expiry.
+It is not evidence that payment was sent or tokens were issued. If a quote
+request has an uncertain outcome, preserve its reference and reconcile it
+before making another request.
+
+The September 7 local repair has not been deployed or accepted as a complete
+wallet, savings, protocol execution or event settlement journey.
+
 ## Related reading
 
 - [Transaction safety](/docs-core/wallets/transaction-safety/)
