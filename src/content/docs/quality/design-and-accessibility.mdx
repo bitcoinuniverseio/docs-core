@@ -15,7 +15,7 @@ import Provenance from '../../../components/Provenance.astro';
   source="frontend/src/configs/theme.js, frontend design system"
   chain="bitcoin, dogecoin"
   network="mainnet"
-  verified="2026-09-01"
+  verified="2026-09-03"
 />
 
 Core is a place to explore, verify, and act on Bitcoin-native assets. The
@@ -70,8 +70,10 @@ makes this usable.
 - Touch targets are at least 44 by 44 pixels.
 - If your system asks for reduced motion, animation is removed rather than
   shortened.
-- Automated accessibility tests run against the application's screens and
-  dialogs as part of the release gate, at a desktop width and at a phone width.
+- Automated accessibility tests run against every production route and each
+  distinct screen family as part of the release gate. Chromium, Firefox, and
+  WebKit cover desktop, phone, landscape, tablet, reduced-motion, and narrow
+  reflow presentations.
 - A disabled control states its reason beside it, and exposes that explanation
   to assistive technology rather than only to sighted readers. Disabled payment
   controls do this explicitly.
@@ -79,6 +81,12 @@ makes this usable.
 If you find a screen that fails any of the above,
 [open an issue](https://github.com/bitcoinuniverseio/docs-core/issues) and name
 the screen and the width you saw it at.
+
+The production source is also checked for theme drift. UI colours must resolve
+through named semantic tokens, including literal values inside JSX, template
+strings, inline styles, CSS, and arbitrary utility classes. Mobile controls,
+inputs, fixed chrome, safe-area handling, and data representations are checked
+by syntax-aware rules before browser tests begin.
 
 ## This documentation site
 
