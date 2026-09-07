@@ -15,7 +15,7 @@ import Provenance from '../../../components/Provenance.astro';
   source="release validation pipeline, GET /health"
   chain="bitcoin, dogecoin"
   network="mainnet"
-  verified="2026-09-01"
+  verified="2026-09-03"
 />
 
 ## Which release is running
@@ -35,17 +35,22 @@ and this documentation will not invent one.
 Changes are validated before publication by automated checks that build the
 application and exercise its safety-sensitive paths.
 
-- **Build and test on a managed private fleet.** Portable validation is
-  eligible across a set of certified Linux services on several independent
-  hosts, so an idle compatible runner can accept work immediately and failover
-  survives one service or host being unavailable. A short infrastructure
-  interruption may earn one automatic retry on an eligible first attempt. **A
-  retry is never used to hide a reported validation failure.**
-- **Browser and accessibility gates**, run at a desktop width and a phone
-  width.
+- **Build and test on the organization-managed runner fleet.** Jobs use the
+  runner labels declared by the current workflow. A scheduled or cancelled
+  check is not a passed check.
+- **Generated route ownership.** The browser inventory is generated from the
+  production router. A missing route, stale entry, invalid redirect,
+  unrepresented parameter, or missing quality owner fails validation.
+- **Browser and accessibility gates** run in Chromium, Firefox, and WebKit at
+  phone portrait, phone landscape, tablet, desktop, and wide desktop sizes.
+  The narrowest required reflow check is 320 CSS pixels.
+- **Truthful state fixtures** exercise populated, empty, partial, failed, slow,
+  stale, offline, large, and edge-case data where a route family supports
+  those states. Unmatched reads and attempted mutations fail the fixture gate.
 - **Screenshot comparison against the exact artifact that passed those
-  gates**, rather than a second compilation, so a candidate is compared pixel
-  for pixel with what was actually tested.
+  gates**, rather than a second compilation. Material route families and UI
+  compositions are checked in both themes with exact pixel comparison on the
+  certified visual host.
 - **Database rehearsal on both MySQL 8 and MariaDB 10.11**, comparing semantic
   column types, constraints, checks, triggers, idempotent reruns, and guarded
   rollback, so a harmless display difference cannot weaken or wrongly block the

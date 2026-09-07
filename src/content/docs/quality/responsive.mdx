@@ -15,11 +15,11 @@ import Provenance from '../../../components/Provenance.astro';
   source="frontend/src/configs/mobile-route-meta.js, frontend layout components"
   chain="bitcoin, dogecoin"
   network="mainnet"
-  verified="2026-09-01"
+  verified="2026-09-03"
 />
 
 Core is laid out for the device in your hand, not shrunk from a desktop screen.
-The last full mobile pass was 29 August 2026.
+The route and mobile checks cover the production router. The 7 September 2026 audit still recorded failed checks; a complete route pass is not established.
 
 ## On a phone
 
@@ -27,7 +27,8 @@ The last full mobile pass was 29 August 2026.
   reach at the bottom of the screen. Everything else lives one tap away in the
   More menu.
 - **Data tables become cards or lists** at phone widths. Nothing asks you to
-  scroll a page sideways.
+  scroll a page sideways. Content that is two-dimensional by nature stays in a
+  named, keyboard-accessible scroll region.
 - **Address and amount fields open the matching keyboard.** Address fields turn
   off auto-capitalisation and autocorrect, so a pasted or typed address arrives
   exactly as entered. This is a correctness feature, not a convenience: an
@@ -38,6 +39,25 @@ The last full mobile pass was 29 August 2026.
   its own when you are back online.
 - **Screens with a notch or rounded corners keep content inside the safe
   area**, in portrait and landscape.
+- **Controls stay touch-safe.** Primary controls and rows keep a 44 pixel
+  target, and text fields use a mobile-safe font size that avoids Safari zoom.
+
+## What the release gate checks
+
+The route list used by browser tests is generated from the production router.
+Each shipped route has a concrete test address, an expected title and heading,
+a fixture profile, and named owners for state, accessibility, performance, and
+visual checks. Adding a route without that information fails validation.
+
+Every route receives a lightweight check in both themes. Deeper checks cover
+each distinct screen family with populated, empty, partial, failed, slow,
+stale, large, and edge-case data as applicable. Failed reads cannot pass by
+looking like an empty result.
+
+The browser matrix includes Chromium, Firefox, and WebKit. Its viewports cover
+320 pixel reflow, common phone widths, compact phone landscape, tablets,
+desktop, and wide desktop. Geometry checks inspect meaningful elements and
+clipped controls, not only the page's total width.
 
 ## Filter sheets are drafts
 
