@@ -1,0 +1,88 @@
+---
+title: Developer Tools
+description: >-
+  The customer developer platform: registered and approved organizations, scoped
+  API keys, the generated OpenAPI document and Swagger UI, honest usage and
+  request logs, Bitcoin-paid plans, signed webhooks and replayable streams.
+sidebar:
+  order: 5
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="GET /v1/developer/openapi.json, /developers"
+  chain="bitcoin"
+  network="signet (functional acceptance), mainnet (deployment)"
+  verified="2026-09-09"
+/>
+
+Developer Tools is the `/developers` console and the `/v1/developer` API. It
+gives an approved organization scoped keys to every offered Bitcoin data and
+execution operation, on the chain the deployment actually serves.
+
+## Getting access
+
+1. Connect a native SegWit or Taproot wallet and sign the challenge. The
+   signature opens a bounded developer session; no password exists.
+2. Create an organization and apply. Access is a platform decision: the
+   application stays `pending` until an operator approves it, and a connected
+   wallet or a paid invoice never approves anything on its own.
+3. Approval starts a ten day trial once (250 000 weighted units, one project,
+   two keys, 100 requests per minute). It is never restarted.
+4. Create a project and a key. The secret is shown exactly once. Keys carry
+   scopes, an allowed network list, an optional expiry and an IP allowlist, and
+   can be rotated with a bounded overlap or revoked immediately.
+
+## Calling the API
+
+Send the key as `Authorization: Bearer bu_test_...` (Signet, testnet4, regtest)
+or `bu_live_...` (mainnet). Data routes require one named `network` that the key
+allows. Every response states the authority that answered and when it observed
+the chain; when an authoritative dependency cannot answer, the route fails with
+a typed 503 instead of a placeholder body.
+
+The complete customer contract is the OpenAPI document at
+`/v1/developer/openapi.json`, browsable at `/v1/developer/docs`. Operator and
+internal routes are not part of it. Every documented operation carries
+`x-universe-family` (usage weight), `x-universe-scopes`, `x-universe-networks`
+and `x-universe-charge`.
+
+Errors are stable JSON: `code`, `statusCode`, `message`, `retryable`, `requestId`.
+Rate limits answer `429` with `Retry-After` and `X-RateLimit-*` headers.
+
+## Usage and logs
+
+The Usage tab shows the organization allowance for the current billing period,
+used and remaining weighted units, and a per project breakdown, all read from
+the durable ledger that charged the requests. Each independent read counts
+once; a retried documented mutation with the same idempotency key is charged
+once. The request log lists status, latency, bytes, network, operation and
+request id, with CSV export. No headers or bodies are stored.
+
+## Plans paid in Bitcoin
+
+Builder, Pro and Scale are paid per period with an exact satoshi invoice
+computed from a locked quote. Checkout shows the amount, the merchant address,
+the network and a BIP21 QR code. You authorize the capped payment with a wallet
+signature, pay from your own wallet, and the plan activates only after the
+payment is confirmed on the configured chain. There is no stored balance and
+nothing is auto-debited. Enterprise is quoted, not self-service.
+
+## Webhooks and streams
+
+Paid plans can register HTTPS endpoints (public hosts on 443 or 8443 only) for
+`developer.*` and `chain.block.connected` events. Deliveries are signed with a
+secret shown once, retried with backoff, dead-lettered after eight attempts and
+replayable from the console. The SSE stream at `/v1/developer/data/stream`
+replays from an opaque cursor and closes with `stream.closed` when the key or
+the organization loses access.
+
+## Verified on Signet
+
+The functional acceptance driver in Core exercises the real backend on Signet:
+sign-in, application, operator approval, projects, keys, every data read,
+metering, admission, scope and network isolation, rotation, revocation,
+tenant isolation and the checkout up to the wallet-signed mandate. See the Core
+repository `docs/developer-tools/evidence` for the recorded run.
