@@ -33,6 +33,16 @@ Everything below follows from those.
 4. Refresh market state after an error before trying again.
 5. Never approve a request because a support account is pressuring you to act.
 
+## Signing flow update
+
+The updated Core signing flow proceeds from transaction review to your wallet.
+It removes the separate proposal-specific policy review and activation status.
+Ownership, network, destination, fee, asset-preservation, and signed-transaction
+checks still apply. A wallet or node rejection still stops submission.
+
+This describes the updated source release. Production rollout and browser
+verification are tracked separately; it does not claim that the update is live.
+
 ## The wallet is the final boundary
 
 Core's review screen shows the asset, the amount, the service fee, the network
