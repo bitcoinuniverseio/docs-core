@@ -32,6 +32,31 @@ function description(p) {
   return `${p.displayName} on ${p.chain} in Core: ${availability}, ${verb}. The registry's source of truth, indexer, freshness, confirmation, and reorg policy, and its stated reason for every action that is unavailable.`;
 }
 
+/*
+ * IMPLEMENTATION-HANDOFF [WP11] A043
+ * Coverage groups: RELEASE, DOCS; defects: D01, D11. ANNOTATED is not implemented or released.
+ * Prerequisites: WP10. Sources: R01, R06, R07, R08 in the bundled research/SOURCE_REGISTER.md.
+ * Current/local requirement Current: the generated Alkanes public page reports read-only and a
+ * fixed provenance date from this owning generator.
+ * 1. After public release synchronize the registry snapshot to the accepted Core policy and
+ * regenerate pages using node scripts/generate-protocol-pages.mjs. Do not hand-edit generated
+ * Alkanes MDX.
+ * 2. Source availability and verification date from actual release evidence, not the preparation
+ * date; keep all other protocol claims unchanged unless independently verified.
+ * 3. Run node scripts/check-protocol-matrix.mjs and the package documentation checks, and verify
+ * public Alkanes action/signing/recovery guidance matches the deployed application.
+ * Verify: From repository root: node scripts/check-protocol-matrix.mjs. Existing publisher
+ * --prepare-only/verification branches must be read before execution; release checks compare exact
+ * accepted SHA and first-party health on test and www routes plus API release header.
+ * Documentation scripts from each package.json are recorded with baseline.
+ * Accept: GO means full functional acceptance AND completed public Mainnet release, with actual
+ * operational receipts. Report RELEASED - PUBLIC MAINNET only then; preserve requested final
+ * mainnet-testing statement.
+ * Migration/rollback: Freeze new prepares, retain in-flight settlement/recovery, revert to the
+ * last verified schema-compatible artifacts through the publisher journal, restore data only with
+ * explicit verified recovery procedure. No deletion of advancing indexers or unrelated services.
+ * END IMPLEMENTATION-HANDOFF A043
+ */
 function page(p) {
   const slug = slugFor(p.id);
   return `---
