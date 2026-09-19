@@ -15,7 +15,7 @@ import Provenance from '../../../components/Provenance.astro';
   source="frontend/src/pages/Indexer.js, frontend/src/configs/indexer-navigation.js"
   chain="bitcoin, dogecoin"
   network="mainnet"
-  verified="2026-09-01"
+  verified="2026-09-19"
 />
 
 An index page is the catalog for one protocol: the tokens, names, or
@@ -68,6 +68,32 @@ An index does not trust a first page to be a complete count. Bitmap supply, for
 example, comes from the authoritative index status unless a complete first page
 proves an exact unique total, so duplicate history rows cannot inflate a
 collection grid or its count.
+
+## Filters, totals, and search cover the whole index
+
+Where an index offers a status filter, a search box, or summary cards, they are
+answered by the index itself and not by the rows that happen to be on screen.
+The OP-20 index works this way: choosing **Mintable** asks for every mintable
+deployment and returns to page one, the deployment counts above the table
+describe everything matching your search rather than the current page, and
+searching a holder finds them wherever they sit in the ranking.
+
+Searching a ticker matches the characters you typed. `op_return` finds the token
+called `op_return`, not every ticker with something between `op` and `return`.
+
+An asset whose supply the ledger does not record is shown as **unknown**. It is
+counted separately from mintable and minted out, because an unreadable supply is
+a gap in the data rather than an invitation to mint.
+
+Holder counts are the addresses that actually hold a positive balance. An
+address that has spent everything is not counted as a holder, and a holder
+percentage always states the supply it is a percentage of.
+
+## Freshness is the block it read, not the moment you loaded it
+
+Where an index knows how far its source has processed, it shows that block
+height. Reloading a page does not make old data new, so the figure you see is
+the chain position behind the numbers, not the time of your request.
 
 ## When an index cannot be read
 
