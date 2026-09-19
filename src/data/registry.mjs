@@ -10,6 +10,38 @@
 // file. That is the whole point of reading it here rather than writing the
 // same claim into prose that can age.
 
+/*
+ * IMPLEMENTATION-HANDOFF [WP-R12]
+ * Coverage: R-DOCS, R-RELEASE, R-REGRESSION. Defects: D09, D15.
+ * Verified baseline: the docs reader loads a pinned read-only capability snapshot; code
+ * presence does not establish a public Rune release.
+ * Required: Publish only the Rune operations and recovery semantics actually released, with
+ * matching source revision, verified date and network; keep generated pages reproducible.
+ * Sources: CORE:protocols.js; DOCS:src/data/registry.mjs;
+ * DOCS:scripts/generate-protocol-pages.mjs. Ord pin: 7e37a3bd3391044b39f5f11f20dfdb8b3764cd0e.
+ * Prerequisites: WP-R11.
+ * 1. After WP-R11 release evidence, refresh capability-snapshot.json through the owning
+ * ecosystem-registry exporter in docs-platform using the accepted Core revision. Preserve all
+ * unrelated protocol rows and provenance; do not hand-author a supported action to match a
+ * desired launch.
+ * 2. Validate Rune and Rune Native display aliases against the one actual execution authority.
+ * Distinguish a publicly available scoped Rune release from a full-market release, and
+ * preserve truthful unavailable action reasons.
+ * 3. Regenerate protocol pages with scripts/generate-protocol-pages.mjs and run the matrix
+ * checker. In markets/marketplace-v1.mdx update the scoped readiness explanation, precise Rune
+ * lifecycle and read-only historical note only after the real public capability has changed.
+ * 4. Keep internal deployment details and credentials out of public pages. Document exact
+ * quoted fees, pending confirmation versus indexed settlement, and the fact that removing an
+ * off-chain listing does not revoke an already copied seller signature.
+ * Verification: npm test and npm run build in the prepared docs-core worktree; compare the
+ * generated Rune pages and public support matrix with the accepted Core capability response.
+ * Acceptance: Published documentation matches deployed Rune actions, fees, cancellation
+ * limitations and pending/indexed/recovery states; no internal hosts, credentials or
+ * unsupported release claims are published.
+ * Rollback: Retain the prior documentation artifact and registry provenance; rollback
+ * capability descriptions with the deployed feature, not independently of it.
+ * Preparation only. Executable behavior remains unchanged; ANNOTATED is not functional PASS.
+ */
 import snapshot from './capability-snapshot.json' with { type: 'json' };
 
 export const provenance = snapshot.provenance;

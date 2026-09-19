@@ -32,6 +32,34 @@ function description(p) {
   return `${p.displayName} on ${p.chain} in Core: ${availability}, ${verb}. The registry's source of truth, indexer, freshness, confirmation, and reorg policy, and its stated reason for every action that is unavailable.`;
 }
 
+/*
+ * IMPLEMENTATION-HANDOFF [WP-R12]
+ * Coverage: R-DOCS, R-RELEASE, R-REGRESSION. Defects: D09, D15.
+ * Verified baseline: generated Rune pages derive availability from the snapshot but the
+ * provenance date is hardcoded to 2026-09-01.
+ * Required: Publish only the Rune operations and recovery semantics actually released, with
+ * matching source revision, verified date and network; keep generated pages reproducible.
+ * Sources: CORE:protocols.js; DOCS:src/data/registry.mjs;
+ * DOCS:scripts/generate-protocol-pages.mjs. Ord pin: 7e37a3bd3391044b39f5f11f20dfdb8b3764cd0e.
+ * Prerequisites: WP-R11.
+ * 1. Derive the generated provenance verification date and source revision from the refreshed
+ * reviewed snapshot or its verified release metadata, not from the current wall clock or an
+ * unconditional fixed date.
+ * 2. Keep protocols/detail/runes.mdx and runes-native.mdx generated-only. Do not directly
+ * change their availability, network or action count; update the owner snapshot and generator
+ * together.
+ * 3. Regenerate all pages and assert no unrelated protocol capabilities change. Publish after
+ * the accepted Rune artifact is live, then verify public pages and support matrix agree with
+ * the actual scope.
+ * Verification: npm test and npm run build in the prepared docs-core worktree; compare the
+ * generated Rune pages and public support matrix with the accepted Core capability response.
+ * Acceptance: Published documentation matches deployed Rune actions, fees, cancellation
+ * limitations and pending/indexed/recovery states; no internal hosts, credentials or
+ * unsupported release claims are published.
+ * Rollback: Retain the prior documentation artifact and registry provenance; rollback
+ * capability descriptions with the deployed feature, not independently of it.
+ * Preparation only. Executable behavior remains unchanged; ANNOTATED is not functional PASS.
+ */
 function page(p) {
   const slug = slugFor(p.id);
   return `---
