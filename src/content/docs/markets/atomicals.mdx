@@ -12,11 +12,11 @@ import Provenance from '../../../components/Provenance.astro';
 
 <Provenance
   repo="bitcoinuniverseio/core (private)"
-  source="backend/packages/ecosystem-contracts/lib/protocols.js, Atomicals execution service"
+  source="backend/packages/ecosystem-contracts/lib/protocols.js, Marketplace v1 action page, Atomicals execution service"
   chain="bitcoin"
   network="mainnet"
   lifecycle="enabled"
-  verified="2026-09-01"
+  verified="2026-09-23"
 />
 
 Atomicals is the largest enabled family in Core: four of the nine `enabled`
@@ -36,6 +36,53 @@ All four run on one isolated Atomicals execution service with separate protocol
 routes and durable state.
 
 A browse result does not by itself mean an asset is listed for sale.
+
+## Where each market is
+
+| Market | Address | Protocol and asset type |
+| --- | --- | --- |
+| ARC-20 | `/trade/arc20` | `arc20`. The asset ID is the ticker |
+| Atomicals NFTs | `/trade/atomicals/nfts` | `atomicals_nft`, type `nft` |
+| Containers | `/trade/atomicals/containers` | `atomicals_nft`, type `container` |
+| DMINT items | `/trade/atomicals/items` | `atomicals_nft`, type `dmitem` |
+| Realms | `/trade/atomicals/realms` | `realms` |
+| Subrealms | `/trade/atomicals/subrealms` | `subrealms` |
+
+Containers and DMINT items trade under the NFT protocol, and each market shows
+only its own type.
+
+Realm, Subrealm, Container, and DMINT item rows show the Atomical's name. Plain
+NFTs, and listings created before names were recorded, show the Atomical ID.
+
+## What you can do
+
+| Action | What happens |
+| --- | --- |
+| **List** | You set a price and sign in your wallet. The listing opens after the market's checks pass |
+| **Update listing** | A new price, recorded as a new revision of the same listing |
+| **Delist** | A signed message, not a transaction. The review dialog shows the exact commitment your wallet is asked to sign |
+| **Buy** | The listing is reserved, the purchase is prepared, you sign it, it is broadcast, and it settles after confirmation |
+| **Offers** | Create an offer, cancel your own, or accept one made on an asset you hold |
+| **Recovery** | Find out what happened to a request whose answer never arrived. See below |
+
+Your asking price must cover the marketplace fee and the dust limit of the
+payout. The market rejects a price that is too low, and the review screen shows
+the fee and your net proceeds before you sign.
+
+## When a request times out
+
+A request can reach the market and apply even though your browser never saw
+the answer. When that happens, Core locks that asset and shows **Earlier
+request outcome unknown**, with a **Check what happened** button.
+
+Checking asks the market, with a request signed by your wallet, whether the
+earlier request applied. It never sends the action again. The lock clears once
+the market confirms the request went through or that it never applied.
+
+This covers every step that finalizes an action: listing, updating, delisting,
+buying, creating an offer, and accepting one. Until the check answers, other
+actions on that asset stay closed, so a timeout cannot turn into a double
+listing or a second purchase.
 
 ## What every mutation rechecks
 
@@ -65,7 +112,7 @@ An ARC-20 balance is held in complete colored-sat outputs.
 1. Open the token from Portfolio or its ARC-20 market.
 2. Select one **available lot**.
 3. Enter the sale price.
-4. Review the 1.5% seller service fee and the net proceeds.
+4. Review the marketplace fee and the net proceeds.
 5. Approve the PSBT in the connected wallet.
 
 Core never splits the selected colored lot and never uses it as ordinary
@@ -108,6 +155,7 @@ distinguishable from a genuinely empty market or wallet.
 
 ## Next
 
+- [Atomicals Studio](/docs-core/create/atomicals-studio/), to create and move Atomicals
 - [ARC-20 in the registry](/docs-core/protocols/detail/arc20/)
 - [Portfolio](/docs-core/portfolio/portfolio/)
 - [Task: list an asset](/docs-core/markets/list/)
