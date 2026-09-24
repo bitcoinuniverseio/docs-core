@@ -58,16 +58,31 @@ NFTs, and listings created before names were recorded, show the Atomical ID.
 
 | Action | What happens |
 | --- | --- |
-| **List** | You set a price and sign in your wallet. The listing opens after the market's checks pass |
+| **List** | You set a price per unit and sign in your wallet. The listing opens after the market's checks pass |
 | **Update listing** | A new price, recorded as a new revision of the same listing |
 | **Delist** | A signed message, not a transaction. The review dialog shows the exact commitment your wallet is asked to sign |
 | **Buy** | The listing is reserved, the purchase is prepared, you sign it, it is broadcast, and it settles after confirmation |
 | **Offers** | Create an offer, cancel your own, or accept one made on an asset you hold |
 | **Recovery** | Find out what happened to a request whose answer never arrived. See below |
 
-Your asking price must cover the marketplace fee and the dust limit of the
-payout. The market rejects a price that is too low, and the review screen shows
-the fee and your net proceeds before you sign.
+## Prices and fees
+
+A price is always **per unit**. The listing form asks for the **Price per unit
+(sats)** and shows the total as you type. A lot's total is its unit price times
+its quantity, so 2,000 units at 1,100 sats per unit cost 2,200,000 sats. Market
+cards and listing pages show the **Unit price**, and the **Total price** when a
+lot holds more than one unit. The wallet review shows both.
+
+The marketplace fee is worked out on the total and charged to both sides:
+
+- the seller receives the total minus the fee;
+- the buyer pays the total plus the fee, plus the network fee.
+
+The market refuses a price whose payout after the fee would fall below the
+Bitcoin dust limit, and says so (`price_below_minimum`). When the wallet's
+funds do not cover the total, the fee, and the network fee, it says that too
+(`insufficient_funding`) instead of asking you to refresh. The review screen
+shows the exact fee and your net proceeds before you sign.
 
 ## When a request times out
 
@@ -75,9 +90,20 @@ A request can reach the market and apply even though your browser never saw
 the answer. When that happens, Core locks that asset and shows **Earlier
 request outcome unknown**, with a **Check what happened** button.
 
-Checking asks the market, with a request signed by your wallet, whether the
-earlier request applied. It never sends the action again. The lock clears once
-the market confirms the request went through or that it never applied.
+Checking asks the market, with a request signed by your wallet, about the
+earlier request under its original request key, so the action can never apply
+twice:
+
+- if the market applied it, the market replays what it recorded and nothing
+  happens a second time;
+- if the market never ran it, the request is closed as not applied;
+- if it was the final step of an action you had already signed and the market
+  never ran it, that same signed step is completed under its original key,
+  once.
+
+The lock clears once the market confirms the outcome. When the check proves a
+final step applied, the page also clears the unfinished-action notice for the
+prepared action that step used.
 
 This covers every step that finalizes an action: listing, updating, delisting,
 buying, creating an offer, and accepting one. Until the check answers, other
@@ -105,6 +131,11 @@ configure 1 to 100. Listing revisions, funded offers, reservations, broadcast
 lineage, confirmation, dropped and replaced transactions, and reorg
 reconciliation are durable and protocol-scoped.
 
+If relaying a purchase fails, the market asks its own Bitcoin node whether the
+transaction went out. A purchase that may have been sent is never reported as
+not applied, and a listing is not offered again while a purchase already
+broadcast for it is pending or confirmed.
+
 ## Listing an ARC-20 lot
 
 An ARC-20 balance is held in complete colored-sat outputs.
@@ -123,6 +154,10 @@ ticker, quantity, payout, and signature checks. Refreshing or reconnecting
 reads the open listing from the market; retrying cannot create a second open
 listing for the same ARC-20 outpoint. Buying independently applies the buyer
 service fee and preserves every colored satoshi in the buyer output.
+
+If another transaction spends a listed lot on other terms, for example because
+the seller moved it or it sold elsewhere, a purchase of that lot can never
+confirm. Core then closes the lot instead of returning it to the book.
 
 ## NFT artwork
 
