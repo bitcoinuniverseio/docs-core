@@ -32,6 +32,7 @@ import Provenance from '../../../components/Provenance.astro';
 | **A column that is absent** | The source cannot answer that question at all | No | Not the same as a column of zeroes |
 | **A disabled control with a reason** | The protocol supports the action; a live gate disagrees | Yes, refreshing rechecks that exact route | An earlier ready result is never reused |
 | **No control at all** | The protocol does not support the action | No | The [support matrix](/docs-core/protocols/support-matrix/) gives the reason |
+| **Earlier request outcome unknown** | A request timed out and may have applied. Other actions on that asset are locked | No. Select **Check what happened** instead | Checking asks the market under the original request key, so the action never applies twice. See [Atomicals](/docs-core/markets/atomicals/#when-a-request-times-out) |
 
 ## The distinction that matters most
 
