@@ -133,8 +133,9 @@ A refusal names its cause when retrying cannot help:
   holds it can list or change it. Switch to that wallet.
 - **The listed asset has moved.** The seller transferred or spent it, so the
   listing can no longer be filled.
-- **This wallet's funding is already committed to another pending purchase.**
-  Finish or cancel that purchase first.
+- **This wallet's funding is already committed to its open offers or pending
+  purchases.** Finish or cancel one of them, or add funds. An offer or purchase
+  otherwise uses whatever funding its other offers and purchases do not hold.
 
 The market also watches the output behind every open listing, for all
 Atomicals types. When that output is spent, even before the spending
