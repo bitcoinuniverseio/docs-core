@@ -37,10 +37,23 @@ tool can be bookmarked, linked, and reopened.
 | Subrealm | Claim, Pay, Transfer | `/atomicals/create/subrealm/claim`, `pay`, `transfer` |
 | Container | Create, Configure, Seal | `/atomicals/create/container/create`, `configure`, `seal` |
 | DMINT item | Mint, Transfer | `/atomicals/create/dmitem/mint`, `transfer` |
-| Manage | Update, Event | `/atomicals/create/manage/update`, `event` |
+| Manage | Update, Event, Separate | `/atomicals/create/manage/update`, `event`, `separate` |
 
 **Fixed supply** issues an ARC-20 token whose whole supply is created at once.
 **Manage** updates an Atomical's state or records an event on it.
+
+**Separate** gives each NFT that shares one Bitcoin output its own output at
+your address. A direct Subrealm claim needs it: the claim spends the parent
+Realm, and the Atomicals index then keeps the parent and the new Subrealm on
+the same output. While they share it, Studio refuses to update, transfer or
+claim with either one and links to Separate with the Atomical filled in.
+Separate orders the outputs the way the index does, lists which NFT goes to
+which output before you sign, and refuses an output that also holds an ARC-20
+balance, which it could not carry over safely.
+
+If your wallet has no confirmed plain Bitcoin output large enough for an
+operation, Studio says so and names the amount needed. It is not reported as
+a service outage.
 
 A tool the server cannot run right now stays visible and says
 **Unavailable**, with the reason. Nothing you press on an unavailable tool
@@ -90,8 +103,12 @@ The Atomicals index creates a Realm or Subrealm only when its reveal is mined
 within **3 blocks** of the commit, and an NFT within **100 blocks**. A later
 reveal would confirm and create nothing. Once the window has closed, the server
 refuses the reveal (`REVEAL_WINDOW_CLOSED`) and the operation expires, so
-Studio no longer offers it. For a Realm or Subrealm claim, sign the reveal
-promptly after the commit confirms.
+Studio no longer offers it.
+
+For a Realm or direct Subrealm claim, Studio offers the reveal as soon as the
+commit is in the mempool, so both can confirm in the same block. Sign it
+then; a network that mines several blocks in quick succession can close a
+3-block window in minutes.
 
 ## Coming from `/inscribe`
 
