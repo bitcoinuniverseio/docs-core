@@ -134,6 +134,10 @@ it is implemented and switched off unless an operator enables it.
 - [Marketplace v1 gates](${SITE}/markets/marketplace-v1/)
 - [Collection media](${SITE}/markets/collection-media/)
 
+## Create
+
+- [Atomicals Studio](${SITE}/create/atomicals-studio/): create and move ARC-20 tokens, NFTs, Realms, Subrealms, Containers, and DMINT items.
+
 ## Data provenance
 
 - [Where each number comes from](${SITE}/data/provenance/)

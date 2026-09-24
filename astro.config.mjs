@@ -116,6 +116,10 @@ export default defineConfig({
           ],
         },
         {
+          label: 'Create',
+          items: [{ label: 'Atomicals Studio', slug: 'create/atomicals-studio' }],
+        },
+        {
           label: 'Markets',
           items: [
             { label: 'How a market works', slug: 'markets/how-markets-work' },

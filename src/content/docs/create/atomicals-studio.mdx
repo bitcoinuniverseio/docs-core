@@ -1,0 +1,123 @@
+---
+title: Atomicals Studio
+description: >-
+  Creating and moving Atomicals on bitcoinuniverse.io: the seven tool families,
+  the address of every tool, which wallet signs each one, and how a commit and
+  reveal run.
+sidebar:
+  order: 1
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private)"
+  source="frontend/src/pages/AtomicalsStudio/, frontend/src/services/atomicals-studio/"
+  chain="bitcoin"
+  network="mainnet"
+  verified="2026-09-23"
+/>
+
+Atomicals Studio is where you create and move Atomicals, on the main
+application at
+[`bitcoinuniverse.io/atomicals/create`](https://bitcoinuniverse.io/atomicals/create).
+It runs on that site: your browser does not leave it, and nothing is signed
+anywhere except in your own wallet.
+
+## What you can do
+
+Every tool has its own address, `/atomicals/create/<family>/<action>`, so a
+tool can be bookmarked, linked, and reopened.
+
+| Family | Actions | Address |
+| --- | --- | --- |
+| ARC-20 | Deploy, Mint, Transfer, Fixed supply | `/atomicals/create/arc20/deploy`, `mint`, `transfer`, `issue` |
+| NFT | Mint, Transfer | `/atomicals/create/nft/mint`, `transfer` |
+| Realm | Claim, Transfer | `/atomicals/create/realm/claim`, `transfer` |
+| Subrealm | Claim, Pay, Transfer | `/atomicals/create/subrealm/claim`, `pay`, `transfer` |
+| Container | Create, Configure, Seal | `/atomicals/create/container/create`, `configure`, `seal` |
+| DMINT item | Mint, Transfer | `/atomicals/create/dmitem/mint`, `transfer` |
+| Manage | Update, Event, Separate | `/atomicals/create/manage/update`, `event`, `separate` |
+
+**Fixed supply** issues an ARC-20 token whose whole supply is created at once.
+**Manage** updates an Atomical's state or records an event on it.
+
+**Separate** gives each NFT that shares one Bitcoin output its own output at
+your address. A direct Subrealm claim needs it: the claim spends the parent
+Realm, and the Atomicals index then keeps the parent and the new Subrealm on
+the same output. While they share it, Studio refuses to update, transfer or
+claim with either one and links to Separate with the Atomical filled in.
+Separate orders the outputs the way the index does, lists which NFT goes to
+which output before you sign, and refuses an output that also holds an ARC-20
+balance, which it could not carry over safely.
+
+If your wallet has no confirmed plain Bitcoin output large enough for an
+operation, Studio says so and names the amount needed. It is not reported as
+a service outage.
+
+A tool the server cannot run right now stays visible and says
+**Unavailable**, with the reason. Nothing you press on an unavailable tool
+creates a transaction.
+
+## Which wallet signs
+
+Studio never holds a key. Each step opens your wallet, and the wallet is the
+final authorization.
+
+| Tools | Wallet |
+| --- | --- |
+| NFT, Realm, Subrealm, Container configure, Manage | [Wizz Wallet](/docs-core/wallets/connecting/) |
+| ARC-20 deploy, mint, transfer | Any wallet Core supports |
+| ARC-20 fixed supply, Container create and seal, DMINT item mint and transfer | A wallet that reports its network and account explicitly |
+
+Before anything is prepared, Studio checks that the wallet is on the network
+the service runs on. If Wizz reports another network, Studio asks you to
+switch it and prepares nothing. If the Wizz account is not the one you
+connected, Studio asks you to reconnect.
+
+## How a creation runs
+
+Most Atomicals operations take two transactions: a **commit**, then a
+**reveal** that spends it once the commit is confirmed.
+
+1. Open the tool and fill in the form.
+2. Review what Studio prepared. Nothing has been signed yet.
+3. Sign the commit in your wallet. Studio checks that the signed transaction
+   is the one it prepared before it is sent.
+4. Wait for the commit to confirm. The tracker shows the stage it is in.
+5. Sign the reveal in your wallet as soon as the commit confirms. See
+   [the reveal window](#the-reveal-window).
+6. The tracker reports **complete** once the result is indexed.
+
+Operations you start are listed on the page, and stay listed after a reload.
+Open one to see its stage or to continue it. The list, and what Studio needs
+to continue an operation, are kept in that browser tab only, so keep the tab
+open until the operation completes.
+
+A failed, cancelled, or expired operation says so. It is never shown as
+complete.
+
+## The reveal window
+
+The Atomicals index creates a Realm or Subrealm only when its reveal is mined
+within **3 blocks** of the commit, and an NFT within **100 blocks**. A later
+reveal would confirm and create nothing. Once the window has closed, the server
+refuses the reveal (`REVEAL_WINDOW_CLOSED`) and the operation expires, so
+Studio no longer offers it.
+
+For a Realm or direct Subrealm claim, Studio offers the reveal as soon as the
+commit is in the mempool, so both can confirm in the same block. Sign it
+then; a network that mines several blocks in quick succession can close a
+3-block window in minutes.
+
+## Coming from `/inscribe`
+
+`bitcoinuniverse.io/inscribe` is an ordinary page, not a redirect. It links to
+Atomicals Studio, and to the separate Inscribe application for other
+protocols. Inscribe opens only when you follow that link.
+
+## Next
+
+- [Atomicals markets](/docs-core/markets/atomicals/), to trade what you created
+- [Connecting a wallet](/docs-core/wallets/connecting/)
+- [Transaction safety](/docs-core/wallets/transaction-safety/)
