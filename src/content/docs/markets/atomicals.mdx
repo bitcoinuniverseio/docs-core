@@ -78,6 +78,11 @@ The marketplace fee is worked out on the total and charged to both sides:
 - the seller receives the total minus the fee;
 - the buyer pays the total plus the fee, plus the network fee.
 
+On bitcoinuniverse.io the fee is 1% of the total, and at least 500 sats, on
+each side. The smallest total the market accepts is therefore 1,046 sats: a
+500-sat fee leaves the seller the 546-sat dust minimum. A sale counts as
+settled once its transaction has 6 confirmations.
+
 The market refuses a price whose payout after the fee would fall below the
 Bitcoin dust limit, and says so (`price_below_minimum`). When the wallet's
 funds do not cover the total, the fee, and the network fee, it says that too
