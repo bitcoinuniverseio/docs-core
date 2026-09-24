@@ -12,11 +12,11 @@ import Provenance from '../../../components/Provenance.astro';
 
 <Provenance
   repo="bitcoinuniverseio/core (private)"
-  source="backend/packages/ecosystem-contracts/lib/protocols.js, Atomicals execution service"
+  source="backend/packages/ecosystem-contracts/lib/protocols.js, Marketplace v1 action page, Atomicals execution service"
   chain="bitcoin"
   network="mainnet"
   lifecycle="enabled"
-  verified="2026-09-01"
+  verified="2026-09-23"
 />
 
 Atomicals is the largest enabled family in Core: four of the nine `enabled`
@@ -37,6 +37,84 @@ routes and durable state.
 
 A browse result does not by itself mean an asset is listed for sale.
 
+## Where each market is
+
+| Market | Address | Protocol and asset type |
+| --- | --- | --- |
+| ARC-20 | `/trade/arc20` | `arc20`. The asset ID is the ticker |
+| Atomicals NFTs | `/trade/atomicals/nfts` | `atomicals_nft`, type `nft` |
+| Containers | `/trade/atomicals/containers` | `atomicals_nft`, type `container` |
+| DMINT items | `/trade/atomicals/items` | `atomicals_nft`, type `dmitem` |
+| Realms | `/trade/atomicals/realms` | `realms` |
+| Subrealms | `/trade/atomicals/subrealms` | `subrealms` |
+
+Containers and DMINT items trade under the NFT protocol, and each market shows
+only its own type.
+
+Realm, Subrealm, Container, and DMINT item rows show the Atomical's name. Plain
+NFTs, and listings created before names were recorded, show the Atomical ID.
+
+## What you can do
+
+| Action | What happens |
+| --- | --- |
+| **List** | You set a price per unit and sign in your wallet. The listing opens after the market's checks pass |
+| **Update listing** | A new price, recorded as a new revision of the same listing |
+| **Delist** | A signed message, not a transaction. The review dialog shows the exact commitment your wallet is asked to sign |
+| **Buy** | The listing is reserved, the purchase is prepared, you sign it, it is broadcast, and it settles after confirmation |
+| **Offers** | Create an offer, cancel your own, or accept one made on an asset you hold |
+| **Recovery** | Find out what happened to a request whose answer never arrived. See below |
+
+## Prices and fees
+
+A price is always **per unit**. The listing form asks for the **Price per unit
+(sats)** and shows the total as you type. A lot's total is its unit price times
+its quantity, so 2,000 units at 1,100 sats per unit cost 2,200,000 sats. Market
+cards and listing pages show the **Unit price**, and the **Total price** when a
+lot holds more than one unit. The wallet review shows both.
+
+The marketplace fee is worked out on the total and charged to both sides:
+
+- the seller receives the total minus the fee;
+- the buyer pays the total plus the fee, plus the network fee.
+
+On bitcoinuniverse.io the fee is 1% of the total, and at least 500 sats, on
+each side. The smallest total the market accepts is therefore 1,046 sats: a
+500-sat fee leaves the seller the 546-sat dust minimum. A sale counts as
+settled once its transaction has 6 confirmations.
+
+The market refuses a price whose payout after the fee would fall below the
+Bitcoin dust limit, and says so (`price_below_minimum`). When the wallet's
+funds do not cover the total, the fee, and the network fee, it says that too
+(`insufficient_funding`) instead of asking you to refresh. The review screen
+shows the exact fee and your net proceeds before you sign.
+
+## When a request times out
+
+A request can reach the market and apply even though your browser never saw
+the answer. When that happens, Core locks that asset and shows **Earlier
+request outcome unknown**, with a **Check what happened** button.
+
+Checking asks the market, with a request signed by your wallet, about the
+earlier request under its original request key, so the action can never apply
+twice:
+
+- if the market applied it, the market replays what it recorded and nothing
+  happens a second time;
+- if the market never ran it, the request is closed as not applied;
+- if it was the final step of an action you had already signed and the market
+  never ran it, that same signed step is completed under its original key,
+  once.
+
+The lock clears once the market confirms the outcome. When the check proves a
+final step applied, the page also clears the unfinished-action notice for the
+prepared action that step used.
+
+This covers every step that finalizes an action: listing, updating, delisting,
+buying, creating an offer, and accepting one. Until the check answers, other
+actions on that asset stay closed, so a timeout cannot turn into a double
+listing or a second purchase.
+
 ## What every mutation rechecks
 
 Each mutation rechecks the exact Bitcoin output, the owner script, the spent
@@ -49,6 +127,20 @@ listing cannot contain a Realm, Subrealm, fungible token, container, or item
 subtype. Realm and Subrealm markets additionally require the resolver to return
 the verified winner at the exact live owner outpoint.
 
+A refusal names its cause when retrying cannot help:
+
+- **The connected wallet does not hold this asset.** Only the address that
+  holds it can list or change it. Switch to that wallet.
+- **The listed asset has moved.** The seller transferred or spent it, so the
+  listing can no longer be filled.
+- **This wallet's funding is already committed to its open offers or pending
+  purchases.** Finish or cancel one of them, or add funds. An offer or purchase
+  otherwise uses whatever funding its other offers and purchases do not hold.
+
+The market also watches the output behind every open listing, for all
+Atomicals types. When that output is spent, even before the spending
+transaction confirms, the listing leaves the book.
+
 Prepared transactions must assign the selected Atomical to one **unburned**
 output, preserve the reviewed seller payout and fees, and pass Bitcoin Core
 preflight.
@@ -58,6 +150,11 @@ configure 1 to 100. Listing revisions, funded offers, reservations, broadcast
 lineage, confirmation, dropped and replaced transactions, and reorg
 reconciliation are durable and protocol-scoped.
 
+If relaying a purchase fails, the market asks its own Bitcoin node whether the
+transaction went out. A purchase that may have been sent is never reported as
+not applied, and a listing is not offered again while a purchase already
+broadcast for it is pending or confirmed.
+
 ## Listing an ARC-20 lot
 
 An ARC-20 balance is held in complete colored-sat outputs.
@@ -65,7 +162,7 @@ An ARC-20 balance is held in complete colored-sat outputs.
 1. Open the token from Portfolio or its ARC-20 market.
 2. Select one **available lot**.
 3. Enter the sale price.
-4. Review the 1.5% seller service fee and the net proceeds.
+4. Review the marketplace fee and the net proceeds.
 5. Approve the PSBT in the connected wallet.
 
 Core never splits the selected colored lot and never uses it as ordinary
@@ -76,6 +173,10 @@ ticker, quantity, payout, and signature checks. Refreshing or reconnecting
 reads the open listing from the market; retrying cannot create a second open
 listing for the same ARC-20 outpoint. Buying independently applies the buyer
 service fee and preserves every colored satoshi in the buyer output.
+
+If another transaction spends a listed lot on other terms, for example because
+the seller moved it or it sold elsewhere, a purchase of that lot can never
+confirm. Core then closes the lot instead of returning it to the book.
 
 ## NFT artwork
 
@@ -108,6 +209,7 @@ distinguishable from a genuinely empty market or wallet.
 
 ## Next
 
+- [Atomicals Studio](/docs-core/create/atomicals-studio/), to create and move Atomicals
 - [ARC-20 in the registry](/docs-core/protocols/detail/arc20/)
 - [Portfolio](/docs-core/portfolio/portfolio/)
 - [Task: list an asset](/docs-core/markets/list/)

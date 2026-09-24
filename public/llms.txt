@@ -61,6 +61,10 @@ not production availability, and a parser existing is not wallet support.
 - [Marketplace v1 gates](https://bitcoinuniverseio.github.io/docs-core/markets/marketplace-v1/)
 - [Collection media](https://bitcoinuniverseio.github.io/docs-core/markets/collection-media/)
 
+## Create
+
+- [Atomicals Studio](https://bitcoinuniverseio.github.io/docs-core/create/atomicals-studio/): create and move ARC-20 tokens, NFTs, Realms, Subrealms, Containers, and DMINT items.
+
 ## Data provenance
 
 - [Where each number comes from](https://bitcoinuniverseio.github.io/docs-core/data/provenance/)
