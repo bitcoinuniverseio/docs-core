@@ -127,6 +127,19 @@ listing cannot contain a Realm, Subrealm, fungible token, container, or item
 subtype. Realm and Subrealm markets additionally require the resolver to return
 the verified winner at the exact live owner outpoint.
 
+A refusal names its cause when retrying cannot help:
+
+- **The connected wallet does not hold this asset.** Only the address that
+  holds it can list or change it. Switch to that wallet.
+- **The listed asset has moved.** The seller transferred or spent it, so the
+  listing can no longer be filled.
+- **This wallet's funding is already committed to another pending purchase.**
+  Finish or cancel that purchase first.
+
+The market also watches the output behind every open listing, for all
+Atomicals types. When that output is spent, even before the spending
+transaction confirms, the listing leaves the book.
+
 Prepared transactions must assign the selected Atomical to one **unburned**
 output, preserve the reviewed seller payout and fees, and pass Bitcoin Core
 preflight.
