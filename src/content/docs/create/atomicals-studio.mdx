@@ -55,6 +55,13 @@ If your wallet has no confirmed plain Bitcoin output large enough for an
 operation, Studio says so and names the amount needed. It is not reported as
 a service outage.
 
+**DMINT item** mints follow the container's rules. When the rule that
+matches the item asks for a payment, Studio reads it from the index first and
+shows every amount and payee before anything is signed. The button then reads
+**Authorize mint and payment**, and your wallet signs exactly that payment
+with the mint. If the container owner changes the rules before you sign, the
+mint is refused with that reason and nothing is paid.
+
 A tool the server cannot run right now stays visible and says
 **Unavailable**, with the reason. Nothing you press on an unavailable tool
 creates a transaction.
