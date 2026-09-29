@@ -1,0 +1,89 @@
+---
+title: Universe Web Wallet and Universe Shielded Wallet
+description: >-
+  Two extension-free wallet choices built for Core, why they are not yet
+  available, what they will and will not do, and the risks of a wallet that
+  runs in a web page.
+sidebar:
+  order: 5
+---
+
+import Provenance from '../../../components/Provenance.astro';
+
+<Provenance
+  repo="bitcoinuniverseio/core (private), bitcoinuniverseio/wallet (private)"
+  source="frontend/src/util/universe-web-wallet-provider.js, frontend/src/components/wallet/WalletModal.js"
+  chain="bitcoin"
+  network="mainnet, signet"
+  lifecycle="not released"
+  verified="2026-09-29"
+/>
+
+**These two wallets are not yet available.** They do not appear in the Core
+wallet list today, and the address they will run from,
+`wallet.bitcoinuniverse.io`, is not live. This page describes what has been
+built so you know what to expect, and what to distrust, when they are offered.
+
+## What they are
+
+**Universe Web Wallet** is a Bitcoin wallet that runs in a web page instead of
+a browser extension. You open it from **Connect Wallet** in Core, and it opens
+in its own window on its own address. Nothing needs to be installed.
+
+**Universe Shielded Wallet** uses the same window and a separate recovery
+phrase. It is meant for shielded token protocols. No shielded protocol it could
+use is usable today, so it refuses every connection.
+
+Both are separate choices from the **Universe** browser extension. Connecting
+one does not connect the other.
+
+## What the web wallet does
+
+- Creates a new 12 or 24 word recovery phrase, and asks you to confirm three of
+  the words before anything is saved.
+- Imports a recovery phrase, a single private key, or an export from the
+  Universe extension. An imported phrase gives the same addresses as the
+  extension.
+- Shows a Bitcoin payment address and an ordinals address, each with a QR code.
+- Sends bitcoin. Before you approve, the wallet shows what leaves, the fee, and
+  the change coming back to you.
+- Locks itself after 15 minutes without use.
+- Lets you download an encrypted backup file and restore it in another browser.
+
+It only spends coins that Universe has checked carry no inscription, rune, or
+Atomicals asset. Other actions, such as protocol trades, are not enabled for
+this wallet.
+
+## What Core can and cannot see
+
+Core never sees your recovery phrase, your password, or your keys. They stay
+inside the wallet window. Connecting shares your public addresses only.
+
+Connecting never approves a signature. Every signature request opens in the
+wallet window, where you review it before approving.
+
+## Risks of a web wallet
+
+- **It is a hot wallet.** A compromised device, a malicious browser extension,
+  or a tampered copy of the wallet page could steal your funds.
+- **Your browser holds the only copy of the encrypted keys.** Clearing site
+  data, a private window, or the browser reclaiming storage can erase it. Write
+  down your recovery phrase and keep the backup file somewhere else.
+- **Encrypting keys is not privacy.** Your Bitcoin addresses and payments are
+  public on the chain, as with any wallet.
+- **Check the address.** Only enter a recovery phrase into the wallet window on
+  `wallet.bitcoinuniverse.io`, and only after Core offers the wallet.
+
+## Shielded wallet status
+
+The two shielded protocols it was built for are not usable:
+
+| Protocol | Why it is not usable |
+| --- | --- |
+| SBRC-20 | The official specification is a draft that is not live. No circuit, verifying key, or source code is published. |
+| Bitshield (BSH) | No licensed source code is published. Its transfers and market start only at a future mainnet block, and its market runs on servers Bitshield operates. |
+
+## Next
+
+- [Connecting a wallet](/docs-core/wallets/connecting/)
+- [Transaction safety](/docs-core/wallets/transaction-safety/)
