@@ -19,7 +19,7 @@ jobs:
     # This workflow runs only for trusted pushes to main or a maintainer
     # dispatch, never for a fork pull request, so the organization-owned Linux
     # fleet is the right place for it.
-    runs-on: [self-hosted, linux, x64, universe-super]
+    runs-on: ${{ contains(fromJSON('["push","schedule","workflow_dispatch"]'), github.event_name) && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop') && fromJSON('["self-hosted","universe-runners-1"]') || 'ubuntu-24.04' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -41,7 +41,7 @@ jobs:
 
   deploy:
     needs: build
-    runs-on: [self-hosted, linux, x64, universe-super]
+    runs-on: ${{ contains(fromJSON('["push","schedule","workflow_dispatch"]'), github.event_name) && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop') && fromJSON('["self-hosted","universe-runners-1"]') || 'ubuntu-24.04' }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
