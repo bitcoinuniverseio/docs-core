@@ -1,17 +1,32 @@
 <!--
 IMPLEMENTATION-HANDOFF [DG-WP-13] DG-A-038
-Coverage: DG-SHARED-DOCS-RELEASE. Defects: DG-F15. Preparation only; no release claim is made.
-Observed: documentation needs to follow the accepted implementation and actual public release, not the existence of source code.
-Prerequisites: all DG-WP-01 through DG-WP-12 acceptance gates.
-1. Update the existing Dogecoin index/trading documentation only after the actual flow and wallet contract are verified. Preserve protocol names and distinguish submitted, confirmed, indexed and settled.
-2. Document the real public navigation, supported wallet/network behavior, error/retry/cancel/recovery and original media behavior. Do not present local tickets as purchases.
-3. Keep this public documentation free of internal hosts, filesystem paths, credentials, private operational logs and unverified completion claims. Link only approved public product routes.
-4. Reconcile docs with the source-annotation index and release coverage matrix; verify every advertised operation remains discoverable.
-Verification: npm test and npm run build using existing package scripts. Test links against the accepted public release.
-Acceptance: user documentation matches completed functional acceptance and actual public Mainnet exposure; no earlier claim of release.
-Rollback: restore the paired accepted docs revision with the compatible application release; retain private historical evidence.
+Coverage: DG-SHARED-DOCS-RELEASE. Defects: DG-F15, DG-F20, DG-F21, DG-F22.
+Preparation 20260919-0438 only. Executable behavior is unchanged.
+Current baseline: 0257f7f85d126a70e42d8c2d6ccab8b5ff7df184.
+Observed: documentation needs to follow the accepted implementation and actual public
+release, not the existence of source code.
+Sources: SRC-USER release/coverage requirements; repository docs conventions.
+Dependencies: DG-WP-01, DG-WP-02, DG-WP-03, DG-WP-04, DG-WP-05, DG-WP-06, DG-WP-07, DG-WP-08,
+DG-WP-09, DG-WP-10, DG-WP-11, DG-WP-12, DG-WP-02R.
+1. Update the existing Dogecoin index/trading documentation only after the actual flow and wallet
+contract are verified. Preserve protocol names and distinguish submitted, confirmed, indexed and
+settled.
+2. Document the real public navigation, supported wallet/network behavior,
+error/retry/cancel/recovery and original media behavior. Do not present local tickets as purchases.
+3. Keep this public documentation free of internal hosts, filesystem paths, credentials, private
+operational logs and unverified completion claims. Link only approved public product routes.
+4. Reconcile docs with the source-annotation index and release coverage matrix; verify every
+advertised operation remains discoverable.
+Verification: npm test and npm run build using existing package scripts. Test links against
+the accepted public release.
+Acceptance: All applicable coverage rows PASS and complete public Mainnet deployment with exact
+receipts; no legitimate work stranded in PRs/worktrees/unpushed commits. No secrets/test state leak
+and every affected unchanged capability retains verified regression evidence.
+Rollback: Restore the paired accepted docs revision with the compatible application release; retain private historical evidence.
+Migration/rollback: Prepare explicit artifact/configuration/database compatibility rollback before
+promotion; leave background indexing undisturbed, pause only affected new mutation intake through
+existing safe controls if rollout fails.
 -->
-
 # Core documentation
 
 Public product documentation for **Core**, the Bitcoin Universe explorer,
