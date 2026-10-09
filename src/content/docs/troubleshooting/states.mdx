@@ -42,6 +42,23 @@ If a market says its reader is unavailable, do not assume that no tokens,
 listings, or activity exist. Retry later, or use the protocol's independent
 explorer. Do not create or repeat a transaction from stale market data.
 
+## When several sections keep loading
+
+The page can open while its data service is unavailable. If markets, the
+index, and fee estimates all keep loading, an empty panel does not establish
+that your assets or the protocol's records are missing.
+
+| What you see | What to do |
+| --- | --- |
+| An error with **Retry** | Retry the read once. A failed request cannot establish a zero balance or an empty index |
+| An answered search with no matches | Clear the search and filters, then check the protocol you selected |
+| Several sections fail together | Check [indexer freshness](/docs-core/data/indexer-freshness/) and return when the data service answers |
+| Market listings appear but the token index fails | Treat the catalogue as unavailable. Listings alone do not contain every token |
+
+If the problem continues, [report it](https://github.com/bitcoinuniverseio/docs-core/issues)
+with the page address, selected protocol, time, and visible error message.
+Keep wallet secrets and private account details out of the report.
+
 ## Diagnosing an unavailable market
 
 ```bash
