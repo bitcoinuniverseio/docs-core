@@ -67,7 +67,7 @@ NFTs, and listings created before names were recorded, show the Atomical ID.
 
 ## Prices and fees
 
-A price is always **per unit**. The listing form asks for the **Price per unit
+A Marketplace v1 price is **per unit**. The listing form asks for the **Price per unit
 (sats)** and shows the total as you type. A lot's total is its unit price times
 its quantity, so 2,000 units at 1,100 sats per unit cost 2,200,000 sats. Market
 cards and listing pages show the **Unit price**, and the **Total price** when a
@@ -155,9 +155,49 @@ transaction went out. A purchase that may have been sent is never reported as
 not applied, and a listing is not offered again while a purchase already
 broadcast for it is pending or confirmed.
 
+{/*
+IMPLEMENTATION-HANDOFF [ARC20-WP05] annotation ARC20-D02
+Status: ANNOTATED only. No fix, acceptance or production release is claimed.
+Coverage: ARC20-COV-DOCS, ARC20-COV-QUANTITY, ARC20-COV-LIST.
+Defects: ARC20-DEF-F06.
+Prerequisites: ARC20-WP03, ARC20-WP04.
+
+1. Document the accepted listing contract as a sale of one whole Bitcoin
+output, while stating its actual ARC-20 token quantity separately from the
+output's Bitcoin value. A per-token price multiplies the token quantity.
+2. State the actual supported allocation/eligibility rules of the specific
+listing flow. Do not imply every protocol-valid partial allocation is accepted
+by a product, or conflate the Portfolio signed-offer flow with Marketplace v1.
+3. Require a current verified output before signing. A balance summary or
+previous listing row does not replace ownership, unspent and token checks.
+4. Cross-check quantity, unit price and total in the form and read-back listing.
+Testnet4 verification is qualification evidence, not mainnet release proof.
+Verify later: quantity round-trip cases and docs npm test / npm run build.
+Rollback: keep claims aligned with the restored product release and its
+supported eligibility rules; do not rewrite protocol history.
+END IMPLEMENTATION-HANDOFF ARC20-D02
+*/}
+
 ## Listing an ARC-20 lot
 
-An ARC-20 balance is held in complete colored-sat outputs.
+An ARC-20 lot sells one whole Bitcoin output. Its token quantity and its
+Bitcoin collateral value are separate: a protocol allocation may contain 600
+token units on an output worth 1,000 sats. An ask of 1,200 sats for that lot is
+2 sats per token. The output value still controls Bitcoin inputs and outputs.
+
+The Portfolio signed-offer form accepts a whole-lot total (`priceSats`).
+Marketplace v1 accepts a per-unit price (`priceAtomic`); its total is that
+price multiplied by `quantityAtomic`. These are distinct signing and fee
+contracts. The per-unit pricing description above applies to Marketplace v1.
+
+The repair prepared on 9 October 2026 preserves this distinction and accepts
+an explicitly verified single-FT allocation below its Bitcoin collateral in
+the Portfolio flow. Missing quantities, mixed assets and an unverified output
+cannot authorize listing. This source change is awaiting functional
+qualification and release; it does not establish current public availability.
+Private Signet still requires verified challenge, rules, interpreter and
+isolated database provenance. Funded wallet journeys and publisher gates remain
+outstanding.
 
 1. Open the token from Portfolio or its ARC-20 market.
 2. Select one **available lot**.
