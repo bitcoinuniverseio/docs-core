@@ -96,6 +96,7 @@ Status: ANNOTATED only. No fix, acceptance or production release is claimed.
 Coverage: ARC20-COV-DOCS, ARC20-COV-COUNT, ARC20-COV-PORTFOLIO.
 Defects: ARC20-DEF-F04, ARC20-DEF-F05.
 Prerequisites: ARC20-WP03, ARC20-WP04.
+
 1. After acceptance, explain that a readable ARC-20 balance summary and the
 current listable-output inventory are separate reads. An unknown UTXO count
 must stay unknown; neither a displayed balance nor a default count proves
@@ -114,6 +115,24 @@ END IMPLEMENTATION-HANDOFF ARC20-D01
 */}
 
 ## Common failure states
+
+### ARC-20 repair awaiting release
+
+The 9 October 2026 candidate keeps the balance summary, current lot inventory
+and seller listing book as separate reads. A measured count of zero remains
+zero; a missing count is unknown. A displayed balance does not prove that an
+output is currently available for sale.
+
+The candidate provides separate lot and listing-book retries, including when
+earlier rows remain visible. Retrying a read does not sign or create a listing.
+Retained rows cannot authorize a mutation until current inventory and the
+complete seller book have been checked for the connected account and network.
+Read recovery is separate from checking a previous mutation's unknown outcome.
+
+These changes have component coverage but await funded wallet and browser
+qualification and release. Private Signet challenge, rules, interpreter and
+isolated database attestation remain prerequisites; test-network evidence
+cannot establish public mainnet readiness.
 
 | What happens | What it means | Recovery |
 | --- | --- | --- |
