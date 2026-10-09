@@ -59,6 +59,21 @@ If the problem continues, [report it](https://github.com/bitcoinuniverseio/docs-
 with the page address, selected protocol, time, and visible error message.
 Keep wallet secrets and private account details out of the report.
 
+## Prepared Bitmap and DMT recovery
+
+The prepared Bitmap reader includes indexed first claims without market
+listings. A claim identifies the inscription; current ownership and trading
+need their own checks. If the index changes during pagination, **Retry**
+starts a fresh page while the older rows remain visibly marked as stale.
+
+DMT collection and item reads use source page cursors. Missing holder data,
+global counts and global sorting remain unavailable instead of displaying
+zero values. Collection media availability does not establish holder or
+trading readiness.
+
+These reader changes still require source qualification and accepted public
+release. This documentation does not claim that production is fully restored.
+
 ## Diagnosing an unavailable market
 
 ```bash
