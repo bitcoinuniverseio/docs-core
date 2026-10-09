@@ -152,6 +152,7 @@ export default defineConfig({
             { label: 'Transaction safety', slug: 'wallets/transaction-safety' },
             { label: 'Market safety', slug: 'wallets/market-safety' },
             { label: 'Private chat verification', slug: 'wallets/chat-verification' },
+            { label: 'Universe Web and Shielded Wallet', slug: 'wallets/universe-web-and-shielded' },
           ],
         },
         {
