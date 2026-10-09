@@ -42,6 +42,27 @@ If a market says its reader is unavailable, do not assume that no tokens,
 listings, or activity exist. Retry later, or use the protocol's independent
 explorer. Do not create or repeat a transaction from stale market data.
 
+{/*
+IMPLEMENTATION-HANDOFF [ARC20-WP05] annotation ARC20-D03
+Status: ANNOTATED only. No fix, acceptance or production release is claimed.
+Coverage: ARC20-COV-DOCS, ARC20-COV-INVENTORY, ARC20-COV-RECOVERY.
+Defects: ARC20-DEF-F01, ARC20-DEF-F02.
+Prerequisites: ARC20-WP01, ARC20-WP02, ARC20-WP04.
+1. Add the accepted ARC-20 portfolio case: an unavailable lot reader means
+the current inventory is unknown, not zero tokens or a measured empty wallet.
+Keep unknown count, confirmed empty, stale rows and current ready distinct.
+2. Give the targeted retry path even when a balance or earlier listing remains
+visible. Use plain availability wording, without raw upstream error payloads.
+3. Explain that restoration, catch-up and process liveness do not establish
+transaction readiness. Use only the owned service and its fresh checks.
+4. Keep read retry distinct from checking an earlier mutation's unknown
+outcome. Do not recommend external fallback data or another network.
+Verify later: accepted empty/outage/recovery screens, docs npm test and build.
+Rollback: restore the preceding verified documentation with its product
+release; never publish Testnet4 acceptance as mainnet readiness.
+END IMPLEMENTATION-HANDOFF ARC20-D03
+*/}
+
 ## Diagnosing an unavailable market
 
 ```bash

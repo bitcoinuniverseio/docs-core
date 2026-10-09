@@ -155,6 +155,28 @@ transaction went out. A purchase that may have been sent is never reported as
 not applied, and a listing is not offered again while a purchase already
 broadcast for it is pending or confirmed.
 
+{/*
+IMPLEMENTATION-HANDOFF [ARC20-WP05] annotation ARC20-D02
+Status: ANNOTATED only. No fix, acceptance or production release is claimed.
+Coverage: ARC20-COV-DOCS, ARC20-COV-QUANTITY, ARC20-COV-LIST.
+Defects: ARC20-DEF-F06.
+Prerequisites: ARC20-WP03, ARC20-WP04.
+1. Document the accepted listing contract as a sale of one whole Bitcoin
+output, while stating its actual ARC-20 token quantity separately from the
+output's Bitcoin value. A per-token price multiplies the token quantity.
+2. State the actual supported allocation/eligibility rules of the specific
+listing flow. Do not imply every protocol-valid partial allocation is accepted
+by a product, or conflate the Portfolio signed-offer flow with Marketplace v1.
+3. Require a current verified output before signing. A balance summary or
+previous listing row does not replace ownership, unspent and token checks.
+4. Cross-check quantity, unit price and total in the form and read-back listing.
+Testnet4 verification is qualification evidence, not mainnet release proof.
+Verify later: quantity round-trip cases and docs npm test / npm run build.
+Rollback: keep claims aligned with the restored product release and its
+supported eligibility rules; do not rewrite protocol history.
+END IMPLEMENTATION-HANDOFF ARC20-D02
+*/}
+
 ## Listing an ARC-20 lot
 
 An ARC-20 balance is held in complete colored-sat outputs.
