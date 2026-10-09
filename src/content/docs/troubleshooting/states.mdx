@@ -48,6 +48,7 @@ Status: ANNOTATED only. No fix, acceptance or production release is claimed.
 Coverage: ARC20-COV-DOCS, ARC20-COV-INVENTORY, ARC20-COV-RECOVERY.
 Defects: ARC20-DEF-F01, ARC20-DEF-F02.
 Prerequisites: ARC20-WP01, ARC20-WP02, ARC20-WP04.
+
 1. Add the accepted ARC-20 portfolio case: an unavailable lot reader means
 the current inventory is unknown, not zero tokens or a measured empty wallet.
 Keep unknown count, confirmed empty, stale rows and current ready distinct.
@@ -64,6 +65,19 @@ END IMPLEMENTATION-HANDOFF ARC20-D03
 */}
 
 ## Diagnosing an unavailable market
+
+The ARC-20 repair candidate prepared on 9 October 2026 distinguishes a readable
+balance summary from current lot inventory. An unavailable lot reader means
+inventory is unknown. A missing count, confirmed empty result and retained
+earlier rows are separate states. Earlier rows stay inactive until a fresh
+read succeeds; lot and seller-book retries are independent.
+
+The candidate API retains HTTP 503 for unavailable dependencies and provides
+safe reason, operation, retryability and correlation fields. Configuration,
+administrative liveness and an advancing restored database are separate from
+fresh protocol readiness. This candidate has not passed funded wallet flows
+or been released. Private Signet challenge, rules, interpreter and isolated
+database attestation and the existing publisher gates remain outstanding.
 
 ```bash
 curl -s https://api.bitcoinuniverse.io/indexer-health \
