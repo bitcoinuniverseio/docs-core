@@ -42,7 +42,74 @@ If a market says its reader is unavailable, do not assume that no tokens,
 listings, or activity exist. Retry later, or use the protocol's independent
 explorer. Do not create or repeat a transaction from stale market data.
 
+{/*
+IMPLEMENTATION-HANDOFF [ARC20-WP05] annotation ARC20-D03
+Status: ANNOTATED only. No fix, acceptance or production release is claimed.
+Coverage: ARC20-COV-DOCS, ARC20-COV-INVENTORY, ARC20-COV-RECOVERY.
+Defects: ARC20-DEF-F01, ARC20-DEF-F02.
+Prerequisites: ARC20-WP01, ARC20-WP02, ARC20-WP04.
+
+1. Add the accepted ARC-20 portfolio case: an unavailable lot reader means
+the current inventory is unknown, not zero tokens or a measured empty wallet.
+Keep unknown count, confirmed empty, stale rows and current ready distinct.
+2. Give the targeted retry path even when a balance or earlier listing remains
+visible. Use plain availability wording, without raw upstream error payloads.
+3. Explain that restoration, catch-up and process liveness do not establish
+transaction readiness. Use only the owned service and its fresh checks.
+4. Keep read retry distinct from checking an earlier mutation's unknown
+outcome. Do not recommend external fallback data or another network.
+Verify later: accepted empty/outage/recovery screens, docs npm test and build.
+Rollback: restore the preceding verified documentation with its product
+release; never publish Testnet4 acceptance as mainnet readiness.
+END IMPLEMENTATION-HANDOFF ARC20-D03
+*/}
+
+## When several sections keep loading
+
+The page can open while its data service is unavailable. If markets, the
+index, and fee estimates all keep loading, an empty panel does not establish
+that your assets or the protocol's records are missing.
+
+| What you see | What to do |
+| --- | --- |
+| An error with **Retry** | Retry the read once. A failed request cannot establish a zero balance or an empty index |
+| An answered search with no matches | Clear the search and filters, then check the protocol you selected |
+| Several sections fail together | Check [indexer freshness](/docs-core/data/indexer-freshness/) and return when the data service answers |
+| Market listings appear but the token index fails | Treat the catalogue as unavailable. Listings alone do not contain every token |
+
+If the problem continues, [report it](https://github.com/bitcoinuniverseio/docs-core/issues)
+with the page address, selected protocol, time, and visible error message.
+Keep wallet secrets and private account details out of the report.
+
+## Prepared Bitmap and DMT recovery
+
+The prepared Bitmap reader includes indexed first claims without market
+listings. A claim identifies the inscription; current ownership and trading
+need their own checks. If the index changes during pagination, **Retry**
+starts a fresh page while the older rows remain visibly marked as stale.
+
+DMT collection and item reads use source page cursors. Missing holder data,
+global counts and global sorting remain unavailable instead of displaying
+zero values. Collection media availability does not establish holder or
+trading readiness.
+
+These reader changes still require source qualification and accepted public
+release. This documentation does not claim that production is fully restored.
+
 ## Diagnosing an unavailable market
+
+The ARC-20 repair candidate prepared on 9 October 2026 distinguishes a readable
+balance summary from current lot inventory. An unavailable lot reader means
+inventory is unknown. A missing count, confirmed empty result and retained
+earlier rows are separate states. Earlier rows stay inactive until a fresh
+read succeeds; lot and seller-book retries are independent.
+
+The candidate API retains HTTP 503 for unavailable dependencies and provides
+safe reason, operation, retryability and correlation fields. Configuration,
+administrative liveness and an advancing restored database are separate from
+fresh protocol readiness. This candidate has not passed funded wallet flows
+or been released. Private Signet challenge, rules, interpreter and isolated
+database attestation and the existing publisher gates remain outstanding.
 
 ```bash
 curl -s https://api.bitcoinuniverse.io/indexer-health \
