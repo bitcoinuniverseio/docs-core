@@ -40,36 +40,22 @@ enrichment provider is offline.
 
 Listings overlay inventory and never create membership.
 
-{/*
-IMPLEMENTATION-HANDOFF [META-10] META-D03
-Coverage: DOC-03; defects: DEF-DOC-01.
-Preparation: ANNOTATED. Functional state remains FAIL or NOT TESTED as indexed.
-Prerequisites: META-04, META-06, META-07, META-08.
-Current evidence: this guide promises authoritative inventory, stable facets and
-cached item traits; the source audit identifies protocol-specific paths that do not
-yet share those guarantees. Listings must remain an overlay on reconciled inventory.
-Sources: Core collection-cache, trait oracle, protocol registries and frontend
-annotations; workstreams/frontend and workstreams/ingestion in the handoff.
+## Traits on every item
 
-1. Update the browse and item sections after the common DTO and all protocol
-consumers pass acceptance. Describe source, coverage and freshness without exposing
-implementation details to a person browsing a collection.
-2. Document OR within one trait type and AND across types, self-excluding counts,
-multi-value de-duplication, value paging and active filter preservation. Define the
-shown denominator as reconciled unique eligible members; never listed count, token
-supply or an unqualified provider estimate. Partial coverage is visible.
-3. Keep creator attributes, derived Bitmap/native properties and token properties
-visually labelled. Every supported collection uses the common readable panel, and a
-verified attribute-free item has an honest empty state with its native identity.
-4. Recheck catalog links, item deep links, direct reload, mobile filter sheet, keyboard
-selection, error/retry and source outage recovery against the release being described.
-Verify: docs-core npm test and npm run build plus META-07/META-08 browser acceptance;
-record actual route, viewport, revision and outcome. Unperformed checks stay NOT TESTED.
-Acceptance: no metadata import grants trade readiness or changes ownership/signing,
-pricing or settlement. Rollback: preserve public navigation and honest unavailable
-states while restoring a compatible accepted Core generation/artifact.
-END IMPLEMENTATION-HANDOFF META-D03
-*/}
+Open any item to see its traits as cards: the trait, the value, and how rare it
+is. Rarity is the share of the collection's known members carrying that value.
+When the full membership is not known yet, the card shows the count only.
+
+Token markets show **Properties** instead: the deployment facts of the token,
+such as supply and decimals, read from Universe indexers.
+
+| State | What you see |
+| --- | --- |
+| Ready | Traits and properties with counts |
+| Partial | What is known so far, marked as partial |
+| None | The item has no traits |
+| Updating | The last good values, with the time of the last update |
+| Unavailable | A short notice and a retry button |
 
 ## Finding an item
 
