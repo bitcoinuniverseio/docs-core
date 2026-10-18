@@ -22,6 +22,36 @@ Core mirrors supported artwork, metadata, thumbnails, renders, audio, and video
 into one shared media system, covering Ordinals, DMT, UNAT, Doginals,
 Atomicals, Bitcoin Stamps, and other supported families.
 
+{/*
+IMPLEMENTATION-HANDOFF [META-10] META-D01
+Coverage: DOC-01; defects: DEF-DOC-01.
+Preparation: ANNOTATED. Functional state remains FAIL or NOT TESTED as indexed.
+Prerequisites: META-02, META-05, META-07, META-08.
+Current evidence: this page describes shared metadata coverage, while core collection
+trait/detail paths still read SQL JSON or provider data without a verified B2
+metadata generation. Media mirroring alone does not establish trait persistence.
+Sources: research/storage-research.md; core collection-media-storage.service.ts
+and collection-trait.service.ts; B2 read-only evidence in the preparation handoff.
+
+1. After META-02/META-05 acceptance, explain the separate immutable source captures,
+normalized collection/item records, facet artifacts and generation manifest in the
+existing private shared store. Keep artwork originals and derivatives distinct.
+2. Describe Core API delivery, source provenance, observation time and explicit
+complete/partial/unavailable states implemented by META-07/META-08. No bucket keys,
+credentials, presigned provider URLs or internal job payloads belong in user prose.
+3. Update Provenance only to the actually accepted revision/date. Tie each claimed
+protocol to its metadata adapter and published coverage evidence; token properties
+and native identifiers are useful even where creator attributes do not exist.
+Verify: from docs-core run npm test and npm run build after updating rendered prose;
+commands exist but this new behavior is not yet implemented or accepted. Compare
+desktop/mobile trait panels and page links with the exact Core release evidence.
+Acceptance: source outages retain the last verified traits with a truthful state,
+and reload reads the same B2-backed generation. No storage fallback claim exceeds
+measured behavior. Rollback: retain truthful prior documented limitations until the
+compatible Core release is restored; documentation never enables runtime flags.
+END IMPLEMENTATION-HANDOFF META-D01
+*/}
+
 ## Originals and derivatives are different things
 
 The exact bytes discovered from a chain or an authoritative Universe index are
