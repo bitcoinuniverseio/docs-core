@@ -49,6 +49,21 @@ publish.
 Gallery imports read the parent inscription's children and are published as
 **Unverified**.
 
+## Where traits come from
+
+| Source | What it adds |
+| --- | --- |
+| Pinned open registry | Names and item traits, read from a fixed, reviewable revision |
+| Marketplace sources | Item traits and collection details where the registry has none |
+| Universe indexers | Native facts: supply, decimals, deployment, block and name records |
+
+When two sources disagree, the registry wins and the other answer is kept as a
+recorded conflict. A source that fails never wipes traits that are already
+known, and an item with no traits is shown as having none, not as missing.
+
+Tokens such as BRC-20, Runes or CAT-20 show their real deployment properties.
+They never get invented artwork traits.
+
 ## What an import controls, and what it does not
 
 An import proposes collection **metadata and membership**. It does not control:
