@@ -40,6 +40,23 @@ enrichment provider is offline.
 
 Listings overlay inventory and never create membership.
 
+## Traits on every item
+
+Open any item to see its traits as cards: the trait, the value, and how rare it
+is. Rarity is the share of the collection's known members carrying that value.
+When the full membership is not known yet, the card shows the count only.
+
+Token markets show **Properties** instead: the deployment facts of the token,
+such as supply and decimals, read from Universe indexers.
+
+| State | What you see |
+| --- | --- |
+| Ready | Traits and properties with counts |
+| Partial | What is known so far, marked as partial |
+| None | The item has no traits |
+| Updating | The last good values, with the time of the last update |
+| Unavailable | A short notice and a retry button |
+
 ## Finding an item
 
 Search, price, listing status, sorting, and traits work together. Trait choices
