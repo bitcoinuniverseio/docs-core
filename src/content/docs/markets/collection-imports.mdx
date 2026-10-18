@@ -49,6 +49,38 @@ publish.
 Gallery imports read the parent inscription's children and are published as
 **Unverified**.
 
+{/*
+IMPLEMENTATION-HANDOFF [META-10] META-D02
+Coverage: DOC-02; defects: DEF-DOC-02.
+Preparation: ANNOTATED. Functional state remains FAIL or NOT TESTED as indexed.
+Prerequisites: META-01, META-03, META-04, META-07.
+Current evidence: this guide covers the existing manifest v1 and calls the parent
+children path a gallery import. New provider registry and Ord properties adapters
+need documented source roles; a gallery list is not proof of parent-child provenance.
+Sources: research/provider-research.md; docs.ordinals.com/inscriptions/metadata.html;
+Core OrdinalsCollectionManifest, import service and annotated publication points.
+
+1. Keep the existing v1 schema and four creator entry methods compatible. Add the
+accepted metadata enrichment behavior and explain reviewable membership sources
+separately from trait sources. Parent-child membership must use the owned Ord
+reader; permissionless gallery references need their own stated trust level.
+2. Document UniSat registry, Satflow membership and Ord metadata only for the exact
+adapter/version and chain/network accepted by META-03. Provider market listings,
+holders or token supply never substitute for the full member inventory.
+3. Show one validated small example containing a string, numeric zero, boolean
+false and absent attributes. Explain that missing creator attributes stay missing;
+Core can display separately labelled native properties without inventing rarity.
+4. Update validation, conflict, partial coverage, retry and last-good publication
+messages to match actual backend error codes and the live import preview.
+Verify: npm test and npm run build in docs-core; pair example/schema checks with
+Core manifest/import and SSRF tests named by META-03. Walk URL, file, paste and
+parent entry paths on the accepted test environment and record each separately.
+Acceptance: docs never grant a source ownership, listings, confirmations, official
+status or signing authority. Rollback: preserve the stable v1 schema and existing
+imports; do not rewrite published source history or describe pending support as live.
+END IMPLEMENTATION-HANDOFF META-D02
+*/}
+
 ## What an import controls, and what it does not
 
 An import proposes collection **metadata and membership**. It does not control:
