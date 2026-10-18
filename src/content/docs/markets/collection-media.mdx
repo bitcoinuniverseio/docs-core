@@ -22,6 +22,18 @@ Core mirrors supported artwork, metadata, thumbnails, renders, audio, and video
 into one shared media system, covering Ordinals, DMT, UNAT, Doginals,
 Atomicals, Bitcoin Stamps, and other supported families.
 
+## Traits and properties are stored too
+
+Collection details, item traits and token properties live in the same private
+store as artwork, in their own space. Each refresh is saved as a complete,
+sealed snapshot: the raw source answers, the cleaned collection and items, the
+trait counts, and a manifest that lists every piece by its exact fingerprint.
+
+The pages you browse read that snapshot back and check every fingerprint before
+showing a value. A snapshot replaces the previous one only after it is complete
+and checked, so you never see half of an update. If a source goes quiet, the
+last good snapshot stays on screen.
+
 ## Originals and derivatives are different things
 
 The exact bytes discovered from a chain or an authoritative Universe index are
