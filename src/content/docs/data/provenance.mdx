@@ -107,16 +107,16 @@ Core validates the exact proxy route and body it allows, but it does not
 compare an external provider's tip with the Bitcoin tip. Several registry
 entries say so in those words.
 
-## Path 3: your own browser, directly
+## Path 3: your own browser, directly (off)
 
-TAP, DMT, and UNAT are a further step removed. Their deployments, mint
-progress, and holder counts are fetched **by your own browser** from a host
-Universe does not operate. They do not pass through a Universe index at all, so
-their availability and freshness are that host's rather than Core's.
+TAP, DMT, and UNAT holder figures used to be fetched by your own browser from a
+host Universe does not operate. That feed is now off by default, so your
+browser contacts no third party for them. The TAP index reads Universe's own
+TAP catalog through the Core path above instead, and holder lists that only
+that feed could answer show **Temporarily unavailable**.
 
-Those three rows name their read source on the coverage page, and the same
-sentence appears on `/index/tap`, `/index/dmt`, and `/index/unat` beside the
-numbers it applies to.
+If the feed is ever switched back on, the coverage page and the index pages
+name its host again beside the numbers it applies to.
 
 ## Fiat prices are a fourth case
 

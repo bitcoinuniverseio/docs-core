@@ -71,17 +71,26 @@ Three of those deserve a note.
 - **CAT-721** has no recorded inscribe or marketplace actions, in contrast with
   CAT-20 which has a testnet-gated trade preview.
 
+## Status on each row
+
+When the Core API publishes indexer health, each row can carry a short status:
+
+| Status | Meaning |
+| --- | --- |
+| **Catching up** | The index is more than two blocks behind the chain. |
+| **Unavailable** | The index cannot be read right now. The Index link stays. |
+| **Off** | The protocol is intentionally turned off. No Index link. |
+| **Planned** | Declared but not built. No Index link. |
+| **Retired** | No longer served. No Index link. |
+
+No status means the index is current, or that health is not published yet. The
+page never waits for health before showing the list.
+
 ## Rows that name a read source
 
-TAP, DMT, and UNAT carry a read source on the in-app coverage list, and the
-same sentence appears again on their index pages beside the numbers it applies
-to. Their deployment, mint progress, and holder figures are read by your
-browser from a host Universe does not operate, so their availability and
-freshness are that host's rather than Core's.
-
-Every other row is read through the Core API. That API may in turn read an
-external provider for a given protocol, which is what
-[`/indexer-health`](/docs-core/api/health/) reports per protocol.
+A row names a read source only when your browser itself fetches from a host
+Universe does not operate. The TAP, DMT, and UNAT live feed that did this is
+off, so no row names one today.
 
 ## Finding the coverage page
 

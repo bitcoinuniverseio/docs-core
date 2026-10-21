@@ -2,8 +2,8 @@
 title: Protocol indexes
 description: >-
   The per-protocol index pages at /index, what a Pending column means and why
-  some protocols do not have one, and the three protocols your own browser
-  reads directly.
+  some protocols do not have one, and how a failed read differs from an empty
+  one.
 sidebar:
   order: 8
 ---
@@ -15,7 +15,7 @@ import Provenance from '../../../components/Provenance.astro';
   source="frontend/src/pages/Indexer.js, frontend/src/configs/indexer-navigation.js"
   chain="bitcoin, dogecoin"
   network="mainnet"
-  verified="2026-09-19"
+  verified="2026-10-21"
 />
 
 An index page is the catalog for one protocol: the tokens, names, or
@@ -46,16 +46,16 @@ at all**, rather than a column of zeroes. This is the unmeasured-figures rule
 applied to a whole column: an absent column means the question was not
 answerable, and a zero in a present column means the answer was zero.
 
-## Three protocols your browser reads directly
+## TAP, DMT, and UNAT
 
-TAP, DMT, and UNAT are a step further out than everything else. Their
-deployments, mint progress, and holder counts are fetched **by your own
-browser** from a host Universe does not operate. They do not pass through a
-Universe index at all, so their availability and freshness are that host's.
+The TAP index reads Universe's own TAP catalog through the Universe API, so it
+loads and fails like every other index. It does not wait on a live feed.
 
-Those three rows name their read source on the coverage page, and the same
-sentence appears again on `/index/tap`, `/index/dmt`, and `/index/unat` beside
-the numbers it applies to.
+TAP, DMT, and UNAT holder lists used to be fetched by your browser from a host
+Universe does not operate. That live feed is now **off**. With it off your
+browser contacts no third party, and the holder lists that depended on it show
+**Temporarily unavailable** instead of an empty list. A read-source note
+appears on the page only while that feed is switched on.
 
 Everything else is read through the Core API, which may in turn read an
 external provider for a given protocol.
@@ -97,10 +97,23 @@ the chain position behind the numbers, not the time of your request.
 
 ## When an index cannot be read
 
+The index table says **Temporarily unavailable** and offers **Retry**. It never
+shows "No tokens found" for a read that failed: that message only appears when
+the index answered and has nothing for your search.
+
+| What you see | What it means |
+| --- | --- |
+| The token list | The index answered. |
+| **No tokens found** | The index answered with nothing for this search. |
+| **Temporarily unavailable** and **Retry** | The read failed or timed out. Nothing is known. |
+| **Could not refresh. Showing saved results.** | A refresh failed. The rows on screen are from the last good read. |
+
 The market, token pages, holder rankings, and portfolio balances for that
-protocol all report the data as unavailable and offer a retry. They never
-substitute sample rows and never show an unreadable balance as zero, so an
-outage stays distinguishable from a genuinely empty market or wallet.
+protocol follow the same rule. They never substitute sample rows and never show
+an unreadable balance as zero, so an outage stays distinguishable from a
+genuinely empty market or wallet.
+
+Pages never show the name of the service behind a failure or its error text.
 
 ## Next
 
