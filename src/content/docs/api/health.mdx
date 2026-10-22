@@ -18,13 +18,14 @@ import Provenance from '../../../components/Provenance.astro';
   verified="2026-09-01"
 />
 
-`GET /health` is the contract that tells you whether Core can do anything, as
-distinct from whether its web server is answering.
+`GET /health` reports dependency and traffic readiness. `GET /` answers whether
+the API process responds and identifies its release through `X-Universe-Release`.
 
 ## A 200 is not readiness
 
-The endpoint answers `200` whenever it can compute an answer. Whether the
-service is *ready* is inside the body, in two independent places:
+`GET /health` and `GET /health/ready` answer `200` only when the configured
+readiness checks pass, otherwise `503`. The body reports read availability and
+transaction availability separately:
 
 ```json
 {
@@ -38,6 +39,11 @@ service is *ready* is inside the body, in two independent places:
 
 Read availability and transaction availability are reported separately on
 purpose. A healthy page is never evidence that trading is open.
+
+The restart monitor checks the API root and its exact release identity. A
+Bitcoin-source outage still reports unavailable data through `/health`, but
+does not cause a responding API to restart. Functional sign-off remains a
+separate requirement.
 
 ## `release`
 
