@@ -51,16 +51,34 @@ answerable, and a zero in a present column means the answer was zero.
 The TAP index reads Universe's own TAP catalog through the Universe API, so it
 loads and fails like every other index. It does not wait on a live feed.
 
-TAP, DMT, and UNAT holder lists used to be fetched by your browser from a host
-Universe does not operate. That live feed is now **off**. With it off your
-browser contacts no third party, and the holder lists that depended on it show
-**Temporarily unavailable** instead of an empty list. A read-source note
-appears on the page only while that feed is switched on.
+TAP, DMT, and UNAT no longer use the old third-party browser feed. A live
+update setting cannot restore that source. Holder views without an owned
+reader show **Temporarily unavailable** with Retry.
 
-Everything else is read through the Core API, which may in turn read an
-external provider for a given protocol.
-[`/indexer-health`](/docs-core/api/health/) names the source it used for each
-one.
+SRC-20 also reads through the owned Stamp gateway. A missing service or an
+incompatible response shows the same neutral unavailable state. Public holder
+and price feeds are no longer used by this index page. Holder reads need an
+owned adapter before they can return results.
+
+Successful HTTP reads do not prove that an index is current. When a health
+observation says the committed cursor is behind, TAP and shared token tables
+label the loaded rows **Data may be out of date**. Expired health observations
+cannot make old data look current. Missing optional health metadata does not
+block an otherwise valid catalog read.
+
+## Explorer availability
+
+The explorer's address page stops waiting after a bounded read and offers
+**Retry**. A read failure does not mean the address has no history or funds.
+Blocks and transactions remain independent of the address reader.
+
+The explorer `/status` page includes protocol data availability. **Turned off**,
+**Not available yet**, and **No longer available** describe explicit lifecycle
+decisions. **Temporarily unavailable** describes a read or observation failure.
+The network, L2, and data pages keep these conditions separate.
+
+These changes describe this release. They do not claim that missing indexer
+services have been restored or deployed.
 
 ## Supply figures and duplicate rows
 
