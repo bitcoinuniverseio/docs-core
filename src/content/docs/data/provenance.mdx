@@ -29,11 +29,9 @@ and the one request that answers the question for any protocol.
     <desc id="prov-desc">
       Path one: your browser asks the Core API, which reads Universe-operated
       Bitcoin and Dogecoin services. Path two: your browser asks the Core API,
-      which reads an external provider for that protocol family. Path three,
-      the dotted one: for TAP, DMT and UNAT deployment, mint progress and
-      holder figures, your own browser fetches directly from a host Universe
-      does not operate, bypassing the Core API entirely. The indexer-health
-      endpoint reports which reader answered for every protocol.
+      which owns the configured reader for that protocol family. The former
+      direct browser feed for TAP, DMT and UNAT has been removed. Health
+      observations describe availability separately from source configuration.
     </desc>
     <style>
       {`
@@ -67,17 +65,16 @@ and the one request that answers the question for any protocol.
 
     <rect class="p-box p-ext" x="430" y="180" width="270" height="52" rx="3" />
     <text class="p-n2" x="442" y="199">03</text>
-    <text class="p-t" x="470" y="199">A host Universe does not operate</text>
-    <text class="p-d" x="442" y="216">TAP, DMT, UNAT deployment and mint figures</text>
+    <text class="p-t" x="470" y="199">Former browser feed: removed</text>
+    <text class="p-d" x="442" y="216">TAP, DMT and UNAT use owned reads or unavailable states</text>
 
     <path class="p-l" d="M126 122 L210 122" />
     <path class="p-l" d="M342 122 L390 122 L390 54 L428 54" />
     <path class="p-l" d="M342 122 L428 122" />
-    <path class="p-dash" d="M67 146 L67 206 L428 206" />
   </svg>
   <figcaption>
-    Path 3 is the only case where a request leaves your own browser to a host
-    Universe does not operate. The pages that show that data name it.
+    The former direct browser feed is removed. Missing owned readers produce
+    an unavailable state rather than a public-provider fallback.
   </figcaption>
 </figure>
 
@@ -98,25 +95,25 @@ Some protocol families are read through an external provider rather than a
 Universe-operated index. That is stated on the coverage page rather than
 hidden, and each protocol's page names the provider.
 
-The clearest examples: BRC-20 reads the UniSat Open API, and the registry adds
-that order freshness and inventory reconciliation are delegated there. Stamps
-and SRC-20 read StampDEX. Mezcal reads the mezcal.sh API. Alkanes reads an
-external Alkanes API set.
+BRC-20 index reads now use the Universe OPI read proxy. SRC-20 index reads
+use the owned Stamp gateway. Missing or incompatible readers stay unavailable.
+Legacy protocol source declarations can still describe older integrations;
+check current health observations before treating a declaration as a live read.
 
 Core validates the exact proxy route and body it allows, but it does not
 compare an external provider's tip with the Bitcoin tip. Several registry
 entries say so in those words.
 
-## Path 3: your own browser, directly
+## Former direct browser feed (removed)
 
-TAP, DMT, and UNAT are a further step removed. Their deployments, mint
-progress, and holder counts are fetched **by your own browser** from a host
-Universe does not operate. They do not pass through a Universe index at all, so
-their availability and freshness are that host's rather than Core's.
+TAP, DMT, and UNAT holder figures used to be fetched by your own browser from a
+host Universe does not operate. That feed is removed, so your
+browser contacts no third party for them. The TAP index reads Universe's own
+TAP catalog through the owned Universe API instead, and holder lists that only
+that feed could answer show **Temporarily unavailable**.
 
-Those three rows name their read source on the coverage page, and the same
-sentence appears on `/index/tap`, `/index/dmt`, and `/index/unat` beside the
-numbers it applies to.
+A live-update setting cannot restore the removed external source. Any future
+live integration must use an explicitly configured owned service.
 
 ## Fiat prices are a fourth case
 
