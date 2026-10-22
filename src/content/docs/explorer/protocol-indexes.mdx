@@ -107,3 +107,16 @@ outage stays distinguishable from a genuinely empty market or wallet.
 - [Coverage beyond the marketplace](/docs-core/protocols/coverage/)
 - [Indexer freshness](/docs-core/data/indexer-freshness/)
 - [Where each number comes from](/docs-core/data/provenance/)
+
+## Zcash read availability
+
+Zcash protocol pages distinguish an empty result from an unavailable read. If the
+first read fails or returns an incompatible response, the page offers **Retry**.
+A failed refresh keeps previously loaded rows and states when they were loaded.
+
+The list and its status load independently. **Status unavailable** means freshness
+could not be checked; it does not erase a successful list or prove it is current.
+Reads have a finite deadline, and changing views cancels the old read. A row
+without a destination is plain text.
+
+These read states do not authorize signing or transactions in another product.
