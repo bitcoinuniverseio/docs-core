@@ -55,7 +55,7 @@ TAP, DMT, and UNAT no longer use the old third-party browser feed. A live
 update setting cannot restore that source. Holder views without an owned
 reader show **Temporarily unavailable** with Retry.
 
-SRC-20 also reads through the owned Stamp gateway. A missing service or an
+Stamps and SRC-20 also read through the owned Stamp gateway. A missing service or an
 incompatible response shows the same neutral unavailable state. Public holder
 and price feeds are no longer used by this index page. Holder reads need an
 owned adapter before they can return results.
@@ -126,10 +126,8 @@ the index answered and has nothing for your search.
 | **Temporarily unavailable** and **Retry** | The read failed or timed out. Nothing is known. |
 | **Could not refresh. Showing saved results.** | A refresh failed. The rows on screen are from the last good read. |
 
-The market, token pages, holder rankings, and portfolio balances for that
-protocol follow the same rule. They never substitute sample rows and never show
-an unreadable balance as zero, so an outage stays distinguishable from a
-genuinely empty market or wallet.
+Retry repeats the read for that panel. Independent block and transaction
+screens remain usable when a protocol reader is unavailable.
 
 Pages never show the name of the service behind a failure or its error text.
 
