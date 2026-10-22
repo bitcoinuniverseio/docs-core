@@ -92,3 +92,17 @@ reach for them.
 - [Collection markets](/docs-core/markets/collection-markets/)
 - [Task: buy a listing](/docs-core/markets/buy/)
 - [Performance](/docs-core/quality/performance/)
+
+## When a feature is unavailable
+
+Market reads show "Temporarily unavailable" with a Retry button when the source
+fails. This state differs from a successful read with no listings. The page does
+not show raw source errors.
+
+The menu and command search hide feature routes that lack current capability
+evidence for the selected network. A direct link shows an unavailable state and
+does not start that feature's data requests. Other markets keep working.
+
+A shared marketplace action link appears only after its readiness check passes.
+The server checks readiness again when you act. A visible link does not authorize
+a trade or guarantee that its dependencies will remain available.
