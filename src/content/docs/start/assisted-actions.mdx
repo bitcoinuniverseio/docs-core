@@ -1,0 +1,32 @@
+---
+title: Assisted actions
+description: Preview of goal-based reads, progress and safe recovery in Core.
+sidebar:
+  order: 8
+---
+
+This feature is in development. Availability depends on the running Core build
+and the selected agent's permissions.
+
+Open **Assist** from Portfolio, Explorer, Market or pending activity. Review the
+address and network, describe a goal, then choose **Prepare**. The review shows what
+the app can actually do before you start it.
+
+Supported reads include Bitcoin balances, market listings, pending operations
+and transaction progress. You can also watch for a fee recommendation at or below
+a selected sat/vB target. This sends a notification; it never submits a trade.
+A balance result covers Bitcoin only; it does not
+establish token or inscription holdings. Missing sources remain unavailable.
+
+Tasks retain progress on the server. You can pause, resume or cancel future
+work. Watching a transaction stops after confirmation or a limited monitoring
+period. Confirmation is distinct from settlement and indexing.
+
+If inference is unavailable, supported deterministic reads remain available.
+Other goals direct you to the relevant form. Listing, purchase and inscription
+forms still require their existing review and wallet authorization. A plan does
+not sign or broadcast a transaction.
+
+Files stay in the local capture flow unless a supported form explicitly accepts
+them. Opening Inscribe is a handoff, not a completed inscription. Keep the
+receipt from the application that submits the operation.
