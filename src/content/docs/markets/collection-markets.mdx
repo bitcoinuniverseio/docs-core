@@ -42,10 +42,12 @@ Listings overlay inventory and never create membership.
 
 {/*
 IMPLEMENTATION-HANDOFF [WP-META-09] public-trait-discovery
-Defects: D-DOC-02, D-UI-DETAIL; coverage: C-DOC-02.
-Prerequisites: WP-META-01, WP-META-02, WP-META-03, WP-META-04, WP-META-05, WP-META-06, WP-META-07, WP-META-08.
+Coverage: C-DOC-02; defects: D-DOC-02, D-UI-DETAIL.
+Dependencies: WP-META-01, WP-META-02, WP-META-03, WP-META-04, WP-META-05, WP-META-06, WP-META-07, WP-META-08.
+Preparation: ANNOTATED; functional verification: NOT TESTED.
 Current cause: this guide promises authoritative item traits, but the observed KNOT
 HEAD #671 standalone route shows zero traits after matching a collection trait filter.
+
 1. After WP-META-06/07, document the shared collection and item metadata experience for
    every offered protocol in the bundled inventory. Use protocol-appropriate properties;
    do not invent NFT rarity for fungible tokens or equate an unavailable source with none.
@@ -60,6 +62,7 @@ HEAD #671 standalone route shows zero traits after matching a collection trait f
 5. Run npm test and npm run build after content implementation. Link the exact Core
    release and evidence before changing Provenance. Retain prior truthful public content
    on rollback; do not claim a completed release from annotation-only preparation.
+
 */}
 
 ## Finding an item

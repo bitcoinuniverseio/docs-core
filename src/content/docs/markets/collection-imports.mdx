@@ -25,11 +25,13 @@ publish.
 
 {/*
 IMPLEMENTATION-HANDOFF [WP-META-09] public-import-contract
-Defects: D-DOC-01, D-SRC-09; coverage: C-DOC-01.
-Prerequisites: WP-META-01, WP-META-02, WP-META-03, WP-META-04, WP-META-05, WP-META-06, WP-META-07, WP-META-08.
+Coverage: C-DOC-01; defects: D-DOC-01, D-SRC-09.
+Dependencies: WP-META-01, WP-META-02, WP-META-03, WP-META-04, WP-META-05, WP-META-06, WP-META-07, WP-META-08.
+Preparation: ANNOTATED; functional verification: NOT TESTED.
 Current cause: this guide advertises a 4 MiB/10,000-item manifest and equates galleries
 with parent children. The prepared Core baseline allows 64 MiB/100,000 items, while
-Ord 0.29 distinguishes structured-property galleries from provenance parents (O2/O4).
+Ord 0.29 distinguishes structured-property galleries from provenance parents (O2/O3/O5/O7).
+
 1. After WP-META-01/02/03 acceptance, replace these limits with the actual validated
    deployed contract from ordinal-collection-manifest.ts and ordinal-collections.service.ts.
    Document v1 compatibility, the new typed representation, and source-specific limits.
@@ -45,6 +47,7 @@ Ord 0.29 distinguishes structured-property galleries from provenance parents (O2
 5. Update Provenance only from accepted Core revision and public release evidence.
    Coordinate docs-dev-core/docs/runbooks/ordinals-collection-imports.md in the same release.
    Roll back misleading new prose if its corresponding feature release is reverted.
+
 */}
 
 ## Prerequisites

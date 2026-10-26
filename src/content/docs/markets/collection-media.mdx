@@ -24,15 +24,17 @@ Atomicals, Bitcoin Stamps, and other supported families.
 
 {/*
 IMPLEMENTATION-HANDOFF [WP-META-09] public-metadata-storage
-Defects: D-DOC-03, D-STO-01; coverage: C-DOC-03.
-Prerequisites: WP-META-01, WP-META-02, WP-META-03, WP-META-04, WP-META-05, WP-META-06, WP-META-07, WP-META-08.
+Coverage: C-DOC-03; defects: D-DOC-03, D-STO-01.
+Dependencies: WP-META-01, WP-META-02, WP-META-03, WP-META-04, WP-META-05, WP-META-06, WP-META-07, WP-META-08.
+Preparation: ANNOTATED; functional verification: NOT TESTED.
 Current cause: metadata is included in this shared-storage promise, while collection
 traits are still published from database-only JSON without verified B2 receipts.
+
 1. After WP-META-04/05/06 acceptance, explain collection/item metadata and immutable
    generation retrieval through the existing private shared media system in user terms.
    Distinguish retained source data, approved display metadata, and image derivatives.
 2. Keep actual bucket names, object keys, credentials, retention controls, and provider
-   tokens out of the product flow. The browser receives safe same-origin JSON and media.
+   tokens out of the product flow. The browser receives safe JSON from the approved backend and verified internal media routes.
 3. Describe pending, partial, no attributes supplied, conflicting, stale, and unavailable
    states truthfully; an upstream outage must retain the last verified display snapshot.
    State coverage from measured accepted inventory, never a blanket unverified claim.
@@ -41,6 +43,7 @@ traits are still published from database-only JSON without verified B2 receipts.
 5. Publish updated Provenance and coverage claims only with their actual Core release.
    If rollout is reversed, keep documentation aligned with the still-active generation
    and public feature state without directing operators to delete retained originals.
+
 */}
 
 ## Originals and derivatives are different things
