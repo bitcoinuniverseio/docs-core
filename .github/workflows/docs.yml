@@ -1,15 +1,12 @@
 name: Docs
 
-# Pull requests only, plus a manual trigger.
-#
-# This job ends with a full axe audit of every built page in both themes at two
-# widths, which takes roughly forty minutes on the shared fleet. Running it
-# again on the push that merges the same commit doubled that cost for no extra
-# signal, and the Pages workflow already re-runs every gate on the exact commit
-# it deploys. Branch protection evaluates the pull request head, which this
-# still covers.
+# Run the same checks on pull requests and the default branch. The Pages
+# workflow also checks its deployment artifact, but does not run the full
+# accessibility audit performed here.
 on:
   pull_request:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
