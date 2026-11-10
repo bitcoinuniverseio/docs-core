@@ -1,15 +1,12 @@
 name: Docs
 
-# Pull requests only, plus a manual trigger.
-#
-# This job ends with a full axe audit of every built page in both themes at two
-# widths, which takes roughly forty minutes on the shared fleet. Running it
-# again on the push that merges the same commit doubled that cost for no extra
-# signal, and the Pages workflow already re-runs every gate on the exact commit
-# it deploys. Branch protection evaluates the pull request head, which this
-# still covers.
+# Run the same checks on pull requests and the default branch. The Pages
+# workflow also checks its deployment artifact, but does not run the full
+# accessibility audit performed here.
 on:
   pull_request:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -31,7 +28,7 @@ jobs:
     # is unreachable from here: a public repository cannot resolve a reusable
     # workflow from a private one. `universe-ci-actions` below is public and is
     # fine to call.
-    runs-on: [self-hosted, universe-runners-1]
+    runs-on: [self-hosted, Linux, X64, universe]
     steps:
       - name: Check out exact source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
