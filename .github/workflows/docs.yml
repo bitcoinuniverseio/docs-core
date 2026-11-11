@@ -79,8 +79,13 @@ jobs:
         # request sudo and fail correctly on the non-privileged runner account.
         run: npx playwright install chromium
 
-      - name: Serve the built site
-        run: npx astro preview --port 4323 &
-
       - name: Accessibility and horizontal overflow, every page, both themes
-        run: npx wait-on http://localhost:4323/docs-core/ && npm run check:a11y
+        # Runners share hosts: use a free port and stop the preview afterwards,
+        # so no server is left behind on a port another job expects.
+        run: |
+          port=$(node -e "const s=require('net').createServer().listen(0,()=>{console.log(s.address().port);s.close()})")
+          node_modules/.bin/astro preview --port "$port" &
+          preview=$!
+          trap 'kill "$preview"' EXIT
+          npx wait-on "http://localhost:$port/docs-core/"
+          PREVIEW_ORIGIN="http://localhost:$port" npm run check:a11y
