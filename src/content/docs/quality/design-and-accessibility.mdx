@@ -88,6 +88,18 @@ strings, inline styles, CSS, and arbitrary utility classes. Mobile controls,
 inputs, fixed chrome, safe-area handling, and data representations are checked
 by syntax-aware rules before browser tests begin.
 
+## How interface changes are checked
+
+Release checks cover route loading, meaningful empty and error states,
+keyboard access, responsive layouts, and screenshots in both themes.
+Screenshots wait for the interface font and settled page content, so a slow
+font request is not mistaken for a design change. Browser checks also verify
+that background connections close when a page is left.
+
+A queued or cancelled check does not establish that a change passed. A local
+build alone does not establish release readiness. Each required check must
+finish successfully for the revision being released.
+
 ## This documentation site
 
 Held to the same commitments, and to a few more that suit a documentation site:
